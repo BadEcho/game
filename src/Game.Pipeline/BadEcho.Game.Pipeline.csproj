@@ -5,9 +5,11 @@
 		<Description>Provides extensions to MonoGame's content pipeline.</Description>
 		<Title>$(Product)</Title>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
-	  <IsPackable>$(CoreIsPackable)</IsPackable>
+	  <IsPackable>$(GameIsPackable)</IsPackable>
 	  <NoWarn>8002</NoWarn>
 		<Platforms>x64;x86</Platforms>
+		<!--All dependencies need to be in the output folder, in particular the native libraries needed to build some types of assets.-->
+	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,7 +31,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="$(CorePath)\Common\BadEcho.Common.csproj" />
+	  <ProjectReference Include="$(CorePath)\Common\BadEcho.Common.csproj"/>
 	  <ProjectReference Include="..\Game\BadEcho.Game.csproj" />
 	  <ProjectReference Include="..\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
 	</ItemGroup>
