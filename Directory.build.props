@@ -1,0 +1,12 @@
+<Project>
+	<PropertyGroup>
+		<RootProperties>$([MSBuild]::GetPathOfFileAbove('Root.build.props', '$(MSBuildThisFileDirectory)..\'))</RootProperties>
+		<BuildProperties Condition="Exists($(RootProperties))">$(RootProperties)</BuildProperties>
+		<BuildProperties Condition="'$(BuildProperties)' == ''">build\Build.props</BuildProperties>
+	</PropertyGroup>
+	<Import Project="$(BuildProperties)"/>
+	<PropertyGroup>
+		<RepositoryUrl>https://github.com/BadEcho/game</RepositoryUrl>
+		<CorePath Condition="'$(CorePath)' == ''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\src\Core\src'))</CorePath>
+	</PropertyGroup>
+</Project>

@@ -29,7 +29,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Common\BadEcho.Common.csproj" />
+	  <ProjectReference Include="$(CorePath)\Common\BadEcho.Common.csproj" />
 	  <ProjectReference Include="..\Game\BadEcho.Game.csproj" />
 	  <ProjectReference Include="..\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
 	</ItemGroup>
