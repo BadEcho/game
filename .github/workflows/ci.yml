@@ -92,6 +92,7 @@ jobs:
         GH_TOKEN: ${{ secrets.REPO_TOKEN }}
       # Store our compiled assets for subsequent jobs.
     - name: Upload Build Artifact
+      if: always()
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.BUILD_ARTIFACT_NAME }}
