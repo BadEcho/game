@@ -168,7 +168,6 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: packages
-        path: artifacts/
-    # Temporarily disable
-    #- name: Push to NuGet
-    # run: .\build\Publish-Packages.ps1 ${{ secrets.NUGET_API_KEY }}
+        path: artifacts/    
+    - name: Push to NuGet
+      run: .\build\Publish-Packages.ps1 ${{ secrets.NUGET_API_KEY }}
