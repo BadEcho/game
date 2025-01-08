@@ -1,7 +1,7 @@
 # Bad Echo TexturePacker Exporter
 [![Discord](https://img.shields.io/discord/348353194801364992?style=flat-square&label=Discord&logo=discord&logoColor=white&color=7289DA)](https://discord.gg/omni) 
 
-This is a custom exporter for TexturePacker used to generate texture atlas metadata that can be processed by the [Bad Echo Content Pipeline Extension](https://github.com/BadEcho/core/tree/master/src/Game.Pipeline).
+This is a custom exporter for TexturePacker used to generate texture atlas metadata that can be processed by the [Bad Echo Content Pipeline Extension](https://github.com/BadEcho/game/tree/master/src/Game.Pipeline).
 
 ## About Bad Echo
 Bad Echo is a collection of software technologies and [various writings](https://badecho.com) by Matt Weber: a software designer, partnered [Twitch](https://twitch.tv/omni) streamer, and game developer.
