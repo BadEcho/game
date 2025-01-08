@@ -36,6 +36,9 @@
     <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup>
+    <VCToolsVersion>14.42.34433</VCToolsVersion>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <OutDir>$(SolutionDir)\bin\dbg\</OutDir>
@@ -45,7 +48,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" Label="Configuration">
     <UseDebugLibraries>false</UseDebugLibraries>
-    <OutDir>$(SolutionDir)\bin\rel\</OutDir>    
+    <OutDir>$(SolutionDir)\bin\rel\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)\bin\rel\x86\</OutDir>
@@ -134,7 +137,7 @@
     <ClCompile>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>      
+      <IntrinsicFunctions>true</IntrinsicFunctions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
