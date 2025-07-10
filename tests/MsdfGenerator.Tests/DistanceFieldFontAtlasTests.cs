@@ -9,7 +9,7 @@
 //      See accompanying file LICENSE.md or a copy at:
 //      https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
-//-----------------------------------------------------------------------
+// -----------------------------------------------------------------------
 
 using Xunit;
 
