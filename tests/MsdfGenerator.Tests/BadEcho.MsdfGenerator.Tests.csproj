@@ -19,13 +19,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
+		<ProjectReference Include="..\..\src\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="Lato-Regular.ttf">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
+		<None Update="Lato-Regular.ttf">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 </Project>
