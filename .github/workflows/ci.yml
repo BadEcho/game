@@ -59,7 +59,7 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
     # GitHub artifacts expire after 90 days, so this will fail every 90 days.
-      # We cache vcpkg build artifacts, as their compilation requires an inordinate amount of time.
+    # We cache vcpkg build artifacts, as their compilation requires an inordinate amount of time.
     - name: Download vcpkg Artifact
       id: download-vcpkg
       uses: dawidd6/action-download-artifact@v3
@@ -73,19 +73,23 @@ jobs:
     - name: Update vcpkg Output Timestamp
       if: steps.download-vcpkg.outcome == 'success'
       run: touch src/MsdfGenerator/vcpkg_installed/x64-windows-static-md/.msbuildstamp-x64-windows-static-md.stamp
+      # Set the CMake version to use, in case we're forced to use system binaries.
+    - name: "Set CMake Version"
+      uses: jwlawson/actions-setup-cmake@v2
+      with:
+        cmake-version: '3.31.x'
     - name: Build
       run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
-        VCPKG_FORCE_SYSTEM_BINARIES: 
       # Grab vcpkg build logs if there was a build failure (most likely source)
     - name: Upload vcpkg Build Logs
       if: failure()
       uses: actions/upload-artifact@v4
       with:
         name: vcpkg-logs
-        path: vcpkg/buildtrees/**/*
+        path: vcpkg/**/*
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
     - name: Upload vcpkg Artifact
       if: steps.download-vcpkg.outcome == 'failure'
