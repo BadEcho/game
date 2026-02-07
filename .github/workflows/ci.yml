@@ -78,6 +78,7 @@ jobs:
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
+        CMAKE_POLICY_VERSION_MINIMUM: 3.5
       # Grab vcpkg build logs if there was a build failure (most likely source)
     - name: Upload vcpkg Build Logs
       if: failure()
