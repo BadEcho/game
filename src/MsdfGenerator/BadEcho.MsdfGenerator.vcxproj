@@ -36,9 +36,6 @@
     <WindowsTargetPlatformMinVersion>7.0</WindowsTargetPlatformMinVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup>
-    <VCToolsVersion>14.44.35207</VCToolsVersion>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
     <OutDir>$(SolutionDir)\bin\dbg\</OutDir>

@@ -34,7 +34,7 @@ void DistanceFieldFontAtlas::Generate(FontConfiguration configuration)
 	if (FontHandle* font = loadFont(freeType, fontPath))
 	{
 		Charset charset;
-		bool charsetLoaded;	
+		bool charsetLoaded;
 
 		if (String::IsNullOrEmpty(configuration.CharsetPath))
 		{
@@ -67,7 +67,7 @@ void DistanceFieldFontAtlas::Generate(FontHandle* font, const Charset& charset, 
 
 	int glyphCount = static_cast<int>(glyphs.size());
 
-	for (GlyphGeometry &glyph : glyphs)
+	for (GlyphGeometry& glyph : glyphs)
 	{
 		glyph.edgeColoring(&edgeColoringInkTrap, 3.0, 0);
 	}
@@ -101,7 +101,8 @@ void DistanceFieldFontAtlas::Generate(FontHandle* font, const Charset& charset, 
 	const char* outputPath = context->marshal_as<const char*>(configuration.OutputPath);
 	const char* jsonPath = context->marshal_as<const char*>(configuration.JsonPath);
 
-	savePng(generator.atlasStorage(), outputPath);
+	BitmapConstSection<byte, 4> bitmap{ generator.atlasStorage() };
+	savePng(bitmap, outputPath);
 	exportJSON(&fontGeometry, 1, scale, range, width, height, ImageType::MTSDF, YDirection::TOP_DOWN, jsonPath, true);
 
 	delete context;
