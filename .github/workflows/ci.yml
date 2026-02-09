@@ -84,7 +84,7 @@ jobs:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
       # Grab vcpkg build logs if there was a build failure (most likely source)
-    - name: Upload vcpkg Build Logs
+    - name: Upload vcpkg Build Trees Artifact
       if: failure()
       uses: actions/upload-artifact@v4
       with:
