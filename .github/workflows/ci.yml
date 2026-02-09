@@ -89,7 +89,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: vcpkg-logs
-        path: vcpkg/**/*
+        path: vcpkg/buildtrees/**/*
       # If vcpkg artifact aquisition failed earlier, we upload our freshly compiled dependencies and record the commit hash for future retrieval.
     - name: Upload vcpkg Artifact
       if: steps.download-vcpkg.outcome == 'failure'
