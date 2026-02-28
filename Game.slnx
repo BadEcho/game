@@ -1,0 +1,49 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Package" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/shared/">
+    <Project Path="src/Core/src/Common/BadEcho.Common.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+    <Project Path="src/Core/src/Drawing/BadEcho.Drawing.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Game.Pipeline/BadEcho.Game.Pipeline.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+    </Project>
+    <Project Path="src/Game/BadEcho.Game.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+    </Project>
+    <Project Path="src/MsdfGenerator/BadEcho.MsdfGenerator.vcxproj" Id="9a554c9b-b87f-44b3-8f6c-bfd8a7ac24e9">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Game.Tests/BadEcho.Game.Tests.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+    <Project Path="tests/MsdfGenerator.Tests/BadEcho.MsdfGenerator.Tests.csproj">
+      <BuildType Solution="Package|*" Project="Release" />
+      <Platform Solution="*|Any CPU" Project="x64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Build Solution="Package|*" Project="false" />
+    </Project>
+  </Folder>
+</Solution>
