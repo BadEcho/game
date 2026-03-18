@@ -33,7 +33,8 @@ on:
         required: true
 
 env:
-  PACKAGE_CONFIGURATION: 'Package' # Replace with the build configuration to use when creating packages.
+  PACKAGE_CONFIGURATION: 'Package'
+  ADDITIONAL_RESTORE_PROPERTIES:
   BUILD_ARTIFACT_NAME: 'binaries'
   
 jobs:
@@ -79,10 +80,11 @@ jobs:
       with:
         cmake-version: '3.31.x'
     - name: Build
-      run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION
+      run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION -AdditionalRestoreProperties:@($Env:ADDITIONAL_RESTORE_PROPERTIES)
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
+        ADDITIONAL_RESTORE_PROPERTIES: ${{ env.ADDITIONAL_RESTORE_PROPERTIES }} 
       # Grab vcpkg build logs if there was a build failure (most likely source)
     - name: Upload vcpkg Build Trees Artifact
       if: failure()
@@ -160,7 +162,7 @@ jobs:
   deploy:
     name: Deploy Packages
     needs: [build, test]
-    if: always()
+    if: always() && github.event_name != 'pull_request'
     runs-on: windows-2025-vs2026
     steps:
     - name: Check Previous Jobs' Results

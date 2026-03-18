@@ -27,7 +27,6 @@
     </Project>
     <Project Path="src/MsdfGenerator/BadEcho.MsdfGenerator.vcxproj" Id="9a554c9b-b87f-44b3-8f6c-bfd8a7ac24e9">
       <BuildType Solution="Package|*" Project="Release" />
-      <Build Solution="Package|*" Project="false" />
     </Project>
   </Folder>
   <Folder Name="/tests/">
