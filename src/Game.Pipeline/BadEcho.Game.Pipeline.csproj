@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
+	<PropertyGroup>		
 		<Title>Bad Echo Content Pipeline Extension</Title>
 		<AssemblyTitle>$(Title)</AssemblyTitle>
 		<Product>Bad Echo Game Framework</Product>
 		<Description>Provides extensions to MonoGame's content pipeline.</Description>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<TargetFramework>net10.0-windows</TargetFramework>
 		<IsPackable>$(GameIsPackable)</IsPackable>
 		<NoWarn>8002</NoWarn>
 		<Platforms>x64;x86</Platforms>
