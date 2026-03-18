@@ -80,7 +80,7 @@ jobs:
       with:
         cmake-version: '3.31.x'
     - name: Build
-      run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION -AdditionalRestoreProperties:@($Env:ADDITIONAL_RESTORE_PROPERTIES)
+      run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION -AdditionalRestoreProperties:@($Env:ADDITIONAL_RESTORE_PROPERTIES) -UseMSBuildRestore
       env:
         RELEASE_BUILD: ${{ inputs.release-build != '' && inputs.release-build || 'false' }}
         PACKAGE_CONFIGURATION: ${{ env.PACKAGE_CONFIGURATION }}
