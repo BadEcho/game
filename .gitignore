@@ -6,6 +6,8 @@
 # vcpkg build files
 **/vcpkg_installed/
 
+Version.props
+
 # User-specific files
 *.rsuser
 *.suo
