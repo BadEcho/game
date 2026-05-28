@@ -38,7 +38,7 @@ public static class Move
         
         float differenceLength = difference.Length();
         float scaledVelocityLength =  ScaleToTime(velocity, time).Length();
-
+        
         // If the rate of movement, scaled by time, exceeds the distance then we need to cap it so that we don't overshoot.
         if (scaledVelocityLength > differenceLength)
             velocity *= differenceLength / scaledVelocityLength;
@@ -57,7 +57,7 @@ public static class Move
     {
         Require.NotNull(time, nameof(time));
 
-        return velocity * (float) time.ElapsedGameTime.TotalSeconds;
+        return velocity * (float) time.ElapsedGameTime.Milliseconds / 1000.0f;
     }
 
     /// <summary>
@@ -70,8 +70,8 @@ public static class Move
     public static float ScaleToTime(float speed, GameUpdateTime time)
     {
         Require.NotNull(time, nameof(time));
-
-        return speed * (float) time.ElapsedGameTime.TotalSeconds;
+        
+        return speed * (float)time.ElapsedGameTime.Milliseconds / 1000.0f;
     }
 }
  

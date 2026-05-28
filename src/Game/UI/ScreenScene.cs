@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,24 +11,24 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Game.States;
+using BadEcho.Game.Scenes;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
 /// <summary>
-/// Provides a self-contained user interface game state that loads and deploys packaged controls onto a provided
+/// Provides a self-contained user interface game scene that loads and deploys packaged controls onto a provided
 /// <see cref="Screen"/> instance.
 /// </summary>
-public abstract class ScreenState : GameState
+public abstract class ScreenScene : GameScene
 {
     private readonly Screen _screen;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ScreenState"/> class.
+    /// Initializes a new instance of the <see cref="ScreenScene"/> class.
     /// </summary>
-    /// <param name="game">The game this state is for.</param>
-    protected ScreenState(Microsoft.Xna.Framework.Game game)
+    /// <param name="game">The game this scene is for.</param>
+    protected ScreenScene(Microsoft.Xna.Framework.Game game)
         : base(game)
     {
         _screen = new Screen(game.GraphicsDevice);
@@ -55,7 +55,7 @@ public abstract class ScreenState : GameState
         => _screen.Draw(spriteBatch);
 
     /// <inheritdoc/>
-    protected override void OnLoad(StateManager manager)
+    protected override void OnLoad(SceneManager manager)
     {
         _screen.Content = LoadControls(manager);
 
@@ -65,7 +65,7 @@ public abstract class ScreenState : GameState
     /// <summary>
     /// Initializes and returns a layout panel containing this user interface's controls.
     /// </summary>
-    /// <param name="manager">The state manager this state is being loaded into.</param>
+    /// <param name="manager">The scene manager this scene is being loaded into.</param>
     /// <returns>An <see cref="IPanel"/> instance containing this user interface's controls.</returns>
-    protected abstract IPanel LoadControls(StateManager manager);
+    protected abstract IPanel LoadControls(SceneManager manager);
 }

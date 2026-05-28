@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,17 +11,17 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Game.States;
+using BadEcho.Game.Scenes;
 using BadEcho.Game.UI;
 
 namespace BadEcho.Game.Tests;
 
-internal sealed class TestScreenState : ScreenState
+internal sealed class TestScreenScene : ScreenScene
 {
-    public TestScreenState(Microsoft.Xna.Framework.Game game) 
+    public TestScreenScene(Microsoft.Xna.Framework.Game game) 
         : base(game)
     { }
 
-    protected override IPanel LoadControls(StateManager manager)
+    protected override IPanel LoadControls(SceneManager manager)
         => new StackPanel();
 }

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -16,12 +16,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
-namespace BadEcho.Game.States;
+namespace BadEcho.Game.Scenes;
 
 /// <summary>
 /// Provides a scene for a game with independently managed content.
 /// </summary>
-public abstract class GameState : IDisposable
+public abstract class GameScene : IDisposable
 {
     private const Transitions MOVEMENT_FLAGS =
         Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
@@ -31,10 +31,10 @@ public abstract class GameState : IDisposable
     private bool _disposed;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="GameState"/> class.
+    /// Initializes a new instance of the <see cref="GameScene"/> class.
     /// </summary>
-    /// <param name="game">The game this state is for.</param>
-    protected GameState(Microsoft.Xna.Framework.Game game)
+    /// <param name="game">The game this scene is for.</param>
+    protected GameScene(Microsoft.Xna.Framework.Game game)
     {
         Require.NotNull(game, nameof(game));
 
@@ -43,13 +43,13 @@ public abstract class GameState : IDisposable
     }
 
     /// <summary>
-    /// Gets a <see cref="TransitionStatus"/> value that specifies this state's current transition phase.
+    /// Gets a <see cref="TransitionStatus"/> value that specifies this scene's current transition phase.
     /// </summary>
     public TransitionStatus TransitionStatus
     { get; private set; }
 
     /// <summary>
-    /// Gets or sets the amount of time required for this state's transitions.
+    /// Gets or sets the amount of time required for this scene's transitions.
     /// </summary>
     public TimeSpan TransitionTime
     { get; set; }
@@ -62,15 +62,15 @@ public abstract class GameState : IDisposable
     { get; private set; }
 
     /// <summary>
-    /// Gets a value indicating if a closing state has finished its exit transition and is ready for full removal.
+    /// Gets a value indicating if a closing scene has finished its exit transition and is ready for full removal.
     /// </summary>
     public bool HasClosed
     { get; private set; }
 
     /// <summary>
-    /// Gets or sets the transitions this state undergoes when entering and exiting the screen.
+    /// Gets or sets the transitions this scene undergoes when entering and exiting the screen.
     /// </summary>
-    public Transitions StateTransitions
+    public Transitions SceneTransitions
     { get; set; }
     
     /// <summary>
@@ -80,35 +80,35 @@ public abstract class GameState : IDisposable
     { get; set; } = 3.0;
 
     /// <summary>
-    /// Gets a value indicating if the state acts like modal dialog on top of other states.
+    /// Gets a value indicating if the scene acts like modal dialog on top of other scenes.
     /// </summary>
     public virtual bool IsModal
         => false;
 
     /// <summary>
-    /// Gets this state's <see cref="ContentManager"/> instnace.
+    /// Gets this scene's <see cref="ContentManager"/> instnace.
     /// </summary>
     protected ContentManager Content
     { get; }
 
     /// <summary>
-    /// Gets the game this state is for.
+    /// Gets the game this scene is for.
     /// </summary>
     protected Microsoft.Xna.Framework.Game Game
     { get; }
 
     /// <summary>
-    /// Gets the state manager this state has been added to.
+    /// Gets the scene manager this scene has been added to.
     /// </summary>
-    protected StateManager? Manager
+    protected SceneManager? Manager
     { get; private set; }
 
     /// <summary>
-    /// Gets or sets the coordinates to the upper-left corner of the state's content.
+    /// Gets or sets the coordinates to the upper-left corner of the scene's content.
     /// </summary>
     /// <remarks>
     /// <para>
-    /// Used when performing movement transitions to begin the transition at a position bordering visible content. Often a state's 
+    /// Used when performing movement transitions to begin the transition at a position bordering visible content. Often a scene's 
     /// content does not encompass the entire screen.
     /// </para>
     /// <para>
@@ -119,41 +119,41 @@ public abstract class GameState : IDisposable
     { get; set; }
 
     /// <summary>
-    /// Gets a value indicating if this type of state honors clipping regions while transitioning.
+    /// Gets a value indicating if this type of scene honors clipping regions while transitioning.
     /// </summary>
     protected virtual bool ClipDuringTransitions
         => true;
 
     /// <summary>
-    /// Gets the base matrix that this type of state applies to position, rotation, scale, and depth data.
+    /// Gets the base matrix that this type of scene applies to position, rotation, scale, and depth data.
     /// </summary>
     protected virtual Matrix MatrixTransform
         => Matrix.Identity;
 
     /// <summary>
-    /// Gets the drawing order this type of state uses for sprite and text drawing.
+    /// Gets the drawing order this type of scene uses for sprite and text drawing.
     /// </summary>
     protected virtual SpriteSortMode SortMode
         => SpriteSortMode.Deferred;
 
     /// <summary>
-    /// Gets a value indicating if this type of state transitions onto (and remains on) the screen, even if it is not
-    /// the active state (i.e., it is not the topmost in the z-order).
+    /// Gets a value indicating if this type of scene transitions onto (and remains on) the screen, even if it is not
+    /// the active scene (i.e., it is not the topmost in the z-order).
     /// </summary>
     protected virtual bool AlwaysDisplay
         => false;
 
     /// <summary>
-    /// Performs any necessary updates to the state, including its position, transition status, and other state-specific
+    /// Performs any necessary updates to the scene, including its position, transition status, and other scene-specific
     /// concerns.
     /// </summary>
-    /// <param name="time">The game timing configuration and state for this update.</param>
+    /// <param name="time">The game timing configuration and scene for this update.</param>
     /// <param name="isActive">
-    /// Value indicating whether this is the active state on top of all others in the z-order and, therefore, should be
+    /// Value indicating whether this is the active scene on top of all others in the z-order and, therefore, should be
     /// visible on the screen.
     /// </param>
     /// <remarks> 
-    /// By default, a state must be the active state to enter the screen and will begin to exit off the screen if not.
+    /// By default, a scene must be the active scene to enter the screen and will begin to exit off the screen if not.
     /// To change this behavior, override <see cref="AlwaysDisplay"/> so that it returns true.
     /// </remarks>
     public void Update(GameUpdateTime time, bool isActive)
@@ -178,9 +178,9 @@ public abstract class GameState : IDisposable
     }
 
     /// <summary>
-    /// Draws the scene associated with the state to the screen.
+    /// Draws the scene to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the state.</param>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the scene.</param>
     public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
@@ -188,16 +188,16 @@ public abstract class GameState : IDisposable
         var viewport = spriteBatch.GraphicsDevice.Viewport;
         var transform = MatrixTransform;
         
-        if ((StateTransitions & MOVEMENT_FLAGS) != 0)
+        if ((SceneTransitions & MOVEMENT_FLAGS) != 0)
             transform *= CreateMoveTransform(viewport);
 
-        if (StateTransitions.HasFlag(Transitions.Zoom))
+        if (SceneTransitions.HasFlag(Transitions.Zoom))
             transform *= CreateZoomTransform(viewport);
 
-        if (StateTransitions.HasFlag(Transitions.Rotate))
+        if (SceneTransitions.HasFlag(Transitions.Rotate))
             transform *= Matrix.CreateRotationZ(MathHelper.ToRadians(TransitionPercentage * 360));
 
-        var alpha = StateTransitions.HasFlag(Transitions.Fade)
+        var alpha = SceneTransitions.HasFlag(Transitions.Fade)
             ? CalculateAnimationCurve()
             : 1f;
 
@@ -232,7 +232,7 @@ public abstract class GameState : IDisposable
     { }
 
     /// <summary>
-    /// Prepares the state for its eventual removal from an active state manager by first performing an
+    /// Prepares the scene for its eventual removal from an active scene manager by first performing an
     /// exit transition.
     /// </summary>
     public void Close() 
@@ -246,10 +246,10 @@ public abstract class GameState : IDisposable
     }
 
     /// <summary>
-    /// Associates this state with the provided state manager in preparation for being drawn to the screen.
+    /// Associates this scene with the provided scene manager in preparation for being drawn to the screen.
     /// </summary>
-    /// <param name="manager">The state manager this state is being loaded into.</param>
-    internal void Load(StateManager manager)
+    /// <param name="manager">The scene manager this scene is being loaded into.</param>
+    internal void Load(SceneManager manager)
     {
         Require.NotNull(manager, nameof(manager));
 
@@ -259,27 +259,27 @@ public abstract class GameState : IDisposable
     }
 
     /// <summary>
-    /// Executes custom state-specific update logic.
+    /// Executes custom scene-specific update logic.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
     /// <param name="isActive">
-    /// Value indicating whether this is the active state on top of all others in the z-order.
+    /// Value indicating whether this is the active scene on top of all others in the z-order.
     /// </param>
     protected abstract void UpdateCore(GameUpdateTime time, bool isActive);
 
     /// <summary>
-    /// Executes the custom rendering logic required to draw the state to the screen.
+    /// Executes the custom rendering logic required to draw the scene to the screen.
     /// </summary>
     /// <param name="spriteBatch">
-    /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this state to.
+    /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this scene to.
     /// </param>
     protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
 
     /// <summary>
-    /// Called when this state is being loaded into a state manager in preparation for being drawn to the screen.
+    /// Called when this scene is being loaded into a scene manager in preparation for being drawn to the screen.
     /// </summary>
-    /// <param name="manager">The state manager this state is being loaded into.</param>
-    protected virtual void OnLoad(StateManager manager)
+    /// <param name="manager">The scene manager this scene is being loaded into.</param>
+    protected virtual void OnLoad(SceneManager manager)
     {
         Require.NotNull(manager, nameof(manager));
     }
@@ -319,13 +319,13 @@ public abstract class GameState : IDisposable
             return;
         }
 
-        // We're still in the process of transitioning the game state on or off the screen.
+        // We're still in the process of transitioning the game scene on or off the screen.
         TransitionStatus = isActive ? TransitionStatus.Entering : TransitionStatus.Exiting;
     }
 
     private Matrix CreateMoveTransform(Viewport viewport)
     {
-        var position = (StateTransitions & MOVEMENT_FLAGS) switch
+        var position = (SceneTransitions & MOVEMENT_FLAGS) switch
         {
             Transitions.MoveLeft => new Vector3(CalculateDisplacement(viewport, true, true), 0f, 0f),
             Transitions.MoveRight => new Vector3(CalculateDisplacement(viewport, true, false), 0f, 0f),
