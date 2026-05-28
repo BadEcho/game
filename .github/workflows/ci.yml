@@ -78,7 +78,7 @@ jobs:
     - name: "Set CMake Version"
       uses: jwlawson/actions-setup-cmake@v2
       with:
-        cmake-version: '3.31.x'
+        cmake-version: '3.31.10'
     - name: Build
       run: .\build\Invoke-Build.ps1 -ReleaseBuild:$([System.Convert]::ToBoolean($Env:RELEASE_BUILD)) -PackageConfiguration:$Env:PACKAGE_CONFIGURATION -AdditionalRestoreProperties:@($Env:ADDITIONAL_RESTORE_PROPERTIES) -UseMSBuildRestore
       env:
