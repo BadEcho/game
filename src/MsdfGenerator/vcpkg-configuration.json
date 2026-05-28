@@ -3,8 +3,10 @@
         {
             "kind": "git",
             "repository": "https://github.com/BadEcho/vcpkg-registry",
-            "baseline": "e4ac3c40650a14257ca37dd3497b625604a9fef6",
-            "packages": [ "msdf-atlas-gen" ]
+            "baseline": "d2337edc5efc8c5ffeb308f9ccc02c6f6ec1c13d",
+            "packages": [
+                "msdf-atlas-gen"
+            ]
         }
     ]
 }
