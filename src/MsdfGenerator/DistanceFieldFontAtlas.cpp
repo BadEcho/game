@@ -101,8 +101,7 @@ void DistanceFieldFontAtlas::Generate(FontHandle* font, const Charset& charset, 
 	const char* outputPath = context->marshal_as<const char*>(configuration.OutputPath);
 	const char* jsonPath = context->marshal_as<const char*>(configuration.JsonPath);
 
-	BitmapConstSection<byte, 4> bitmap{ generator.atlasStorage() };
-	savePng(bitmap, outputPath);
+	savePng(generator.atlasStorage(), outputPath);	
 	exportJSON(&fontGeometry, 1, scale, range, width, height, ImageType::MTSDF, YDirection::TOP_DOWN, jsonPath, true);
 
 	delete context;
