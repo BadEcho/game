@@ -1,7 +1,7 @@
 // -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -12,6 +12,12 @@
 // -----------------------------------------------------------------------
 
 #include "Defines.fxh"
+
+declare_texture(SpriteTexture, 0);
+sampler2D SpriteTextureSampler : register(s0) = sampler_state
+{
+    Texture = <SpriteTexture>;
+};
 
 BEGIN_PARAMETERS
     float4x4 MatrixTransform _vs(c0) _cb(c0);
@@ -42,7 +48,7 @@ VSOutput SpriteVertexShader(    float4 position : POSITION0,
 
 float4 SpritePixelShader(VSOutput input) : SV_Target0
 {
-    return SAMPLE(Texture, input.TexCoord) * input.Color;
+    return sample2D(SpriteTexture, input.TexCoord) * input.Color;
 }
 
 technique SpriteBatch

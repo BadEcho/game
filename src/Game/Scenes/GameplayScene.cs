@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Game.UI;
+using BadEcho.Game.Effects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -68,8 +69,10 @@ public abstract class GameplayScene : GameScene
 
         if (IsPaused)
         {
+            spriteBatch.Begin(RenderStates);
             _pauseOverlay.Color = Color.Black * PauseOverlayAlpha;
             _pauseOverlay.Draw(spriteBatch, spriteBatch.GraphicsDevice.Viewport.Bounds);
+            spriteBatch.End();
         }
     }
 

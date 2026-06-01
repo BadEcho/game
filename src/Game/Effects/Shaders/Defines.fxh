@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -23,11 +23,9 @@
 	#define BEGIN_PARAMETERS
 	#define END_PARAMETERS
 
-	#ifndef NOT_STANDARD_TEXTURE
-		#define SAMPLE(texture, texCoord) tex2D(texture, texCoord) 
-
-	    sampler2D Texture : register(s0);
-	#endif
+	#define sample2D(texture, texCoord) tex2D(texture##Sampler, texCoord)
+	#define declare_texture(name, index) \
+		sampler2D name : register(s##index);
 #else
 	#define _vs(r)
 	#define _ps(r)
@@ -38,10 +36,9 @@
 	#define BEGIN_PARAMETERS    cbuffer Parameters : register(b0) {
 	#define END_PARAMETERS      };
 
-	#ifndef NOT_STANDARD_TEXTURE
-		#define SAMPLE(texture, texCoord) texture.Sample(texture##Sampler, texCoord)
+	#define sample2D(texture, texCoord) texture.Sample(texture##Sampler, texCoord)
+	#define sampler2D SamplerState
+	#define declare_texture(name, index) \
+		Texture2D<float4> name : register(t##index); 	
 
-		Texture2D<float4> Texture : register(t0);
-		sampler TextureSampler : register(s0);
-	#endif
 #endif

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,9 +11,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-#define NOT_STANDARD_TEXTURE
-
 #include "Defines.fxh"
+
+declare_texture(Texture, 0);
 
 BEGIN_PARAMETERS
     float4x4 MatrixTransform _vs(c0) _cb(c0);
@@ -22,9 +22,7 @@ BEGIN_PARAMETERS
     float Alpha _vs(c4) _cb(c6);
 END_PARAMETERS
 
-texture Texture : register(t0);
-
-sampler AtlasSampler : register(s0) = sampler_state
+sampler2D TextureSampler : register(s0) = sampler_state
 {
     Texture = (Texture);
     AddressU = CLAMP;
@@ -113,7 +111,7 @@ VSOutput DistanceVertexShader(in VSInput input)
 float4 DistancePixelShader(VSOutput input) : COLOR
 {   // Divide the distance field range by the atlas size to give us a distance range applicable to texels.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
-    float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
+    float3 sample = sample2D(Texture, input.TexCoord).rgb;
         
     // Vertex color values go from 0.0 to 1.0. The center of a pixel is located at (0, 0), however the edges are located at +/- 0.5.
     // We subtract 0.5 to align with the pixels.
@@ -133,7 +131,7 @@ float4 DistancePixelShader(VSOutput input) : COLOR
 float4 StrokedDistancePixelShader(VSOutput input) : COLOR
 {   // Refer to DistancePixelShader for documentation on the code common to both shaders.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
-    float medianSample = Median(tex2D(AtlasSampler, input.TexCoord).rgb);
+    float medianSample = Median(sample2D(Texture, input.TexCoord).rgb);
     float signedDistance = medianSample - 0.5f;
 
     float distanceInputRelation = dot(texelDistanceRange, 0.5f / fwidth(input.TexCoord));
@@ -169,7 +167,7 @@ float4 SmallDistancePixelShader(VSOutput input) : COLOR
     float2 pixelCoord = input.TexCoord * AtlasSize;    
     float2 Jdx = ddx(pixelCoord);
     float2 Jdy = ddy(pixelCoord);
-    float3 sample = tex2D(AtlasSampler, input.TexCoord).rgb;
+    float3 sample = sample2D(Texture, input.TexCoord).rgb;
     float signedDistance = Median(sample) - 0.5f;
     
     float opacity = GetOpacityFromDistance(signedDistance, Jdx, Jdy);
@@ -189,7 +187,7 @@ float4 StrokedSmallDistancePixelShader(VSOutput input) : COLOR
     float2 pixelCoord = input.TexCoord * AtlasSize;
     float2 Jdx = ddx(pixelCoord);
     float2 Jdy = ddy(pixelCoord);
-    float medianSample = Median(tex2D(AtlasSampler, input.TexCoord).rgb);
+    float medianSample = Median(sample2D(Texture, input.TexCoord).rgb);
     float signedDistance = medianSample - 0.5f;
 
 	const float strokeThickness = 0.1875f;
