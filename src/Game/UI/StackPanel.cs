@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -20,15 +20,13 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class StackPanel : Panel<StackPanel>
 {
-    private Orientation _orientation;
-
     /// <summary>
     /// Gets or sets the dimension by which child controls are stacked.
     /// </summary>
     public Orientation Orientation
     {
-        get => _orientation;
-        set => RemeasureIfChanged(ref _orientation, value);
+        get;
+        set => RemeasureIfChanged(ref field, value);
     }
 
     /// <inheritdoc />

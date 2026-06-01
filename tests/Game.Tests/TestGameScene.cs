@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Game.Scenes;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Tests;
 
@@ -34,6 +35,6 @@ internal sealed class TestGameScene : GameScene
         }
     }
 
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
+    protected override void DrawCore(SpriteBatch spriteBatch)
     { }
 }

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -15,6 +15,7 @@ using BadEcho.Game.Fonts;
 using BadEcho.Game.Properties;
 using BadEcho.Logging;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -23,8 +24,6 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Label : Control<Label>
 {
-    private string _text = string.Empty;
-    private DistanceFieldFont? _font;
     private IModelRenderer? _textRenderer;
 
     /// <summary>
@@ -32,8 +31,8 @@ public sealed class Label : Control<Label>
     /// </summary>
     public DistanceFieldFont? Font
     {
-        get => _font;
-        set => RemeasureIfChanged(ref _font, value);
+        get;
+        set => RemeasureIfChanged(ref field, value);
     }
 
     /// <summary>
@@ -53,9 +52,9 @@ public sealed class Label : Control<Label>
     /// </summary>
     public string Text
     {
-        get => _text;
-        set => RemeasureIfChanged(ref _text, value);
-    }
+        get;
+        set => RemeasureIfChanged(ref field, value);
+    } = string.Empty;
 
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
@@ -69,7 +68,11 @@ public sealed class Label : Control<Label>
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
+    protected override void DrawCore(SpriteBatch spriteBatch)
+    { }
+
+    /// <inheritdoc/>
+    protected override void DrawPrimitivesCore(IStandardEffect? effect)
     {
         if (_textRenderer == null)
         {
@@ -77,20 +80,15 @@ public sealed class Label : Control<Label>
             return;
         }
 
-        // UI elements are drawn immediately, as opposed to being deferred, so creating a new batch here won't be any significant effect.
-        spriteBatch.End();
-
         Matrix textTranslation = Matrix.CreateTranslation(ContentBounds.X, ContentBounds.Y, 0);
         float alpha = 1.0f;
 
-        if (spriteBatch.Effect != null)
+        if (effect != null)
         {
-            textTranslation *= spriteBatch.Effect.MatrixTransform ?? Matrix.Identity;
-            alpha = spriteBatch.Effect.Alpha;
+            textTranslation *= effect.MatrixTransform ?? Matrix.Identity;
+            alpha = effect.Alpha;
         }
 
         _textRenderer.Draw(textTranslation, alpha);
-
-        spriteBatch.Begin();
     }
 }

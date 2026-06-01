@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using BadEcho.Game.Effects;
 using BadEcho.Game.Scenes;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -32,15 +33,13 @@ public abstract class ScreenScene : GameScene
         : base(game)
     {
         _screen = new Screen(game.GraphicsDevice);
+
+        RenderStates = RenderStates with { SortMode = SpriteSortMode.Immediate };
     }
 
     /// <inheritdoc/>
     protected override bool ClipDuringTransitions
         => false;
-
-    /// <inheritdoc/>
-    protected override SpriteSortMode SortMode
-        => SpriteSortMode.Immediate;
 
     /// <inheritdoc/>
     protected override void UpdateCore(GameUpdateTime time, bool isActive)
@@ -51,8 +50,16 @@ public abstract class ScreenScene : GameScene
     }
 
     /// <inheritdoc/>
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
-        => _screen.Draw(spriteBatch);
+    protected override void DrawCore(SpriteBatch spriteBatch)
+    {
+        spriteBatch.Begin(RenderStates);
+
+        _screen.Draw(spriteBatch);
+
+        spriteBatch.End();
+
+        _screen.DrawPrimitives(RenderStates.Effect);
+    }
 
     /// <inheritdoc/>
     protected override void OnLoad(SceneManager manager)

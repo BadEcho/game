@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -74,7 +74,7 @@ public sealed class NineSliceRegion : TextureRegion
     { get; }
 
     /// <inheritdoc/>
-    public override void Draw(ConfiguredSpriteBatch spriteBatch, Rectangle targetArea)
+    public override void Draw(SpriteBatch spriteBatch, Rectangle targetArea)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 

@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -181,8 +182,14 @@ public interface IControl : IArrangeable, IInputElement
     /// <summary>
     /// Draws the user interface to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the user interface.</param>
-    void Draw(ConfiguredSpriteBatch spriteBatch);
+    /// <param name="spriteBatch">The sprite batch to use to draw the user interface.</param>
+    void Draw(SpriteBatch spriteBatch);
+
+    /// <summary>
+    /// Draws primitives required by the user interface to the screen outside the main sprite batch.
+    /// </summary>
+    /// <param name="effect">Shaders currently being used during rendering passes, if any.</param>
+    void DrawPrimitives(IStandardEffect? effect);
 
     /// <summary>
     /// Processes events related to user input.

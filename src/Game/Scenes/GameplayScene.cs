@@ -13,6 +13,7 @@
 
 using BadEcho.Game.UI;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Scenes;
 
@@ -59,7 +60,7 @@ public abstract class GameplayScene : GameScene
     }
 
     /// <inheritdoc/>
-    protected sealed override void DrawCore(ConfiguredSpriteBatch spriteBatch)
+    protected sealed override void DrawCore(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));        
 
@@ -81,10 +82,8 @@ public abstract class GameplayScene : GameScene
     /// <summary>
     /// Executes the custom rendering logic required to draw the gameplay to the screen.
     /// </summary>
-    /// <param name="spriteBatch">
-    /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this scene to.
-    /// </param>
-    protected abstract void DrawGameplay(ConfiguredSpriteBatch spriteBatch);
+    /// <param name="spriteBatch">A sprite batch for drawing the scene.</param>
+    protected abstract void DrawGameplay(SpriteBatch spriteBatch);
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)

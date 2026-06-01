@@ -159,13 +159,20 @@ public sealed class Screen : IArrangeable, IInputHandler
     /// <summary>
     /// Draws the user interface to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the user interface.</param>
-    public void Draw(ConfiguredSpriteBatch spriteBatch)
+    /// <param name="spriteBatch">The sprite batch to use to draw the user interface.</param>
+    public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
-
+        
         Content.Draw(spriteBatch);
     }
+
+    /// <summary>
+    /// Draws primitives required by the user interface to the screen outside the main sprite batch.
+    /// </summary>
+    /// <param name="effect">Shaders currently being used during rendering passes, if any.</param>
+    public void DrawPrimitives(IStandardEffect? effect)
+        => Content.DrawPrimitives(effect);
 
     [MemberNotNull(nameof(_content))]
     private void LoadContent(IPanel content)

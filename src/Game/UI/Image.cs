@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,6 +11,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace BadEcho.Game.UI;
 
 /// <summary>
@@ -18,15 +20,13 @@ namespace BadEcho.Game.UI;
 /// </summary>
 public sealed class Image : Control<Image>
 {
-    private IVisualRegion? _visual;
-
     /// <summary>
     /// Gets or sets the visual component data composing the image.
     /// </summary>
     public IVisualRegion? Visual
     {
-        get => _visual;
-        set => RemeasureIfChanged(ref _visual, value);
+        get;
+        set => RemeasureIfChanged(ref field, value);
     }
 
     /// <inheritdoc />
@@ -50,8 +50,10 @@ public sealed class Image : Control<Image>
     }
 
     /// <inheritdoc />
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
-    {
-        Visual?.Draw(spriteBatch, ContentBounds);
-    }
+    protected override void DrawCore(SpriteBatch spriteBatch) 
+        => Visual?.Draw(spriteBatch, ContentBounds);
+
+    /// <inheritdoc/>
+    protected override void DrawPrimitivesCore(IStandardEffect? effect)
+    { }
 }

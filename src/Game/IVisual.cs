@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
 
@@ -23,7 +24,7 @@ public interface IVisual
     /// <summary>
     /// Draws the component to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the component.</param>
+    /// <param name="spriteBatch">The sprite batch to use to draw the component.</param>
     /// <param name="targetArea">The bounding rectangle of the region of the screen that this component will be drawn to.</param>
-    void Draw(ConfiguredSpriteBatch spriteBatch, Rectangle targetArea);
+    void Draw(SpriteBatch spriteBatch, Rectangle targetArea);
 }

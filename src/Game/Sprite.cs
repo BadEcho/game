@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -124,17 +124,6 @@ public class Sprite : IEntity
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite.</param>
     public void Draw(SpriteBatch spriteBatch)
-    {
-        Require.NotNull(spriteBatch, nameof(spriteBatch));
-        
-        spriteBatch.Draw(Texture, (Rectangle) GetTargetArea(), GetSourceArea(), Color.White);
-    }
-
-    /// <summary>
-    /// Draws the sprite to the screen.
-    /// </summary>
-    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the sprite.</param>
-    public void Draw(ConfiguredSpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         

@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using BadEcho.Game.Effects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -41,7 +42,7 @@ public sealed class BackgroundScene : GameScene
 
         _texture = Content.Load<Texture2D>(backgroundAssetPath);
     }
-
+    
     /// <inheritdoc/>
     /// <remarks>
     /// We'll always be displayed on screen regardless of z-order position.
@@ -55,15 +56,19 @@ public sealed class BackgroundScene : GameScene
     { }
 
     /// <inheritdoc/>
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
-    {
+    protected override void DrawCore(SpriteBatch spriteBatch)
+    {   
         Require.NotNull(spriteBatch, nameof(spriteBatch));
-
+        
         Viewport viewport = spriteBatch.GraphicsDevice.Viewport;
+
+        spriteBatch.Begin(RenderStates);
 
         spriteBatch.Draw(_texture,
                          new Rectangle(0, 0, viewport.Width, viewport.Height),
                          Color.White);
+
+        spriteBatch.End();
     }
 
     /// <inheritdoc/>

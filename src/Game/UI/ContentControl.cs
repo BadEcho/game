@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -10,6 +10,8 @@
 //      https://www.gnu.org/licenses/agpl-3.0.html
 // </copyright>
 // -----------------------------------------------------------------------
+
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -65,6 +67,10 @@ public abstract class ContentControl<T,TSelf> : Control<TSelf>
     }
 
     /// <inheritdoc/>
-    protected override void DrawCore(ConfiguredSpriteBatch spriteBatch)
+    protected override void DrawCore(SpriteBatch spriteBatch)
         => Content.Draw(spriteBatch);
+
+    /// <inheritdoc/>
+    protected override void DrawPrimitivesCore(IStandardEffect? effect) 
+        => Content.DrawPrimitives(effect);
 }

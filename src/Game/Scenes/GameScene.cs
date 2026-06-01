@@ -37,9 +37,13 @@ public abstract class GameScene : IDisposable
     protected GameScene(Microsoft.Xna.Framework.Game game)
     {
         Require.NotNull(game, nameof(game));
-
+        
         Content = new ContentManager(game.Services, "Content");
         Game = game;
+
+        RenderStates = new RenderStates(SpriteSortMode.Deferred,
+                                        BlendState.AlphaBlend,
+                                        SamplerState.PointClamp);
     }
 
     /// <summary>
@@ -131,17 +135,17 @@ public abstract class GameScene : IDisposable
         => Matrix.Identity;
 
     /// <summary>
-    /// Gets the drawing order this type of scene uses for sprite and text drawing.
-    /// </summary>
-    protected virtual SpriteSortMode SortMode
-        => SpriteSortMode.Deferred;
-
-    /// <summary>
     /// Gets a value indicating if this type of scene transitions onto (and remains on) the screen, even if it is not
     /// the active scene (i.e., it is not the topmost in the z-order).
     /// </summary>
     protected virtual bool AlwaysDisplay
         => false;
+
+    /// <summary>
+    /// Gets or sets the default device render states the scene should use when drawing with a sprite batch.
+    /// </summary>
+    protected RenderStates RenderStates
+    { get; set; }
 
     /// <summary>
     /// Performs any necessary updates to the scene, including its position, transition status, and other scene-specific
@@ -205,26 +209,19 @@ public abstract class GameScene : IDisposable
             = TransitionStatus is TransitionStatus.Entered or TransitionStatus.Exited || ClipDuringTransitions;
 
         _alphaEffect ??= new AlphaSpriteEffect(spriteBatch.GraphicsDevice);
-
         _alphaEffect.Alpha = alpha;
         _alphaEffect.MatrixTransform = transform;
 
-        var configuredSpriteBatch = new ConfiguredSpriteBatch(
-            spriteBatch,
-            SortMode,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            rasterizerState: new RasterizerState { ScissorTestEnable = clippingEnabled },
-            matrixTransform: transform);
-
-        configuredSpriteBatch.LoadEffect(_alphaEffect);
-        configuredSpriteBatch.Begin();
+        RenderStates = RenderStates with
+                       {
+                           RasterizerState = new RasterizerState { ScissorTestEnable = clippingEnabled },
+                           Effect = _alphaEffect,
+                           MatrixTransform = transform
+                       };
         
-        DrawCore(configuredSpriteBatch);
-
-        configuredSpriteBatch.End();
+        DrawCore(spriteBatch);
     }
-    
+
     /// <summary>
     /// Handles the input being currently sent by the user.
     /// </summary>
@@ -270,10 +267,8 @@ public abstract class GameScene : IDisposable
     /// <summary>
     /// Executes the custom rendering logic required to draw the scene to the screen.
     /// </summary>
-    /// <param name="spriteBatch">
-    /// A <see cref="ConfiguredSpriteBatch"/> instance with an active batch operation to draw this scene to.
-    /// </param>
-    protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
+    /// <param name="spriteBatch">A sprite batch for drawing the scene.</param>
+    protected abstract void DrawCore(SpriteBatch spriteBatch);
 
     /// <summary>
     /// Called when this scene is being loaded into a scene manager in preparation for being drawn to the screen.

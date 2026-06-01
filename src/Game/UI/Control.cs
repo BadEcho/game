@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -16,6 +16,7 @@ using BadEcho.Extensions;
 using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
 
@@ -400,7 +401,7 @@ public abstract class Control<TSelf> : IControl
     }
 
     /// <inheritdoc/>
-    public void Draw(ConfiguredSpriteBatch spriteBatch)
+    public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         
@@ -449,6 +450,15 @@ public abstract class Control<TSelf> : IControl
         DrawCore(spriteBatch);
 
         spriteBatch.GraphicsDevice.ScissorRectangle = clippingRectangle;
+    }
+
+    /// <inheritdoc/>
+    public void DrawPrimitives(IStandardEffect? effect)
+    {
+        if (!IsVisible)
+            return;
+
+        DrawPrimitivesCore(effect);
     }
 
     /// <inheritdoc/>
@@ -594,11 +604,17 @@ public abstract class Control<TSelf> : IControl
     /// <summary>
     /// Executes the custom rendering logic required to draw the control to the screen.
     /// </summary>
-    /// <param name="spriteBatch">The <see cref="ConfiguredSpriteBatch"/> instance to use to draw the control.</param>
+    /// <param name="spriteBatch">The sprite batch to use to draw the control.</param>
     /// <remarks>
     /// This is where the actually rendering logic for the content (something this base type knows nothing about) needs to occur.
     /// </remarks>
-    protected abstract void DrawCore(ConfiguredSpriteBatch spriteBatch);
+    protected abstract void DrawCore(SpriteBatch spriteBatch);
+
+    /// <summary>
+    /// Executes the custom rendering logic required to draw primitives required by the control to the screen.
+    /// </summary>
+    /// <param name="effect">Shaders currently being used during rendering passes, if any.</param>
+    protected abstract void DrawPrimitivesCore(IStandardEffect? effect);
 
     /// <summary>
     /// When overridden in a derived class, provides custom logic for selecting the background visual of the control based on its

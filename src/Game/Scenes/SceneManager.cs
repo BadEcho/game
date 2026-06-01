@@ -81,7 +81,7 @@ public sealed class SceneManager : DrawableGameComponent
 
         IEnumerable<GameScene> visibleScenes 
             = _scenes.Where(s => s.TransitionStatus != TransitionStatus.Exited);
-
+        
         foreach (var visibleScene in visibleScenes)
         {
             visibleScene.Draw(_spriteBatch);
@@ -95,13 +95,13 @@ public sealed class SceneManager : DrawableGameComponent
     public void AddScene(GameScene scene)
     {
         Require.NotNull(scene, nameof(scene));
+        
+        _scenes.Add(scene);
 
         // Associate this manager with the scene.
         scene.Load(this);
-
-        _scenes.Add(scene);
     }
-
+    
     /// <summary>
     /// Removes the specified game scene from the collection of loaded scenes, immediately disconnecting it from the screen.
     /// </summary>
