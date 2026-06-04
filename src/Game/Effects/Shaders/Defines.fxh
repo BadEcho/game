@@ -12,14 +12,16 @@
 // -----------------------------------------------------------------------
 
 // Common definitions for targeting various platforms.
+#ifndef DEFINES
+#define DEFINES
 
 #if OPENGL
 	#define _vs(r)  : register(vs, r)
 	#define _ps(r)  : register(ps, r)
 	#define _cb(r)
-	#define VS_MODEL vs_3_0
+	#define VS_MODEL vs_3_0	
 	#define PS_MODEL ps_3_0
-
+	
 	#define BEGIN_PARAMETERS
 	#define END_PARAMETERS
 
@@ -32,7 +34,7 @@
 	#define _cb(r)
 	#define VS_MODEL vs_4_0_level_9_3
 	#define PS_MODEL ps_4_0_level_9_3
-
+	
 	#define BEGIN_PARAMETERS    cbuffer Parameters : register(b0) {
 	#define END_PARAMETERS      };
 
@@ -40,5 +42,20 @@
 	#define sampler2D SamplerState
 	#define declare_texture(name, index) \
 		Texture2D<float4> name : register(t##index); 	
+#endif
+
+struct VSInput 
+{
+    float4 Position : POSITION0;
+    float4 Color : COLOR0;
+    float2 TexCoord : TEXCOORD0;
+};
+
+struct VSOutput
+{
+    float4 Position : SV_Position;
+    float4 Color    : COLOR0;
+    float2 TexCoord : TEXCOORD0;
+};
 
 #endif

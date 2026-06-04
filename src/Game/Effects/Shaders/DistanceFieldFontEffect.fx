@@ -14,14 +14,6 @@
 #include "Defines.fxh"
 
 declare_texture(Texture, 0);
-
-BEGIN_PARAMETERS
-    float4x4 MatrixTransform _vs(c0) _cb(c0);
-    float2 AtlasSize _ps(c0) _cb(c4);
-    float DistanceRange _ps(c1)  _cb(c5);
-    float Alpha _vs(c4) _cb(c6);
-END_PARAMETERS
-
 sampler2D TextureSampler : register(s0) = sampler_state
 {
     Texture = (Texture);
@@ -32,7 +24,14 @@ sampler2D TextureSampler : register(s0) = sampler_state
     MipFilter = LINEAR;
 };
 
-struct VSInput
+BEGIN_PARAMETERS
+    float4x4 MatrixTransform _vs(c0) _cb(c0);
+    float2 AtlasSize _ps(c0) _cb(c4);
+    float DistanceRange _ps(c1)  _cb(c5);
+    float Alpha _vs(c4) _cb(c6);
+END_PARAMETERS
+
+struct VSFontInput
 {
     float4 Position : POSITION0;
     float4 FillColor : COLOR0;
@@ -40,7 +39,7 @@ struct VSInput
     float2 TexCoord : TEXCOORD0;
 };
 
-struct VSOutput
+struct VSFontOutput
 {
     float4 Position : SV_POSITION;
     float4 FillColor : COLOR0;
@@ -90,9 +89,9 @@ float GetOpacityFromDistance(float signedDistance, float2 Jdx, float2 Jdy)
 }
 
 // A fairly standard vertex shader; most of the work is done in the pixel shader.
-VSOutput DistanceVertexShader(in VSInput input)
+VSFontOutput DistanceVertexShader(VSFontInput input)
 {
-    VSOutput output;
+    VSFontOutput output;
 
     output.Position = mul(input.Position, MatrixTransform);
     output.FillColor = input.FillColor;
@@ -108,7 +107,7 @@ VSOutput DistanceVertexShader(in VSInput input)
 }
 
 // A pixel shader to use for normal- and large-sized text.
-float4 DistancePixelShader(VSOutput input) : COLOR
+float4 DistancePixelShader(VSFontOutput input) : COLOR
 {   // Divide the distance field range by the atlas size to give us a distance range applicable to texels.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float3 sample = sample2D(Texture, input.TexCoord).rgb;
@@ -128,7 +127,7 @@ float4 DistancePixelShader(VSOutput input) : COLOR
 }
 
 // A pixel shader to use for normal- and large-sized outlined text.
-float4 StrokedDistancePixelShader(VSOutput input) : COLOR
+float4 StrokedDistancePixelShader(VSFontOutput input) : COLOR
 {   // Refer to DistancePixelShader for documentation on the code common to both shaders.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float medianSample = Median(sample2D(Texture, input.TexCoord).rgb);
@@ -156,7 +155,7 @@ float4 StrokedDistancePixelShader(VSOutput input) : COLOR
 // A pixel shader to use for small- and normal-sized text.
 // This will render small-sized text more accurately without artifacts. As the text size increases however, the text may appear 'phatter' than it should.
 // In that case, use the standard DistancePixelShader.
-float4 SmallDistancePixelShader(VSOutput input) : COLOR
+float4 SmallDistancePixelShader(VSFontOutput input) : COLOR
 {   // A downside of SDF fonts is that small font sizes will experience a degradation in quality when working from the same, large
     // resolution font atlas that all other sizes are working from. Because creating a separate font atlas specifically for small font sizes
     // defeats the purpose of MSDF altogether, a special shader needs to be provided for when the font size is small enough.
@@ -182,7 +181,7 @@ float4 SmallDistancePixelShader(VSOutput input) : COLOR
 // A pixel shader to use for small- and normal-sized outlined text.
 // This will render small-sized outline text more accurately without artifacts; however, as text continues to decrease in size, eventually it becomes
 // unfeasible to try outline text due to the ever-shrinking amount of fill pixels that can be replaced.
-float4 StrokedSmallDistancePixelShader(VSOutput input) : COLOR
+float4 StrokedSmallDistancePixelShader(VSFontOutput input) : COLOR
 {   // Refer to SmallDistancePixelShader and StrokedDistancePixelShader for documentation on code common to both shaders.
     float2 pixelCoord = input.TexCoord * AtlasSize;
     float2 Jdx = ddx(pixelCoord);
