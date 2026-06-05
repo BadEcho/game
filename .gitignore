@@ -6,6 +6,9 @@
 # vcpkg build files
 **/vcpkg_installed/
 
+# Compiled shaders
+**/*.mgfxo
+
 Version.props
 
 # User-specific files

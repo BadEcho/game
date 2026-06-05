@@ -45,4 +45,8 @@
 		<None Include="..\..\README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 
+	<Target Name="RebuildShaders" BeforeTargets="Build">
+		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShaders.cmd"/>
+	</Target>
+
 </Project>
