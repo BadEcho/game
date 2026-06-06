@@ -45,7 +45,17 @@
 		<None Include="..\..\README.md" Pack="true" PackagePath="" />
 	</ItemGroup>
 
-	<Target Name="RebuildShaders" BeforeTargets="Build">
+	<ItemGroup>
+		<UpToDateCheckInput Include="Effects\Shaders\*.fx"/>
+		<ShaderInput Include="Effects\Shaders\*.fx">
+			<Visible>true</Visible>
+		</ShaderInput>
+		<ShaderOutput Include="Effects\Shaders.resources">
+			<Visible>false</Visible>
+		</ShaderOutput>
+	</ItemGroup>
+
+	<Target Name="RebuildShaders" BeforeTargets="BeforeBuild" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
 		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShaders.cmd"/>
 	</Target>
 

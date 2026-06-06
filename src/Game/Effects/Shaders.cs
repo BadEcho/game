@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -44,7 +44,19 @@ public static class Shaders
     /// </summary>
     public static byte[] DistanceFieldFontEffect
         => GetStreamBytes($"{nameof(DistanceFieldFontEffect)}.{PLATFORM_EXTENSION}");
+
+    /// <summary>
+    /// Gets the data for an effect that emits illumination from a point light.
+    /// </summary>
+    public static byte[] PointLightEffect
+        => GetStreamBytes($"{nameof(PointLightEffect)}.{PLATFORM_EXTENSION}");
     
+    /// <summary>
+    /// Gets the data for an effect that combines various off-screen textures to create the final screen render.
+    /// </summary>
+    public static byte[] CompositeEffect
+        => GetStreamBytes($"{nameof(CompositeEffect)}.{PLATFORM_EXTENSION}");
+
     private static byte[] GetStreamBytes(string name)
     {
         UnmanagedMemoryStream stream
