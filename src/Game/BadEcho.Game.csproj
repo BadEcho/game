@@ -55,7 +55,7 @@
 		</ShaderOutput>
 	</ItemGroup>
 
-	<Target Name="RestoreDotnetTools" BeforeTargets="Restore">
+	<Target Name="RestoreDotnetTools" BeforeTargets="RebuildShaders">
 		<Message Text="Restoring dotnet tools" Importance="High" />
 		<Exec Command="dotnet tool restore" />
 	</Target>
