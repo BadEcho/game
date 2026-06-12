@@ -1,0 +1,18 @@
+{
+    "version": 1,
+    "isRoot": true,
+    "tools": {
+        "dotnet-mgfxc": {
+            "version": "3.8.4.1",
+            "commands": [
+                "mgfxc"
+            ]
+        },
+        "badecho.resourcecreator": {
+            "version": "1.2.1",
+            "commands": [
+                "resource-creator"
+            ]
+        }
+    }
+}

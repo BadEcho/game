@@ -1,12 +1,12 @@
 @echo off
 
 cd /d %~dp0
-mgfxc StandardEffect.fx StandardEffect.ogl.mgfxo /profile:OpenGL
-mgfxc StandardEffect.fx StandardEffect.dx11.mgfxo /profile:DirectX_11
-mgfxc DistanceFieldFontEffect.fx DistanceFieldFontEffect.ogl.mgfxo /profile:OpenGL
-mgfxc DistanceFieldFontEffect.fx DistanceFieldFontEffect.dx11.mgfxo /profile:DirectX_11
-mgfxc PointLightEffect.fx PointLightEffect.ogl.mgfxo /profile:OpenGL
-mgfxc PointLightEffect.fx PointLightEffect.dx11.mgfxo /profile:DirectX_11
-mgfxc CompositeEffect.fx CompositeEffect.ogl.mgfxo /profile:OpenGL
-mgfxc CompositeEffect.fx CompositeEffect.dx11.mgfxo /profile:DirectX_11
-resource-creator . -f *.mgfxo -o ..\Shaders
+dotnet tool run mgfxc StandardEffect.fx StandardEffect.ogl.mgfxo /profile:OpenGL
+dotnet tool run mgfxc StandardEffect.fx StandardEffect.dx11.mgfxo /profile:DirectX_11
+dotnet tool run mgfxc DistanceFieldFontEffect.fx DistanceFieldFontEffect.ogl.mgfxo /profile:OpenGL
+dotnet tool run mgfxc DistanceFieldFontEffect.fx DistanceFieldFontEffect.dx11.mgfxo /profile:DirectX_11
+dotnet tool run mgfxc PointLightEffect.fx PointLightEffect.ogl.mgfxo /profile:OpenGL
+dotnet tool run mgfxc PointLightEffect.fx PointLightEffect.dx11.mgfxo /profile:DirectX_11
+dotnet tool run mgfxc CompositeEffect.fx CompositeEffect.ogl.mgfxo /profile:OpenGL
+dotnet tool run mgfxc CompositeEffect.fx CompositeEffect.dx11.mgfxo /profile:DirectX_11
+dotnet tool run resource-creator . -f *.mgfxo -o ..\Shaders
