@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -22,6 +22,12 @@ public sealed class SpriteSheetAsset
     /// Gets or sets the path to the file containing the texture of the individual animation frames that compose the sprite sheet.
     /// </summary>
     public string TexturePath 
+    { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the path to the file containing the normal map for the sprite sheet's texture, if one exists.
+    /// </summary>
+    public string NormalMapPath
     { get; set; } = string.Empty;
 
     /// <summary>

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -35,6 +35,9 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
         ValidateAsset(input.Asset);
         
         input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, []);
+
+        if (!string.IsNullOrEmpty(input.Asset.NormalMapPath))
+            input.AddReference<Texture2DContent>(context, input.Asset.NormalMapPath, []);
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 

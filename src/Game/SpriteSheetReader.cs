@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -27,11 +27,18 @@ public sealed class SpriteSheetReader : ContentTypeReader<SpriteSheet>
         Require.NotNull(input, nameof(input));
 
         var texture = input.ReadExternalReference<Texture2D>();
+        Texture2D? normalMap = null;
+
+        var hasNormalMap = input.ReadBoolean();
+
+        if (hasNormalMap)
+            normalMap = input.ReadExternalReference<Texture2D>();
+
         var columnCount = input.ReadInt32();
         var rowCount = input.ReadInt32();
         var initialFrame = input.ReadInt32();
 
-        var spriteSheet = new SpriteSheet(texture, columnCount, rowCount);
+        var spriteSheet = new SpriteSheet(texture, normalMap, columnCount, rowCount);
 
         spriteSheet.AddAnimation(
             new SpriteAnimationSequence(string.Empty, initialFrame, initialFrame, TimeSpan.Zero));

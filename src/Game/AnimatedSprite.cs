@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -30,7 +30,7 @@ public sealed class AnimatedSprite : Sprite
     /// </summary>
     /// <param name="sheet">The sprite sheet containing the various animation frames of the sprite.</param>
     public AnimatedSprite(SpriteSheet sheet)
-        : base(GetSheetTexture(sheet))
+        : base(GetSheetTexture(sheet), sheet.NormalMap)
     {
         _sheet = sheet;
         _currentAnimation = sheet.GetAnimation(string.Empty);

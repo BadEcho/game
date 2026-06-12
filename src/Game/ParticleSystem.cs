@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -116,7 +116,7 @@ public sealed class ParticleSystem
         float angularVelocity = 0.1f * (_random.NextSingle() * 2 - 1);
 
         var sprite
-            = new Sprite(texture)
+            = new Sprite(texture, null)
               {
                   Position = EmitterLocation,
                   Velocity = velocity,

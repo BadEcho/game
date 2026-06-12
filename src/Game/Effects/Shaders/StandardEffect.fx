@@ -19,12 +19,34 @@ sampler2D SpriteTextureSampler : register(s0) = sampler_state
     Texture = <SpriteTexture>;
 };
 
+declare_texture(NormalMap, 1);
+sampler2D NormalMapSampler : register(s1) = sampler_state
+{
+	Texture = <NormalMap>;
+};
+
 BEGIN_PARAMETERS
     float4x4 MatrixTransform _vs(c0) _cb(c0);
     float Alpha _vs(c4) _cb(c4);
 END_PARAMETERS
 
-VSOutput AlphaSpriteVertexShader(VSInput input)
+struct StandardPSOutput
+{
+	float4 Color: COLOR0;
+    float4 Normal: COLOR1;
+};
+
+StandardPSOutput StandardPS(VSOutput input)
+{
+	StandardPSOutput output;
+
+    output.Color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
+    output.Normal = sample2D(NormalMap, input.TexCoord);
+
+    return output;
+}
+
+VSOutput StandardVS(VSInput input)
 {
     VSOutput output;
     
@@ -37,16 +59,11 @@ VSOutput AlphaSpriteVertexShader(VSInput input)
     return output;
 }
 
-float4 AlphaSpritePixelShader(VSOutput input) : SV_Target0
-{
-    return sample2D(SpriteTexture, input.TexCoord) * input.Color;
-}
-
 technique SpriteBatch
 {
     pass
     {
-        VertexShader = compile VS_MODEL AlphaSpriteVertexShader();
-        PixelShader = compile PS_MODEL AlphaSpritePixelShader();
+        VertexShader = compile VS_MODEL StandardVS();
+        PixelShader = compile PS_MODEL StandardPS();
     }
 };

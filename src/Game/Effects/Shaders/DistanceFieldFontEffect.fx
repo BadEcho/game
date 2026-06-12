@@ -31,7 +31,7 @@ BEGIN_PARAMETERS
     float Alpha _vs(c4) _cb(c6);
 END_PARAMETERS
 
-struct VSFontInput
+struct DistanceVSInput
 {
     float4 Position : POSITION0;
     float4 FillColor : COLOR0;
@@ -39,7 +39,7 @@ struct VSFontInput
     float2 TexCoord : TEXCOORD0;
 };
 
-struct VSFontOutput
+struct DistanceVSOutput
 {
     float4 Position : SV_POSITION;
     float4 FillColor : COLOR0;
@@ -89,9 +89,9 @@ float GetOpacityFromDistance(float signedDistance, float2 Jdx, float2 Jdy)
 }
 
 // A fairly standard vertex shader; most of the work is done in the pixel shader.
-VSFontOutput DistanceVertexShader(VSFontInput input)
+DistanceVSOutput DistanceVS(DistanceVSInput input)
 {
-    VSFontOutput output;
+    DistanceVSOutput output;
 
     output.Position = mul(input.Position, MatrixTransform);
     output.FillColor = input.FillColor;
@@ -107,7 +107,7 @@ VSFontOutput DistanceVertexShader(VSFontInput input)
 }
 
 // A pixel shader to use for normal- and large-sized text.
-float4 DistancePixelShader(VSFontOutput input) : COLOR
+float4 DistancePS(DistanceVSOutput input) : COLOR
 {   // Divide the distance field range by the atlas size to give us a distance range applicable to texels.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float3 sample = sample2D(Texture, input.TexCoord).rgb;
@@ -127,8 +127,8 @@ float4 DistancePixelShader(VSFontOutput input) : COLOR
 }
 
 // A pixel shader to use for normal- and large-sized outlined text.
-float4 StrokedDistancePixelShader(VSFontOutput input) : COLOR
-{   // Refer to DistancePixelShader for documentation on the code common to both shaders.
+float4 StrokedDistancePS(DistanceVSOutput input) : COLOR
+{   // Refer to DistancePS for documentation on the code common to both shaders.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float medianSample = Median(sample2D(Texture, input.TexCoord).rgb);
     float signedDistance = medianSample - 0.5f;
@@ -154,8 +154,8 @@ float4 StrokedDistancePixelShader(VSFontOutput input) : COLOR
 
 // A pixel shader to use for small- and normal-sized text.
 // This will render small-sized text more accurately without artifacts. As the text size increases however, the text may appear 'phatter' than it should.
-// In that case, use the standard DistancePixelShader.
-float4 SmallDistancePixelShader(VSFontOutput input) : COLOR
+// In that case, use the standard DistancePS.
+float4 SmallDistancePS(DistanceVSOutput input) : COLOR
 {   // A downside of SDF fonts is that small font sizes will experience a degradation in quality when working from the same, large
     // resolution font atlas that all other sizes are working from. Because creating a separate font atlas specifically for small font sizes
     // defeats the purpose of MSDF altogether, a special shader needs to be provided for when the font size is small enough.
@@ -181,8 +181,8 @@ float4 SmallDistancePixelShader(VSFontOutput input) : COLOR
 // A pixel shader to use for small- and normal-sized outlined text.
 // This will render small-sized outline text more accurately without artifacts; however, as text continues to decrease in size, eventually it becomes
 // unfeasible to try outline text due to the ever-shrinking amount of fill pixels that can be replaced.
-float4 StrokedSmallDistancePixelShader(VSFontOutput input) : COLOR
-{   // Refer to SmallDistancePixelShader and StrokedDistancePixelShader for documentation on code common to both shaders.
+float4 StrokedSmallDistancePS(DistanceVSOutput input) : COLOR
+{   // Refer to SmallDistancePS and StrokedDistancePS for documentation on code common to both shaders.
     float2 pixelCoord = input.TexCoord * AtlasSize;
     float2 Jdx = ddx(pixelCoord);
     float2 Jdy = ddy(pixelCoord);
@@ -202,8 +202,8 @@ technique DistanceFieldFont
 {
     pass
     {
-        VertexShader = compile VS_MODEL DistanceVertexShader();
-        PixelShader = compile PS_MODEL DistancePixelShader();
+        VertexShader = compile VS_MODEL DistanceVS();
+        PixelShader = compile PS_MODEL DistancePS();
     }
 }
 
@@ -211,8 +211,8 @@ technique SmallDistanceFieldFont
 {
     pass
     {
-        VertexShader = compile VS_MODEL DistanceVertexShader();
-        PixelShader = compile PS_MODEL SmallDistancePixelShader();
+        VertexShader = compile VS_MODEL DistanceVS();
+        PixelShader = compile PS_MODEL SmallDistancePS();
     }
 }
 
@@ -220,8 +220,8 @@ technique StrokedDistanceFieldFont
 {
     pass
     {
-        VertexShader = compile VS_MODEL DistanceVertexShader();
-        PixelShader = compile PS_MODEL StrokedDistancePixelShader();
+        VertexShader = compile VS_MODEL DistanceVS();
+        PixelShader = compile PS_MODEL StrokedDistancePS();
     }
 }
 
@@ -229,7 +229,7 @@ technique StrokedSmallDistanceFieldFont
 {
     pass
     {
-        VertexShader = compile VS_MODEL DistanceVertexShader();
-        PixelShader = compile PS_MODEL StrokedSmallDistancePixelShader();
+        VertexShader = compile VS_MODEL DistanceVS();
+        PixelShader = compile PS_MODEL StrokedSmallDistancePS();
     }    
 }

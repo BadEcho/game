@@ -26,7 +26,7 @@ public abstract class GameScene : IDisposable
     private const Transitions MOVEMENT_FLAGS =
         Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
 
-    private AlphaSpriteEffect? _alphaEffect;
+    private StandardEffect? _alphaEffect;
     private bool _isClosing;
     private bool _disposed;
 
@@ -208,7 +208,7 @@ public abstract class GameScene : IDisposable
         bool clippingEnabled
             = TransitionStatus is TransitionStatus.Entered or TransitionStatus.Exited || ClipDuringTransitions;
 
-        _alphaEffect ??= new AlphaSpriteEffect(spriteBatch.GraphicsDevice);
+        _alphaEffect ??= new StandardEffect(spriteBatch.GraphicsDevice);
         _alphaEffect.Alpha = alpha;
         _alphaEffect.MatrixTransform = transform;
 

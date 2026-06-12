@@ -29,11 +29,14 @@ BEGIN_PARAMETERS
     float AmbientLight _ps(c0) _cb(c0);
 END_PARAMETERS
 
-float4 CompositePixelShader(VSOutput input) : COLOR
+float4 CompositePS(VSOutput input) : COLOR
 {
     float4 color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
     float4 light = sample2D(LightBuffer, input.TexCoord) * input.Color;
 
+    float3 toneMapped = light.xyz / (.5 + dot(light.xyz, float3(0.299, 0.587, 0.114)));
+    light.xyz = toneMapped;
+    
     light = saturate(light + AmbientLight);
 
     return color * light;
@@ -43,6 +46,6 @@ technique
 {
     pass
     {
-        PixelShader = compile PS_MODEL CompositePixelShader();        
+        PixelShader = compile PS_MODEL CompositePS();        
     }
 }

@@ -201,7 +201,7 @@ public sealed class TileMap : Extensible, IModelRenderer
                              Projection = projection,
                              Alpha = alpha
                          };
-
+            
             foreach (var layerModel in _layerModelMap[layer])
             {
                 layerModel.Draw(effect);

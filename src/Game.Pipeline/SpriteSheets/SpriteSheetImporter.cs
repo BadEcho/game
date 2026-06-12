@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -55,6 +55,16 @@ public sealed class SpriteSheetImporter : ContentImporter<SpriteSheetContent>
             = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.TexturePath);
 
         context.AddDependency(asset.TexturePath);
+
+        if (!string.IsNullOrEmpty(asset.NormalMapPath))
+        {
+            context.Log(Strings.ImportingDependency.InvariantFormat(asset.NormalMapPath));
+
+            asset.NormalMapPath
+                = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.NormalMapPath);
+
+            context.AddDependency(asset.NormalMapPath);
+        }
 
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 

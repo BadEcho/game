@@ -30,6 +30,6 @@ public sealed record RenderStates(SpriteSortMode SortMode,
                                   BlendState? BlendState = null,
                                   SamplerState? SamplerState = null,
                                   RasterizerState? RasterizerState = null,
-                                  AlphaSpriteEffect? Effect = null,
+                                  StandardEffect? Effect = null,
                                   Matrix? MatrixTransform = null,
                                   DepthStencilState? DepthStencilState = null);

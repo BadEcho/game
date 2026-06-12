@@ -22,30 +22,31 @@ namespace BadEcho.Game;
 /// </summary>
 public class Sprite : IEntity
 {
-    private readonly IShape _bounds;
-
     private EntityCollider _collider;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
     /// </summary>
     /// <param name="boundedTexture">The texture of the sprite, with spatial boundaries defined.</param>
-    public Sprite(BoundedTexture boundedTexture)
-        : this(GetBoundedTexture(boundedTexture))
+    /// <param name="normalMap">An optional normal map for the sprite.</param>
+    public Sprite(BoundedTexture boundedTexture, Texture2D? normalMap)
+        : this(GetBoundedTexture(boundedTexture), normalMap)
     {
-        _bounds = boundedTexture.Bounds;
+        Bounds = boundedTexture.Bounds;
     }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Sprite"/> class.
     /// </summary>
     /// <param name="texture">The texture of the sprite.</param>
-    public Sprite(Texture2D texture)
+    /// <param name="normalMap">An optional normal map for the sprite.</param>
+    public Sprite(Texture2D texture, Texture2D? normalMap)
     {
         Require.NotNull(texture, nameof(texture));
         
         Texture = texture;
-        _bounds = new RectangleF(PointF.Empty, Texture.Bounds.Size);
+        NormalMap = normalMap;
+        Bounds = new RectangleF(PointF.Empty, Texture.Bounds.Size);
         Collider = new EntityCollider();
     }
 
@@ -54,7 +55,13 @@ public class Sprite : IEntity
     /// </summary>
     public Texture2D Texture
     { get; }
-    
+
+    /// <summary>
+    /// Gets the normal map for the sprite, if one exists.
+    /// </summary>
+    public Texture2D? NormalMap 
+    { get; }
+
     /// <summary>
     /// Gets or sets the collider that manages collisions for this sprite.
     /// </summary>
@@ -95,7 +102,7 @@ public class Sprite : IEntity
 
     /// <inheritdoc />
     public IShape Bounds 
-        => _bounds.CenterAt(GetTargetArea().Center);
+        => field.CenterAt(GetTargetArea().Center);
 
     /// <summary>
     /// Executes associated components and advances the movement of the sprite by one tick.

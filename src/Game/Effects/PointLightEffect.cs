@@ -17,13 +17,13 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.Effects;
 
 /// <summary>
-/// Provides an effect that emits illumination from a point light.
+/// Provides an effect that emits illumination from a point light against a normal map.
 /// </summary>
-public sealed class PointLightEffect : Effect
+public sealed class PointLightEffect : OrthographicEffect
 {
     private EffectParameter _lightBrightnessParam;
     private EffectParameter _lightSharpnessParam;
-
+    
     /// <summary>
     /// Initializes a new instance of the <see cref="PointLightEffect"/> class.
     /// </summary>
@@ -61,7 +61,7 @@ public sealed class PointLightEffect : Effect
         get => _lightSharpnessParam.GetValueSingle();
         set => _lightSharpnessParam.SetValue(value);
     }
-
+    
     /// <inheritdoc/>
     public override Effect Clone()
         => new PointLightEffect(this);

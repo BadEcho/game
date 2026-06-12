@@ -54,7 +54,7 @@ public sealed class TileSet : Extensible
     }   
 
     /// <summary>
-    ///  Gets the texture containing the individual tiles that compose this tile set.
+    /// Gets the texture containing the individual tiles that compose this tile set.
     /// </summary>
     /// <remarks>
     /// <para>

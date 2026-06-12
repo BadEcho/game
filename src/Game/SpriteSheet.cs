@@ -1,7 +1,7 @@
 ﻿ // -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -42,13 +42,15 @@ public sealed class SpriteSheet
     /// Initializes a new instance of the <see cref="SpriteSheet"/> class.
     /// </summary>
     /// <param name="texture">The texture containing the individual frames that compose the sprite sheet.</param>
+    /// <param name="normalMap">An optional normal map for the sprite sheet's texture.</param>
     /// <param name="columnCount">The number of columns of frames in this sprite sheet.</param>
     /// <param name="rowCount">The number of rows of frames in this sprite sheet.</param>
-    public SpriteSheet(Texture2D texture, int columnCount, int rowCount)
+    public SpriteSheet(Texture2D texture, Texture2D? normalMap, int columnCount, int rowCount)
     {
         Require.NotNull(texture, nameof(texture));
 
         Texture = texture;
+        NormalMap = normalMap;
         ColumnCount = columnCount;
         RowCount = rowCount;
     }
@@ -58,7 +60,13 @@ public sealed class SpriteSheet
     /// </summary>
     public Texture2D Texture
     { get; }
-    
+
+    /// <summary>
+    /// Gets the normal map for the sprite sheet's texture, if one exists.
+    /// </summary>
+    public Texture2D? NormalMap 
+    { get; }
+
     /// <summary>
     /// Gets the size of an individual frame in the sprite sheet.
     /// </summary>

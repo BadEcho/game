@@ -33,11 +33,10 @@ public static class Shaders
     private static readonly ResourceManager _Manager = new("BadEcho.Game.Effects.Shaders",
                                                            typeof(Shaders).Assembly);
     /// <summary>
-    /// Gets the data for a <see cref="SpriteBatch"/> effect that allows control over the alpha channel
-    /// of all sprites in a batch.
+    /// Gets the data for a <see cref="SpriteBatch"/> effect that can be used in first phase diffuse layer rendering.
     /// </summary>
-    public static byte[] AlphaSpriteEffect
-        => GetStreamBytes($"{nameof(AlphaSpriteEffect)}.{PLATFORM_EXTENSION}");
+    public static byte[] StandardEffect
+        => GetStreamBytes($"{nameof(StandardEffect)}.{PLATFORM_EXTENSION}");
 
     /// <summary>
     /// Gets the data for an effect required to correctly render multi-channel signed distance field font text.

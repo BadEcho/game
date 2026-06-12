@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,70 +11,55 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace BadEcho.Game.Effects;
 
 /// <summary>
-/// Provides <see cref="SpriteBatch"/> shaders that allow control over the alpha channel of all
-/// sprites drawn in a batch.
+/// Provides an effect that uses orthographic projection.
 /// </summary>
-public sealed class AlphaSpriteEffect : Effect, IStandardEffect
+public abstract class OrthographicEffect : Effect
 {
     private EffectParameter _matrixParam;
-    private EffectParameter _alphaParam;
-
     private Viewport _lastViewport;
     private Matrix? _lastTransform;
     private Matrix _viewProjection;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AlphaSpriteEffect"/> class.
+    /// Initializes a new instance of the <see cref="OrthographicEffect"/> class.
     /// </summary>
     /// <param name="device">The graphics device used for sprite rendering.</param>
-    public AlphaSpriteEffect(GraphicsDevice device)
-        : base(device, Shaders.AlphaSpriteEffect)
+    /// <param name="effectCode">The compiled shader </param>
+    protected OrthographicEffect(GraphicsDevice device, byte[] effectCode)
+        : base(device, effectCode)
     {
         CacheEffectParameters();
-
-        Alpha = 1f;
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AlphaSpriteEffect"/> class.
+    /// Initializes a new instance of the <see cref="OrthographicEffect"/> class.
     /// </summary>
-    /// <param name="cloneSource">The <see cref="AlphaSpriteEffect"/> instance to clone.</param>
-    private AlphaSpriteEffect(AlphaSpriteEffect cloneSource)
+    /// <param name="cloneSource">The <see cref="Effect"/> instance to clone.</param>
+    protected OrthographicEffect(Effect cloneSource)
         : base(cloneSource)
     {
         CacheEffectParameters();
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets an optional matrix to apply to position, rotation, scale, and depth data.
+    /// </summary>
     public Matrix? MatrixTransform
     { get; set; }
 
     /// <inheritdoc/>
-    public float Alpha
-    {
-        get => _alphaParam.GetValueSingle();
-        set => _alphaParam.SetValue(value);
-    }
-
-    /// <summary>
-    /// Creates a clone of the current <see cref="AlphaSpriteEffect"/> instance.
-    /// </summary>
-    /// <returns>A cloned <see cref="Effect"/> instance of this.</returns>
-    public override Effect Clone()
-        => new AlphaSpriteEffect(this);
-
-    /// <summary>
-    /// Lazily computes derived parameter values immediately before applying the effect.
-    /// </summary>
     protected override void OnApply()
     {
+        base.OnApply();
+
+        // Apply an orthogonal projection akin to how MonoGame converts world-space coords to clip-space for sprite batches.
         Viewport viewport = GraphicsDevice.Viewport;
 
         bool parametersChanged =
@@ -91,11 +76,10 @@ public sealed class AlphaSpriteEffect : Effect, IStandardEffect
 
         _matrixParam.SetValue(_viewProjection);
     }
-    
-    [MemberNotNull(nameof(_matrixParam), nameof(_alphaParam))]
+
+    [MemberNotNull(nameof(_matrixParam))]
     private void CacheEffectParameters()
     {
         _matrixParam = Parameters[nameof(MatrixTransform)];
-        _alphaParam = Parameters[nameof(Alpha)];
     }
 }

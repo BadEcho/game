@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -39,6 +39,19 @@ public sealed class SpriteSheetWriter : ContentTypeWriter<SpriteSheetContent>
             = value.GetReference<Texture2DContent>(asset.TexturePath);
 
         output.WriteExternalReference(textureReference);
+
+        bool hasNormalMap = !string.IsNullOrEmpty(asset.NormalMapPath);
+
+        output.Write(hasNormalMap);
+
+        if (hasNormalMap)
+        {
+            ExternalReference<Texture2DContent> normalMapReference 
+                = value.GetReference<Texture2DContent>(asset.NormalMapPath);
+
+            output.WriteExternalReference(normalMapReference);
+        }
+
         output.Write(asset.ColumnCount);
         output.Write(asset.RowCount);
         output.Write(asset.InitialFrame);
