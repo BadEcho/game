@@ -29,7 +29,7 @@ public class PatrolTests : IClassFixture<ContentManagerFixture>
     {
         var texture = contentFixture.Content.Load<Texture2D>("Images\\Circle");
 
-        _entity = new Sprite(texture);
+        _entity = new Sprite(texture, null);
         _time = new GameUpdateTime(_game, new GameTime(TimeSpan.Zero, TimeSpan.FromSeconds(1)));
     }
 
