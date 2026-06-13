@@ -17,7 +17,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.Effects;
 
 /// <summary>
-/// Provides an effect that emits illumination from a point light against a normal map.
+/// Provides an effect that emits light from a point against a normal map.
 /// </summary>
 public sealed class PointLightEffect : OrthographicEffect
 {
