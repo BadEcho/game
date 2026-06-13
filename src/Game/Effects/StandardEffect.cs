@@ -22,7 +22,7 @@ namespace BadEcho.Game.Effects;
 public sealed class StandardEffect : OrthographicEffect, IStandardEffect
 {
     private EffectParameter _alphaParam;
-    private EffectParameter _normalMapParam;
+    private EffectParameter _normalBufferParam;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="StandardEffect"/> class.
@@ -57,10 +57,10 @@ public sealed class StandardEffect : OrthographicEffect, IStandardEffect
     /// Gets or sets the texture that contains the normal map of the main, diffuse texture being rendered, which is
     /// used to change how much the lighting affects each pixel depending on the "normal" of the surface at the given pixel.
     /// </summary>
-    public Texture2D? NormalMap
+    public Texture2D? NormalBuffer
     {
-        get => _normalMapParam.GetValueTexture2D();
-        set => _normalMapParam.SetValue(value);
+        get => _normalBufferParam.GetValueTexture2D();
+        set => _normalBufferParam.SetValue(value);
     }
 
     /// <summary>
@@ -70,10 +70,10 @@ public sealed class StandardEffect : OrthographicEffect, IStandardEffect
     public override Effect Clone()
         => new StandardEffect(this);
 
-    [MemberNotNull(nameof(_alphaParam), nameof(_normalMapParam))]
+    [MemberNotNull(nameof(_alphaParam), nameof(_normalBufferParam))]
     private void CacheEffectParameters()
     {
         _alphaParam = Parameters[nameof(Alpha)];
-        _normalMapParam = Parameters[nameof(NormalMap)];
+        _normalBufferParam = Parameters[nameof(NormalBuffer)];
     }
 }

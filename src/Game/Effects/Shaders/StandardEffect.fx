@@ -19,10 +19,10 @@ sampler2D SpriteTextureSampler : register(s0) = sampler_state
     Texture = <SpriteTexture>;
 };
 
-declare_texture(NormalMap, 1);
-sampler2D NormalMapSampler : register(s1) = sampler_state
+declare_texture(NormalBuffer, 1);
+sampler2D NormalBufferSampler : register(s1) = sampler_state
 {
-	Texture = <NormalMap>;
+	Texture = <NormalBuffer>;
 };
 
 BEGIN_PARAMETERS
@@ -41,7 +41,7 @@ StandardPSOutput StandardPS(VSOutput input)
 	StandardPSOutput output;
 
     output.Color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
-    output.Normal = sample2D(NormalMap, input.TexCoord);
+    output.Normal = sample2D(NormalBuffer, input.TexCoord);
 
     return output;
 }

@@ -13,10 +13,10 @@
 
 #include "Defines.fxh"
 
-declare_texture(NormalMap, 0);
-sampler2D NormalMapSampler : register(s0) = sampler_state
+declare_texture(NormalBuffer, 0);
+sampler2D NormalBufferSampler : register(s0) = sampler_state
 {
-	Texture = <NormalMap>;
+	Texture = <NormalBuffer>;
 };
 
 BEGIN_PARAMETERS
@@ -76,7 +76,7 @@ float4 PointLightPS(PointLightVSOutput input) : COLOR
     float2 screenCoords = .5 * (input.ScreenData.xy + 1);
     screenCoords.y = 1 - screenCoords.y;
 
-    float4 normal = sample2D(NormalMap,screenCoords);    
+    float4 normal = sample2D(NormalBuffer,screenCoords);    
     
     // If the normal is transparent, then no normal values were mapped to the position on the screen this pixel occupies,
     // so we will simply return the light as is.
