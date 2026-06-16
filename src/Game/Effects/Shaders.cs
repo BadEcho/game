@@ -56,6 +56,12 @@ public static class Shaders
     public static byte[] CompositeEffect
         => GetStreamBytes($"{nameof(CompositeEffect)}.{PLATFORM_EXTENSION}");
 
+    /// <summary>
+    /// Gets the data for an effect that casts a shadow hull.
+    /// </summary>
+    public static byte[] ShadowHullEffect
+        => GetStreamBytes($"{nameof(ShadowHullEffect)}.{PLATFORM_EXTENSION}");
+
     private static byte[] GetStreamBytes(string name)
     {
         UnmanagedMemoryStream stream

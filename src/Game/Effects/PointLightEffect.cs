@@ -12,6 +12,8 @@
 // -----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Effects;
@@ -24,6 +26,8 @@ public sealed class PointLightEffect : OrthographicEffect
     private EffectParameter _lightBrightnessParam;
     private EffectParameter _lightSharpnessParam;
     
+    //private EffectParameter _shadowBufferParam;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="PointLightEffect"/> class.
     /// </summary>
@@ -61,7 +65,13 @@ public sealed class PointLightEffect : OrthographicEffect
         get => _lightSharpnessParam.GetValueSingle();
         set => _lightSharpnessParam.SetValue(value);
     }
-    
+
+    //public Texture2D ShadowBuffer
+    //{
+    //    get => _shadowBufferParam.GetValueTexture2D();
+    //    set => _shadowBufferParam.SetValue(value);
+    //}
+
     /// <inheritdoc/>
     public override Effect Clone()
         => new PointLightEffect(this);
@@ -72,5 +82,7 @@ public sealed class PointLightEffect : OrthographicEffect
     {
         _lightBrightnessParam = Parameters[nameof(LightBrightness)];
         _lightSharpnessParam = Parameters[nameof(LightSharpness)];
+        //_shadowBufferParam = Parameters[nameof(ShadowBuffer)];
+        
     }
 }

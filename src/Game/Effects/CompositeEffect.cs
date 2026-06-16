@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Effects;
@@ -24,6 +25,9 @@ public sealed class CompositeEffect : Effect
     private EffectParameter _ambientLightParam;
     private EffectParameter _lightBufferParam;
 
+    private EffectParameter _screenSizeParam;
+
+    private EffectParameter _boxBlurStrideParam;
     /// <summary>
     /// Initializes a new instance of the <see cref="CompositeEffect"/> class.
     /// </summary>
@@ -42,6 +46,19 @@ public sealed class CompositeEffect : Effect
         : base(cloneSource)
     {
         CacheEffectParameters();
+    }
+
+
+    public float BoxBlurStride
+    {
+        get => _boxBlurStrideParam.GetValueSingle();
+        set => _boxBlurStrideParam.SetValue(value);
+    }
+
+    public Vector2 ScreenSize
+    {
+        get => _screenSizeParam.GetValueVector2();
+        set => _screenSizeParam.SetValue(value);
     }
 
     /// <summary>
@@ -67,10 +84,13 @@ public sealed class CompositeEffect : Effect
         => new CompositeEffect(this);
   
     [MemberNotNull(nameof(_ambientLightParam),
-                   nameof(_lightBufferParam))]
+                   nameof(_lightBufferParam), nameof(_screenSizeParam),
+                   nameof(_boxBlurStrideParam))]
     private void CacheEffectParameters()
     {
         _ambientLightParam = Parameters[nameof(AmbientLight)];
         _lightBufferParam = Parameters[nameof(LightBuffer)];
+        _screenSizeParam = Parameters[nameof(ScreenSize)];
+        _boxBlurStrideParam = Parameters[nameof(BoxBlurStride)];
     }
 }

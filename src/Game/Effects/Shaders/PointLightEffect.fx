@@ -76,6 +76,10 @@ float4 PointLightPS(PointLightVSOutput input) : COLOR
     float2 screenCoords = .5 * (input.ScreenData.xy + 1);
     screenCoords.y = 1 - screenCoords.y;
 
+    //float shadow = sample2D(ShadowBuffer,screenCoords).r;
+
+    //color.a *= shadow;
+
     float4 normal = sample2D(NormalBuffer,screenCoords);    
     
     // If the normal is transparent, then no normal values were mapped to the position on the screen this pixel occupies,
@@ -94,7 +98,7 @@ float4 PointLightPS(PointLightVSOutput input) : COLOR
     // Calculate the degree to which the normal and light vectors are pointing in the same direction.
     float lightAmount = (dot(normalDir, lightDir));
 
-    color.a *= lightAmount;
+    color.a *= lightAmount;// * shadow;
     //color.a = falloff;
 
     return color;
