@@ -80,33 +80,33 @@ public sealed class PointLight
         return new Color(r, g, b, a);
     }
 
-    public void DrawShadows(SpriteBatch spriteBatch, IEnumerable<ShadowCaster> shadows, ShadowHullEffect shadowHull)
-    {
-        _device.SetRenderTarget(ShadowBuffer);
-        _device.Clear(Color.White);
+    //public void DrawShadows(SpriteBatch spriteBatch, IEnumerable<ShadowCaster> shadows)//, ShadowEffect shadow)
+    //{
+    //    _device.SetRenderTarget(ShadowBuffer);
+    //    _device.Clear(Color.White);
 
-        shadowHull.LightPosition = Position;
-        var screenSize = new Vector2(ShadowBuffer.Width, ShadowBuffer.Height);
+    //    shadow.LightPosition = Position;
+    //    var screenSize = new Vector2(ShadowBuffer.Width, ShadowBuffer.Height);
 
-        spriteBatch.Begin(effect: shadowHull, rasterizerState: RasterizerState.CullNone);
+    //    spriteBatch.Begin(effect: shadow, rasterizerState: RasterizerState.CullNone);
 
-        foreach (var shadow in shadows)
-        {
-            for (int i = 0; i < shadow.Points.Count; i++)
-            {
-                var a = shadow.Position + shadow.Points[i];
-                var b = shadow.Position + shadow.Points[(i + 1) % shadow.Points.Count];
+    //    foreach (var shadow in shadows)
+    //    {
+    //        for (int i = 0; i < shadow.Points.Count; i++)
+    //        {
+    //            var a = shadow.Position + shadow.Points[i];
+    //            var b = shadow.Position + shadow.Points[(i + 1) % shadow.Points.Count];
 
-                //var positionA = shadow.LineSegmentA;
-                var aToB = (b - a) / screenSize;
-                var packed = PackVector2_SNorm(aToB);
+    //            //var positionA = shadow.LineSegmentA;
+    //            var aToB = (b - a) / screenSize;
+    //            var packed = PackVector2_SNorm(aToB);
 
-                spriteBatch.Draw(_pixel, a, packed);
-            }
-        }
+    //            spriteBatch.Draw(_pixel, a, packed);
+    //        }
+    //    }
 
-        spriteBatch.End();
-    }
+    //    spriteBatch.End();
+    //}
 
     /// <summary>
     /// Draws the light using the provided active sprite batch against the provided normal buffer.

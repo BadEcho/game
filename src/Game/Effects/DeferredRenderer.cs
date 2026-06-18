@@ -153,7 +153,7 @@ public sealed class DeferredRenderer
         _device.Clear(Color.Black);
     }
 
-    public void DrawLights(SpriteBatch spriteBatch, PointLightEffect effect, ShadowHullEffect shadowHull, RenderStates renderStates, IEnumerable<PointLight> lights, IEnumerable<ShadowCaster> shadows)
+    public void DrawLights(SpriteBatch spriteBatch, PointLightEffect effect, ShadowEffect shadowEffect, RenderStates renderStates, IEnumerable<PointLight> lights, IEnumerable<ShadowCaster> shadows)
     {
         _device.SetRenderTarget(LightBuffer);
         _device.Clear(Color.Black);
@@ -168,36 +168,36 @@ public sealed class DeferredRenderer
             var screenSize = new Vector2(LightBuffer.Width, LightBuffer.Height);
 
 
-            _device.Clear(ClearOptions.Stencil, Color.Black, 0, 0);
+            //_device.Clear(ClearOptions.Stencil, Color.Black, 0, 0);
 
-            shadowHull.ScreenSize = screenSize;
-            shadowHull.MatrixTransform = renderStates.MatrixTransform ?? Matrix.Identity;
-            shadowHull.LightPosition = light.Position;
-            //shadowHull.ShadowFadeStart = 0.00f;
-            //shadowHull.ShadowFadeEnd = 0.005f;
+            //shadowEffect.ScreenSize = screenSize;
+            //shadowEffect.MatrixTransform = renderStates.MatrixTransform ?? Matrix.Identity;
+            //shadowEffect.LightPosition = light.Position;
+            ////shadowHull.ShadowFadeStart = 0.00f;
+            ////shadowHull.ShadowFadeEnd = 0.005f;
 
-            spriteBatch.Begin(
-                depthStencilState: _stencilWrite,
+            //spriteBatch.Begin(
+            //    depthStencilState: _stencilWrite,
                 
-                effect: shadowHull, blendState: _shadowBlendState, rasterizerState: 
-                RasterizerState.CullNone
-                //_lightRasterizerState
-                );
+            //    effect: shadowEffect, blendState: _shadowBlendState, rasterizerState: 
+            //    RasterizerState.CullNone
+            //    //_lightRasterizerState
+            //    );
 
-            foreach (var shadow in shadows)
-            {
-                for (int i = 0; i < shadow.Points.Count; i++)
-                {
-                    var a = shadow.Position + shadow.Points[i];
-                    var b = shadow.Position + shadow.Points[(i + 1) % shadow.Points.Count];
+            //foreach (var shadow in shadows)
+            //{
+            //    for (int i = 0; i < shadow.Points.Count; i++)
+            //    {
+            //        var a = shadow.Position + shadow.Points[i];
+            //        var b = shadow.Position + shadow.Points[(i + 1) % shadow.Points.Count];
 
-                    var aToB = (b - a) / screenSize;
-                    var packed = PointLight.PackVector2_SNorm(aToB);
-                    spriteBatch.Draw(_rectangle, a, packed);
-                }
-            }
+            //        var aToB = (b - a) / screenSize;
+            //        var packed = PointLight.PackVector2_SNorm(aToB);
+            //        spriteBatch.Draw(_rectangle, a, packed);
+            //    }
+            //}
 
-            spriteBatch.End();
+            //spriteBatch.End();
 
             spriteBatch.Begin(effect: effect,
                               depthStencilState:  _stencilTest,

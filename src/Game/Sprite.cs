@@ -147,19 +147,14 @@ public class Sprite : IEntity
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
-        var sourceArea = GetSourceArea();//.Size / 2;//new Vector2((float)Texture.Width / 2, (float)Texture.Height / 2);
+        var origin = new Vector2((float)Texture.Width / 2, (float)Texture.Height / 2);
 
-        var a = sourceArea.Size.ToVector2() ;/// 2;
-        //a.X /= 2;
-        a.X = 0;
-        var pos = Position;
-        pos.Y += sourceArea.Height;
         spriteBatch.Draw(Texture,
                          Position,
                          GetSourceArea(),
                          color,
                          Angle,
-                         a,
+                         origin,
                          size,
                          SpriteEffects.None,
                          0f);

@@ -20,20 +20,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Effects;
 
-public sealed class ShadowHullEffect : OrthographicEffect
+public sealed class ShadowEffect : OrthographicEffect
 {
     private EffectParameter _lightPositionParam;
     private EffectParameter _screenSizeParam;
-    private EffectParameter _shadowFadeStartParam;
-    private EffectParameter _shadowFadeEndParam;
-
-    public ShadowHullEffect(GraphicsDevice device)
-        : base(device, Shaders.ShadowHullEffect)
+    private EffectParameter _spriteSizeParam;
+    private EffectParameter _spriteCenterParam;
+    public ShadowEffect(GraphicsDevice device)
+        : base(device, Shaders.ShadowEffect)
     {
         CacheEffectParameters();
     }
 
-    public ShadowHullEffect(ShadowHullEffect cloneSource)
+    public ShadowEffect(ShadowEffect cloneSource)
         : base(cloneSource)
     {
         CacheEffectParameters();
@@ -51,27 +50,27 @@ public sealed class ShadowHullEffect : OrthographicEffect
         set => _screenSizeParam.SetValue(value);
     }
 
-    public float ShadowFadeStart
+    public Vector2 SpriteSize
     {
-        get => _shadowFadeStartParam.GetValueSingle();
-        set => _shadowFadeStartParam.SetValue(value);
+        get => _spriteSizeParam.GetValueVector2();
+        set => _spriteSizeParam.SetValue(value);
     }
 
-    public float ShadowFadeEnd
+    public Vector2 SpriteCenter
     {
-        get => _shadowFadeStartParam.GetValueSingle();
-        set => _shadowFadeEndParam.SetValue(value);
+        get => _spriteCenterParam.GetValueVector2();
+        set => _spriteCenterParam.SetValue(value);
     }
 
     public override Effect Clone()
-        => new ShadowHullEffect(this);
+        => new ShadowEffect(this);
 
-    [MemberNotNull(nameof(_lightPositionParam), nameof(_screenSizeParam), nameof(_shadowFadeEndParam), nameof(_shadowFadeStartParam))]
+    [MemberNotNull(nameof(_lightPositionParam), nameof(_screenSizeParam), nameof(_spriteSizeParam), nameof(_spriteCenterParam))]
     private void CacheEffectParameters()
     {
         _lightPositionParam = Parameters[nameof(LightPosition)];
         _screenSizeParam = Parameters[nameof(ScreenSize)];
-        _shadowFadeEndParam = Parameters[nameof(ShadowFadeEnd)];
-        _shadowFadeStartParam = Parameters[nameof(ShadowFadeStart)];
+        _spriteSizeParam = Parameters[nameof(SpriteSize)];
+        _spriteCenterParam = Parameters[nameof(SpriteCenter)];
     }
 }
