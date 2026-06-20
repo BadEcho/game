@@ -97,7 +97,7 @@ VSOutput ShadowHullVS(VSInput input)
     return output;  
 }
 
-float4 ShadowHullPS(VSOutput input) : COLOR
+float4 ShadowHullPS(VSOutput input) : SV_Target
 {
     int2 pixel = int2(input.TexCoord * ScreenSize);
     int idx = (pixel.x % 4) + (pixel.y % 4) * 4;

@@ -28,7 +28,7 @@ BEGIN_PARAMETERS
     float2 SpriteCenter _vs(c7) _cb(c7);
 END_PARAMETERS
 
-float4 ShadowPS(VSOutput input) : COLOR
+float4 ShadowPS(VSOutput input) : SV_Target
 {
     float4 color  = sample2D(SpriteTexture, input.TexCoord) * input.Color;   
 

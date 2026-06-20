@@ -58,7 +58,7 @@ PointLightVSOutput PointLightVS(VSInput input)
     return output;
 }
 
-float4 PointLightPS(PointLightVSOutput input) : COLOR
+float4 PointLightPS(PointLightVSOutput input) : SV_Target
 {
     float distance = length(input.TexCoord - 0.5);
     float range = 5;

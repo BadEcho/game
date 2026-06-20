@@ -48,13 +48,13 @@ float4 Blur(float2 texCoord)
         }
     }
 
-    int totalSamples = pow(kernalSize*2+1, 2);
+    int totalSamples = (kernalSize * 2 + 1) * (kernalSize * 2 + 1);
     color /= totalSamples;
     color.a = 1;
     return color;
 }
 
-float4 CompositePS(VSOutput input) : COLOR
+float4 CompositePS(VSOutput input) : SV_Target
 {
     float4 color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
     float4 light = 

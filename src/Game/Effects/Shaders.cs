@@ -26,6 +26,8 @@ public static class Shaders
 {
 #if OPENGL
     private const string PLATFORM_EXTENSION = "ogl";
+#elif VULKAN
+    private const string PLATFORM_EXTENSION = "vulkan";
 #else
     private const string PLATFORM_EXTENSION = "dx11";
 #endif

@@ -32,8 +32,8 @@ END_PARAMETERS
 
 struct StandardPSOutput
 {
-	float4 Color: COLOR0;
-    float4 Normal: COLOR1;
+	float4 Color: SV_Target0;
+    float4 Normal: SV_Target1;
 };
 
 StandardPSOutput StandardPS(VSOutput input)
