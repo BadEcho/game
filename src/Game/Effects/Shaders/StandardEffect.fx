@@ -43,6 +43,8 @@ StandardPSOutput StandardPS(VSOutput input)
     output.Color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
     output.Normal = sample2D(NormalBuffer, input.TexCoord);
 
+    clip(output.Color.a - .01);
+
     return output;
 }
 

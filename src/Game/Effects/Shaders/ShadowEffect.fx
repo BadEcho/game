@@ -38,6 +38,8 @@ float4 ShadowPS(VSOutput input) : SV_Target
     // color.a /= 0.5;
     // }
 
+    clip(color.a == 0.0f ? -1 : 1);
+
     return float4(0,0,0,color.a);    
 }
 
@@ -62,6 +64,11 @@ VSOutput ShadowVS(VSInput input)
 
         // Rotate the sprite around the desired center so both its local y-axis aligns with the shadow cast direction and its local x-axis aligns with the direction shadow's width.
         input.Position.xy = SpriteCenter + perpendicularAxis * localOffset.x - castDir * localOffset.y;
+
+        // Cull faces.
+        // float alignment = dot(perpendicularAxis, (LightPosition - input.Position.xy));
+        // if (alignment < 0)
+        //     input.Color.a = -1;
     }
 
     output.Position = mul(input.Position, MatrixTransform);

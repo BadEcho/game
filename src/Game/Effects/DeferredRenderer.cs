@@ -32,6 +32,8 @@ public sealed class DeferredRenderer
     private DepthStencilState _stencilWrite;
 
     private DepthStencilState _stencilTest;
+    private DepthStencilState _stencilShadowExclude;
+
 
     private BlendState _shadowBlendState;
     private RasterizerState _lightRasterizerState = new RasterizerState()
@@ -52,6 +54,14 @@ public sealed class DeferredRenderer
         _compositeEffect = new CompositeEffect(device);
 
         Rectangle viewportBounds = device.Viewport.Bounds;
+
+        BackgroundBuffer = new RenderTarget2D(device,
+                                           viewportBounds.Width,
+                                           viewportBounds.Height,
+                                           false,
+                                           SurfaceFormat.Color,
+                                           DepthFormat.None
+            );
 
         DiffuseBuffer = new RenderTarget2D(device,
                                            viewportBounds.Width,
@@ -80,11 +90,11 @@ public sealed class DeferredRenderer
                             StencilEnable = true,
 
                             // instruct every fragment to interact with the stencil buffer
-                            StencilFunction = CompareFunction.Always,
+                            StencilFunction = CompareFunction.LessEqual,
 
                             // every operation will replace the current value in the stencil buffer
                             //  with whatever value is in the ReferenceStencil variable
-                            StencilPass = StencilOperation.Replace,
+                            StencilPass = StencilOperation.IncrementSaturation,
 
                             // this is the value that will be written into the stencil buffer
                             ReferenceStencil = 1,
@@ -100,10 +110,10 @@ public sealed class DeferredRenderer
 
                            // instruct only fragments that have a current value EQUAl to the
                            //  ReferenceStencil value to interact
-                           StencilFunction = CompareFunction.Equal,
+                           StencilFunction = CompareFunction.GreaterEqual,
 
                            // shadow hulls wrote `1`, so `0` means "not" shadow. 
-                           ReferenceStencil = 0,
+                           ReferenceStencil = 1,
 
                            // do not change the value of the stencil buffer. KEEP the current value.
                            StencilPass = StencilOperation.Keep,
@@ -118,6 +128,24 @@ public sealed class DeferredRenderer
                                 ColorWriteChannels = ColorWriteChannels.None
                             };
 
+        _stencilShadowExclude = new DepthStencilState
+                                {
+                                    // instruct MonoGame to use the stencil buffer
+                                    StencilEnable = true,
+
+                                    // in the setup, always set the pixel to '0'
+                                    StencilFunction = CompareFunction.Always,
+
+                                    // Write a '0' anywhere we don't want a shadow to appear
+                                    ReferenceStencil = 0,
+
+                                    // Overwrite the current value
+                                    StencilPass = StencilOperation.Replace,
+
+                                    // ignore depth from the stencil buffer write/reads
+                                    DepthBufferEnable = false
+                                };
+
     }
 
     public RenderTarget2D DiffuseBuffer
@@ -129,22 +157,40 @@ public sealed class DeferredRenderer
     public RenderTarget2D LightBuffer
     { get; }
 
+    public RenderTarget2D BackgroundBuffer
+    {
+        get;
+    }
+
     public DepthStencilState StencilWrite
         => _stencilWrite;
 
     public DepthStencilState StencilTest
         => _stencilTest;
 
-    public void StartDiffusePhase()
+
+    public void StartBackgroundPhase()
     {
-        _device.SetRenderTargets(
-            new RenderTargetBinding[]
-            {
-                new RenderTargetBinding(DiffuseBuffer),
-                new RenderTargetBinding(NormalBuffer)
-            }
-        );
+        _device.SetRenderTarget(BackgroundBuffer);
         _device.Clear(Color.Transparent);
+    }
+
+    public void StartDiffusePhase(SpriteBatch spriteBatch)
+    {
+            _device.SetRenderTargets(
+                new RenderTargetBinding[]
+                {
+                    new RenderTargetBinding(DiffuseBuffer),
+                    new RenderTargetBinding(NormalBuffer)
+                }
+            );
+        
+        _device.Clear(Color.Transparent);
+
+        //spriteBatch.Begin();
+        //spriteBatch.Draw(BackgroundBuffer, BackgroundBuffer.Bounds, Color.White);
+        //spriteBatch.End();
+
     }
 
     public void StartLightPhase()
@@ -153,7 +199,8 @@ public sealed class DeferredRenderer
         _device.Clear(Color.Black);
     }
 
-    public void DrawLights(SpriteBatch spriteBatch, PointLightEffect effect, ShadowEffect shadowEffect, RenderStates renderStates, IEnumerable<PointLight> lights, IEnumerable<ShadowCaster> shadows)
+    public void DrawLights(SpriteBatch spriteBatch, PointLightEffect effect, ShadowEffect shadowEffect, RenderStates renderStates, IEnumerable<PointLight> lights, Sprite sprite,
+                           Action<BlendState, DepthStencilState> prepareStencil)
     {
         _device.SetRenderTarget(LightBuffer);
         _device.Clear(Color.Black);
@@ -168,7 +215,8 @@ public sealed class DeferredRenderer
             var screenSize = new Vector2(LightBuffer.Width, LightBuffer.Height);
 
 
-            //_device.Clear(ClearOptions.Stencil, Color.Black, 0, 0);
+            _device.Clear(ClearOptions.Stencil, Color.Black, 0, 1);
+            prepareStencil?.Invoke(_shadowBlendState, _stencilShadowExclude);
 
             //shadowEffect.ScreenSize = screenSize;
             //shadowEffect.MatrixTransform = renderStates.MatrixTransform ?? Matrix.Identity;
@@ -176,14 +224,17 @@ public sealed class DeferredRenderer
             ////shadowHull.ShadowFadeStart = 0.00f;
             ////shadowHull.ShadowFadeEnd = 0.005f;
 
-            //spriteBatch.Begin(
-            //    depthStencilState: _stencilWrite,
-                
-            //    effect: shadowEffect, blendState: _shadowBlendState, rasterizerState: 
-            //    RasterizerState.CullNone
-            //    //_lightRasterizerState
-            //    );
+            spriteBatch.Begin(
+                depthStencilState: _stencilWrite,
 
+                effect: shadowEffect, blendState: _shadowBlendState, rasterizerState:
+                RasterizerState.CullNone
+                //_lightRasterizerState
+                );
+
+            sprite.Draw(spriteBatch);
+
+            spriteBatch.End();
             //foreach (var shadow in shadows)
             //{
             //    for (int i = 0; i < shadow.Points.Count; i++)
@@ -202,7 +253,7 @@ public sealed class DeferredRenderer
             spriteBatch.Begin(effect: effect,
                               depthStencilState:  _stencilTest,
                               blendState: BlendState.Additive);
-
+            
             spriteBatch.Draw(NormalBuffer, destination, light.Color);
 
             spriteBatch.End();
@@ -216,7 +267,7 @@ public sealed class DeferredRenderer
         _compositeEffect.AmbientLight = ambientLight;
         _compositeEffect.LightBuffer = LightBuffer;
         _compositeEffect.ScreenSize = new Vector2(viewportBounds.Width, viewportBounds.Height);
-        _compositeEffect.BoxBlurStride = 0.18f;
+        _compositeEffect.BoxBlurStride = 0.05f;
 
         spriteBatch.Begin(effect: _compositeEffect);
         spriteBatch.Draw(DiffuseBuffer, viewportBounds, Color.White);

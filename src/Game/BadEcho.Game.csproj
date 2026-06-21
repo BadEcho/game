@@ -8,6 +8,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<IsPackable>$(GameIsPackable)</IsPackable>
 		<NoWarn>8002</NoWarn>
+		<DefineConstants>OPENGL</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

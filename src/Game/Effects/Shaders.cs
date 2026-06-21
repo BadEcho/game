@@ -64,6 +64,9 @@ public static class Shaders
     public static byte[] ShadowEffect
         => GetStreamBytes($"{nameof(ShadowEffect)}.{PLATFORM_EXTENSION}");
 
+    public static byte[] TileMapEffect
+        => GetStreamBytes($"{nameof(TileMapEffect)}.{PLATFORM_EXTENSION}");
+
     private static byte[] GetStreamBytes(string name)
     {
         UnmanagedMemoryStream stream

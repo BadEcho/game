@@ -19,4 +19,7 @@ dotnet tool run mgfxc ShadowEffect.fx ShadowEffect.vulkan.mgfxo /profile:Vulkan
 dotnet tool run mgfxc CompositeEffect.fx CompositeEffect.ogl.mgfxo /profile:OpenGL /Debug
 dotnet tool run mgfxc CompositeEffect.fx CompositeEffect.dx11.mgfxo /profile:DirectX_11 /Debug
 dotnet tool run mgfxc CompositeEffect.fx CompositeEffect.vulkan.mgfxo /profile:Vulkan 
+dotnet tool run mgfxc TileMapEffect.fx TileMapEffect.ogl.mgfxo /profile:OpenGL /Debug
+dotnet tool run mgfxc TileMapEffect.fx TileMapEffect.dx11.mgfxo /profile:DirectX_11 /Debug
+dotnet tool run mgfxc TileMapEffect.fx TileMapEffect.vulkan.mgfxo /profile:Vulkan 
 dotnet tool run resource-creator . -f *.mgfxo -o ..\Shaders

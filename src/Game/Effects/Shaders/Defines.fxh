@@ -19,6 +19,7 @@
 	#define _vs(r)  : register(vs, r)
 	#define _ps(r)  : register(ps, r)
 	#define _cb(r)
+	#define SV_POSITION POSITION
 	#define VS_MODEL vs_3_0	
 	#define PS_MODEL ps_3_0
 	

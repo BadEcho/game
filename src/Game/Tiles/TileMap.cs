@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Extensions;
+using BadEcho.Game.Effects;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -194,14 +195,14 @@ public sealed class TileMap : Extensible, IModelRenderer
 
             world.Translation = new Vector3(layer.Offset, 0);
 
-            var effect = new BasicEffect(_device)
+            Matrix worldViewProjection = world * view * projection;
+
+            var effect = new TileMapEffect(_device)
                          {
-                             World = world,
-                             View = view,
-                             Projection = projection,
+                             WorldViewProjection = worldViewProjection,
                              Alpha = alpha
                          };
-            
+
             foreach (var layerModel in _layerModelMap[layer])
             {
                 layerModel.Draw(effect);
