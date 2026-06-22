@@ -197,4 +197,10 @@
 	<data name="StateExiting" xml:space="preserve">
 		<value>Exiting state: {0}</value>
 	</data>
+	<data name="NoShadersForGraphicsBackend" xml:space="preserve">
+		<value>No shaders are available for the active graphics backend.</value>
+	</data>
+	<data name="SdlGetWindowManagerFailed" xml:space="preserve">
+		<value>Failed to retrieve SDL window manager with error: {0}</value>
+	</data>
 </root>
