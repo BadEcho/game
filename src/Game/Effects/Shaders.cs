@@ -16,56 +16,52 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Globalization;
 using System.Resources;
 using BadEcho.Game.Properties;
+using MonoGame.Framework.Utilities;
 
 namespace BadEcho.Game.Effects;
 
 /// <summary>
 /// Provides access to shader effect resources.
 /// </summary>
-public static class Shaders
+internal static class Shaders
 {
-#if OPENGL
-    private const string PLATFORM_EXTENSION = "ogl";
-#elif VULKAN
-    private const string PLATFORM_EXTENSION = "vulkan";
-#else
-    private const string PLATFORM_EXTENSION = "dx11";
-#endif
+    private static readonly string _PlatformExtension = GetPlatformExtension();
 
     private static readonly ResourceManager _Manager = new("BadEcho.Game.Effects.Shaders",
                                                            typeof(Shaders).Assembly);
+
     /// <summary>
     /// Gets the data for a <see cref="SpriteBatch"/> effect that can be used in first phase diffuse layer rendering.
     /// </summary>
     public static byte[] StandardEffect
-        => GetStreamBytes($"{nameof(StandardEffect)}.{PLATFORM_EXTENSION}");
+        => GetStreamBytes($"{nameof(StandardEffect)}.{_PlatformExtension}");
 
     /// <summary>
     /// Gets the data for an effect required to correctly render multi-channel signed distance field font text.
     /// </summary>
     public static byte[] DistanceFieldFontEffect
-        => GetStreamBytes($"{nameof(DistanceFieldFontEffect)}.{PLATFORM_EXTENSION}");
+        => GetStreamBytes($"{nameof(DistanceFieldFontEffect)}.{_PlatformExtension}");
 
     /// <summary>
     /// Gets the data for an effect that emits illumination from a point light.
     /// </summary>
     public static byte[] PointLightEffect
-        => GetStreamBytes($"{nameof(PointLightEffect)}.{PLATFORM_EXTENSION}");
-    
+        => GetStreamBytes($"{nameof(PointLightEffect)}.{_PlatformExtension}");
+
     /// <summary>
     /// Gets the data for an effect that combines various off-screen textures to create the final screen render.
     /// </summary>
     public static byte[] CompositeEffect
-        => GetStreamBytes($"{nameof(CompositeEffect)}.{PLATFORM_EXTENSION}");
+        => GetStreamBytes($"{nameof(CompositeEffect)}.{_PlatformExtension}");
 
     /// <summary>
     /// Gets the data for an effect that casts a shadow.
     /// </summary>
     public static byte[] ShadowEffect
-        => GetStreamBytes($"{nameof(ShadowEffect)}.{PLATFORM_EXTENSION}");
+        => GetStreamBytes($"{nameof(ShadowEffect)}.{_PlatformExtension}");
 
     public static byte[] TileMapEffect
-        => GetStreamBytes($"{nameof(TileMapEffect)}.{PLATFORM_EXTENSION}");
+        => GetStreamBytes($"{nameof(TileMapEffect)}.{_PlatformExtension}");
 
     private static byte[] GetStreamBytes(string name)
     {
@@ -74,5 +70,18 @@ public static class Shaders
               ?? throw new BadImageFormatException(Strings.EffectMissingResource.InvariantFormat(name));
 
         return stream.ToArray();
+    }
+
+    private static string GetPlatformExtension()
+    {   
+        return PlatformInfo.GraphicsBackend switch
+        {
+            GraphicsBackend.OpenGL => "ogl",
+            GraphicsBackend.Vulkan => "vulkan",
+            GraphicsBackend.DirectX => "dx11",
+            GraphicsBackend.DirectX12 => "dx12",
+            // Other platforms will be added once v3.8.5 comes out.
+            _ => throw new InvalidOperationException(Strings.NoShadersForGraphicsBackend)
+        };
     }
 }
