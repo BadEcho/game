@@ -21,7 +21,6 @@ sampler2D TextureSampler : register(s0) = sampler_state
 
 BEGIN_PARAMETERS
     float4x4 WorldViewProjection _vs(c0) _cb(c0);
-    float Alpha _vs(c4) _cb(c4);
 END_PARAMETERS
 
 struct TileMapPSOutput
@@ -30,24 +29,40 @@ struct TileMapPSOutput
     float4 Ignore: SV_Target1;
 };
 
-TileMapPSOutput TileMapPS(VSOutput input)
+struct TileMapVSInput
+{
+    float4 Position: POSITION;    
+    float2 TexCoord: TEXCOORD0;
+};
+
+struct TileMapVSOutput
+{
+    float4 Position : SV_Position;
+    float2 TexCoord : TEXCOORD0;
+};
+
+TileMapPSOutput TileMapPS(TileMapVSOutput input)
 {
     TileMapPSOutput output;
 
-    output.Color = sample2D(Texture, input.TexCoord);// * input.Color;
+    output.Color = sample2D(Texture, input.TexCoord);
+    /*
+    We need to use a pixel shader with two color outputs and with the second output zeroed out, otherwise 
+    (either due to a bug in MonoGame or a quirk of OpenGL) the single color output will not only get assigned 
+    to the first render target, but any additional render targets as well when using OpenGL. 
+    The second render target is typically used for effects such as normal mapping: something we don't use with
+    our tile maps (we just want to render the tiles, nothing more).
+    */
     output.Ignore = float4(0,0,0,0);
 
     return output;
 }
 
-VSOutput TileMapVS(VSInput input)
+TileMapVSOutput TileMapVS(TileMapVSInput input)
 {
-    VSOutput output;
+    TileMapVSOutput output;
 
     output.Position = mul(input.Position, WorldViewProjection);
-    output.Color = input.Color;
-    output.Color.a *= Alpha;
-    output.Color.rgb *= Alpha;
     output.TexCoord = input.TexCoord;
 
     return output;

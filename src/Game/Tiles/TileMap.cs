@@ -199,8 +199,7 @@ public sealed class TileMap : Extensible, IModelRenderer
 
             var effect = new TileMapEffect(_device)
                          {
-                             WorldViewProjection = worldViewProjection,
-                             Alpha = alpha
+                             WorldViewProjection = worldViewProjection
                          };
 
             foreach (var layerModel in _layerModelMap[layer])
