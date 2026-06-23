@@ -61,7 +61,7 @@
 	</Target>
 
 	<Target Name="RebuildShaders" BeforeTargets="BeforeBuild" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
-		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShaders.cmd" />
+		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShader.cmd %(ShaderInput.Identity)" />
 	</Target>
 
 </Project>
