@@ -26,8 +26,8 @@ sampler2D NormalBufferSampler : register(s1) = sampler_state
 };
 
 BEGIN_PARAMETERS
-    float4x4 MatrixTransform _vs(c0) _cb(c0);
-    float Alpha _vs(c4) _cb(c4);
+    float4x4 MatrixTransform;
+    float Alpha;
 END_PARAMETERS
 
 struct StandardPSOutput
@@ -54,6 +54,7 @@ VSOutput StandardVS(VSInput input)
     
     output.Position = mul(input.Position, MatrixTransform);
     output.Color = input.Color;
+    // We don't want existing alpha data overwritten, so we just multiply the current value by the parameter.
     output.Color.a *= Alpha;
     output.Color.rgb *= Alpha;    
     output.TexCoord = input.TexCoord;

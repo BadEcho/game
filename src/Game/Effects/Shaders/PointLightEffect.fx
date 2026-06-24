@@ -20,9 +20,9 @@ sampler2D NormalBufferSampler : register(s0) = sampler_state
 };
 
 BEGIN_PARAMETERS
-    float LightBrightness _ps(c0) _cb(c0);
-    float LightSharpness _ps(c1) _cb(c1);	
-	float4x4 MatrixTransform _vs(c2) _cb(c2);
+    float LightBrightness;
+    float LightSharpness;
+	float4x4 MatrixTransform;
 END_PARAMETERS
 
 struct PointLightVSOutput
@@ -76,10 +76,6 @@ float4 PointLightPS(PointLightVSOutput input) : SV_Target
     float2 screenCoords = .5 * (input.ScreenData.xy + 1);
     screenCoords.y = 1 - screenCoords.y;
 
-    //float shadow = sample2D(ShadowBuffer,screenCoords).r;
-
-    //color.a *= shadow;
-
     float4 normal = sample2D(NormalBuffer,screenCoords);    
     
     // If the normal is transparent, then no normal values were mapped to the position on the screen this pixel occupies,
@@ -98,8 +94,7 @@ float4 PointLightPS(PointLightVSOutput input) : SV_Target
     // Calculate the degree to which the normal and light vectors are pointing in the same direction.
     float lightAmount = (dot(normalDir, lightDir));
 
-    color.a *= lightAmount;// * shadow;
-    //color.a = falloff;
+    color.a *= lightAmount;    
 
     return color;
 }
