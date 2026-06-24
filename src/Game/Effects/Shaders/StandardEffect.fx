@@ -43,6 +43,7 @@ StandardPSOutput StandardPS(VSOutput input)
     output.Color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
     output.Normal = sample2D(NormalBuffer, input.TexCoord);
 
+    // Fully transparent pixels are clipped so they aren't factored into any active stencil buffers.
     clip(output.Color.a - .01);
 
     return output;
