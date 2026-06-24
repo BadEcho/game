@@ -11,9 +11,6 @@ cd /d %~dp0\..\..\
 dotnet tool run mgfxc %name% %nameWithoutExt%.ogl.mgfxo /profile:OpenGL /Debug
 dotnet tool run mgfxc %name% %nameWithoutExt%.dx11.mgfxo /profile:DirectX_11 /Debug
 
-if defined skipVulcan goto :create-resources
+if defined skipVulcan goto :eof
 
 dotnet tool run mgfxc %name% %nameWithoutExt%.vulkan.mgfxo /profile:Vulkan /Debug
-
-:create-resources
-dotnet tool run resource-creator . -f *.mgfxo -o Effects\Shaders.resources

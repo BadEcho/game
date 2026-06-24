@@ -8,6 +8,7 @@
 
 # Compiled shaders
 **/*.mgfxo
+**/ShaderSymbols/
 
 Version.props
 

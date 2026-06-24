@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="Properties\Effects.resources" />
+		<None Remove="Effects\Shaders\*.mgfxo" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -47,21 +47,33 @@
 
 	<ItemGroup>
 		<UpToDateCheckInput Include="Effects\Shaders\*.fx" />
-		<ShaderInput Include="Effects\Shaders\*.fx">
-			<Visible>true</Visible>
-		</ShaderInput>
-		<ShaderOutput Include="Effects\Shaders.resources">
-			<Visible>false</Visible>
-		</ShaderOutput>
+		<ShaderInput Include="Effects\Shaders\*.fx" />
+		<ShaderOutput Include="Effects\Shaders.resources" />
 	</ItemGroup>
 
-	<Target Name="RestoreDotnetTools" BeforeTargets="RebuildShaders">
-		<Message Text="Restoring dotnet tools" Importance="High" />
-		<Exec Command="dotnet tool restore" />
+	<Target Name="GetDotnetToolsConfigFile">
+		<ItemGroup>
+			<DotnetToolsConfigFile Include="$(MSBuildProjectDirectory).config/dotnet-tools.json" Condition="Exists('$(MSBuildProjectDirectory).config/dotnet-tools.json')"/>
+		</ItemGroup>
 	</Target>
 
-	<Target Name="RebuildShaders" BeforeTargets="BeforeBuild" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
+	<Target Name="RestoreDotnetTools"
+					DependsOnTargets="GetDotnetToolsConfigFile"
+					Inputs="$(MSBuildProjectFullPath);@(DotnetToolsConfigFile);$(ProjectAssetsFile)"
+					Outputs="$(IntermediateOutputPath)bad-echo-game.tools.restore">
+		<Exec Command="dotnet tool restore" ContinueOnError="true">
+			<Output TaskParameter="ExitCode" PropertyName="RestoreToolsExitCode"/>
+		</Exec>
+		<MakeDir Directories="$(IntermediateOutputPath)" Condition="!Exists('$(IntermediateOutputPath)')" />
+		<Touch Files="$(IntermediateOutputPath)bad-echo.tools.restore" AlwaysCreate="true" Condition="$(RestoreToolsExitCode) == 0" />
+	</Target>
+
+	<Target Name="CompileShaders" BeforeTargets="BeforeBuild" AfterTargets="RestoreDotnetTools" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
 		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShader.cmd %(ShaderInput.Identity)" />
+	</Target>
+
+	<Target Name="CreateShaderResources" AfterTargets="CompileShaders" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
+		<Exec Command="dotnet tool run resource-creator $(MSBuildThisFileDirectory)Effects\Shaders -f *.mgfxo -o $(MSBuildThisFileDirectory)Effects\Shaders.resources" />
 	</Target>
 
 </Project>
