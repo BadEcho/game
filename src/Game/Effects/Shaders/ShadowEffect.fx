@@ -19,27 +19,21 @@ sampler2D SpriteTextureSampler : register(s0) = sampler_state
     Texture = <SpriteTexture>;
 };
 
-
 BEGIN_PARAMETERS
-    float4x4 MatrixTransform _vs(c0) _cb(c0);
-    float2 LightPosition _vs(c4) _cb(c4);
-    float2 ScreenSize _vs(c5) _cb(c5);
-    float2 SpriteSize _vs(c6) _cb(c6);
-    float2 SpriteCenter _vs(c7) _cb(c7);
+    float4x4 MatrixTransform;
+    float2 LightPosition;
+    float2 ShadowOrigin;
 END_PARAMETERS
 
 float4 ShadowPS(VSOutput input) : SV_Target
-{
+{   
     float4 color  = sample2D(SpriteTexture, input.TexCoord) * input.Color;   
 
-    // if (color.a > 0)
-    // {
-    // color.rgb = float3(0, 0, 0x8B);
-    // color.a /= 0.5;
-    // }
-
+    // If the pixel is fully transparent, then there is nothing here to block the light and produce a shadow, so we clip.
     clip(color.a == 0.0f ? -1 : 1);
 
+    // This shader is meant to be drawn into a stencil buffer. 
+    // The color is irrelevant, all that matters in regards to the stencil test is whether the RGBA is a non-zero value or not.
     return float4(0,0,0,color.a);    
 }
 
@@ -56,19 +50,14 @@ VSOutput ShadowVS(VSInput input)
         float2 castDir = normalize(lightVector);
 
         // Get coordinates in world space relative to the sprite's center. This is needed in order to pivot the shadow around the desired center.
-        float2 localOffset = input.Position.xy - SpriteCenter;
+        float2 localOffset = input.Position.xy - ShadowOrigin;
 
         // We use the shadow cast direction and the following unit vector to define a rotated coordinate frame aligned to the light.        
         // The shadow cast direction rotated 90 degrees counter-clockwise. This basically gives us the direction of the shadow's width.
         float2 perpendicularAxis = float2(-castDir.y, castDir.x);
 
         // Rotate the sprite around the desired center so both its local y-axis aligns with the shadow cast direction and its local x-axis aligns with the direction shadow's width.
-        input.Position.xy = SpriteCenter + perpendicularAxis * localOffset.x - castDir * localOffset.y;
-
-        // Cull faces.
-        // float alignment = dot(perpendicularAxis, (LightPosition - input.Position.xy));
-        // if (alignment < 0)
-        //     input.Color.a = -1;
+        input.Position.xy = ShadowOrigin + perpendicularAxis * localOffset.x - castDir * localOffset.y;
     }
 
     output.Position = mul(input.Position, MatrixTransform);
