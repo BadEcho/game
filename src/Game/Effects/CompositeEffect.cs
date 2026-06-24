@@ -48,17 +48,14 @@ public sealed class CompositeEffect : Effect
         CacheEffectParameters();
     }
 
-
+    /// <summary>
+    /// Gets or sets strength of the blur that affects the number of nearby pixels the filter moves across.
+    /// </summary>
+    /// <remarks>The blur will affect the compositing of the light buffer, specifically the shadow data found in it.</remarks>
     public float BoxBlurStride
     {
         get => _boxBlurStrideParam.GetValueSingle();
         set => _boxBlurStrideParam.SetValue(value);
-    }
-
-    public Vector2 ScreenSize
-    {
-        get => _screenSizeParam.GetValueVector2();
-        set => _screenSizeParam.SetValue(value);
     }
 
     /// <summary>
@@ -82,9 +79,26 @@ public sealed class CompositeEffect : Effect
     /// <inheritdoc/>
     public override Effect Clone()
         => new CompositeEffect(this);
-  
+
+    /// <summary>
+    /// The size of the screen, used by the shader to calculate the size of a pixel.
+    /// </summary>
+    private Vector2 ScreenSize
+        => _screenSizeParam.GetValueVector2();
+
+    /// <inheritdoc/>
+    protected override void OnApply()
+    {
+        base.OnApply();
+
+        Viewport viewport = GraphicsDevice.Viewport;
+
+        _screenSizeParam.SetValue(new Vector2(viewport.Width, viewport.Height));
+    }
+
     [MemberNotNull(nameof(_ambientLightParam),
-                   nameof(_lightBufferParam), nameof(_screenSizeParam),
+                   nameof(_lightBufferParam), 
+                   nameof(_screenSizeParam),
                    nameof(_boxBlurStrideParam))]
     private void CacheEffectParameters()
     {
