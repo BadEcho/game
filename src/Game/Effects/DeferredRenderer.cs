@@ -27,6 +27,7 @@ namespace BadEcho.Game.Effects;
 public sealed class DeferredRenderer
 {
     private readonly GraphicsDevice _device;
+    
     private readonly CompositeEffect _compositeEffect;
 
     private DepthStencilState _stencilWrite;
@@ -46,6 +47,7 @@ public sealed class DeferredRenderer
     {
 
         _device = device;
+        
         _rectangle = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
         _rectangle.SetData([
             //new Color(0x80, 0x80, 0xff, 0xff)
@@ -63,7 +65,7 @@ public sealed class DeferredRenderer
                                            DepthFormat.None
             );
 
-        DiffuseBuffer = new RenderTarget2D(device,
+        ColorBuffer = new RenderTarget2D(device,
                                            viewportBounds.Width,
                                            viewportBounds.Height,
                                            false,
@@ -148,7 +150,7 @@ public sealed class DeferredRenderer
 
     }
 
-    public RenderTarget2D DiffuseBuffer
+    public RenderTarget2D ColorBuffer
     { get; }
 
     public RenderTarget2D NormalBuffer
@@ -175,22 +177,40 @@ public sealed class DeferredRenderer
         _device.Clear(Color.Transparent);
     }
 
-    public void StartDiffusePhase(SpriteBatch spriteBatch)
+    public StandardEffect StartDiffusePhase(RenderStates renderStates)
     {
-            _device.SetRenderTargets(
-                new RenderTargetBinding[]
-                {
-                    new RenderTargetBinding(DiffuseBuffer),
-                    new RenderTargetBinding(NormalBuffer)
-                }
-            );
-        
-        _device.Clear(Color.Transparent);
+        _device.SetRenderTarget(ColorBuffer);
+
+        var effect = new  StandardEffect(_device);
+
+        effect.Alpha = renderStates.Alpha ?? 1.0f;
+        effect.MatrixTransform = renderStates.MatrixTransform;
 
         //spriteBatch.Begin();
         //spriteBatch.Draw(BackgroundBuffer, BackgroundBuffer.Bounds, Color.White);
         //spriteBatch.End();
 
+        return effect;
+    }
+
+    public StandardEffect StartDiffusePhase(RenderStates renderStates, Texture2D normalAtlas)
+    {
+        _device.SetRenderTargets(
+            new RenderTargetBinding[]
+            {
+                new RenderTargetBinding(ColorBuffer),
+                new RenderTargetBinding(NormalBuffer)
+            }
+        );
+
+        _device.Clear(Color.Transparent);
+
+        var effect = new StandardEffect(_device) { NormalBuffer = normalAtlas };
+
+        effect.Alpha = renderStates.Alpha ?? 1.0f;
+        effect.MatrixTransform = renderStates.MatrixTransform;
+
+        return effect;
     }
 
     public void StartLightPhase()
@@ -269,7 +289,7 @@ public sealed class DeferredRenderer
         _compositeEffect.BoxBlurStride = 0.05f;
 
         spriteBatch.Begin(effect: _compositeEffect);
-        spriteBatch.Draw(DiffuseBuffer, viewportBounds, Color.White);
+        spriteBatch.Draw(ColorBuffer, viewportBounds, Color.White);
         spriteBatch.End();
     }
 
@@ -328,7 +348,7 @@ public sealed class DeferredRenderer
         s.Draw(_rectangle, colorBorderRect, Color.MonoGameOrange);
 
         // draw the color buffer
-        s.Draw(DiffuseBuffer, colorRect, Color.White);
+        s.Draw(ColorBuffer, colorRect, Color.White);
 
         //draw a debug border
         s.Draw(_rectangle, lightBorderRect, Color.CornflowerBlue);

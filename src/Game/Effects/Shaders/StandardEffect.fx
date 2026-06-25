@@ -30,23 +30,37 @@ BEGIN_PARAMETERS
     float Alpha;
 END_PARAMETERS
 
-struct StandardPSOutput
+// Fully transparent pixels are clipped so they aren't factored into any active stencil buffers.
+#define SetColorPSOutput \
+    color = sample2D(SpriteTexture, input.TexCoord) * input.Color; \
+	clip(color.a - .01);
+
+struct ColorNormalStandardPSOutput
 {
 	float4 Color: SV_Target0;
     float4 Normal: SV_Target1;
 };
 
-StandardPSOutput StandardPS(VSOutput input)
+ColorNormalStandardPSOutput ColorNormalStandardPS(VSOutput input)
 {
-	StandardPSOutput output;
+    float4 color;
+	ColorNormalStandardPSOutput output;
 
-    output.Color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
+    SetColorPSOutput;
+    
+    output.Color = color;
     output.Normal = sample2D(NormalBuffer, input.TexCoord);
-
-    // Fully transparent pixels are clipped so they aren't factored into any active stencil buffers.
-    clip(output.Color.a - .01);
-
+    
     return output;
+}
+
+float4 ColorStandardPS(VSOutput input) : SV_Target
+{
+    float4 color;
+    
+    SetColorPSOutput;
+
+    return color;
 }
 
 VSOutput StandardVS(VSInput input)
@@ -63,11 +77,20 @@ VSOutput StandardVS(VSInput input)
     return output;
 }
 
-technique SpriteBatch
+technique ColorStandard
 {
     pass
     {
         VertexShader = compile VS_MODEL StandardVS();
-        PixelShader = compile PS_MODEL StandardPS();
+        PixelShader = compile PS_MODEL ColorStandardPS();
+    }
+};
+
+technique ColorNormalStandard
+{
+    pass
+    {
+        VertexShader = compile VS_MODEL StandardVS();
+        PixelShader = compile PS_MODEL ColorNormalStandardPS();
     }
 };

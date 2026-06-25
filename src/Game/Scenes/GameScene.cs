@@ -211,8 +211,7 @@ public abstract class GameScene : IDisposable
         _alphaEffect ??= new StandardEffect(spriteBatch.GraphicsDevice);
         _alphaEffect.Alpha = alpha;
         _alphaEffect.MatrixTransform = transform;
-        SpriteEffect ef = new SpriteEffect();
-        var bat = new spritebatcher    
+        
         RenderStates = RenderStates with
                        {
                            RasterizerState = new RasterizerState { ScissorTestEnable = clippingEnabled },

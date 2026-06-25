@@ -47,6 +47,18 @@ public sealed class StandardEffect : OrthographicEffect
     }
 
     /// <summary>
+    /// Gets the name of the technique designed to render a single color target.
+    /// </summary>
+    public static string ColorTechnique
+        => "ColorStandard";
+
+    /// <summary>
+    /// Gets the name of the technique designed to render both color and normal targets.
+    /// </summary>
+    public static string ColorNormalTechnique
+        => "ColorNormalStandard";
+
+    /// <summary>
     /// Gets or sets the transparency of the material being rendered.
     /// </summary>
     public float Alpha
@@ -56,7 +68,7 @@ public sealed class StandardEffect : OrthographicEffect
     }
 
     /// <summary>
-    /// Gets or sets the texture that contains the normal map of the main, diffuse texture being rendered, which is
+    /// Gets or sets an optional texture that contains the normal map of the main, diffuse texture being rendered, which is
     /// used to change how much the lighting affects each pixel depending on the "normal" of the surface at the given pixel.
     /// </summary>
     public Texture2D? NormalBuffer
@@ -71,6 +83,16 @@ public sealed class StandardEffect : OrthographicEffect
     /// <returns>A cloned <see cref="Effect"/> instance of this.</returns>
     public override Effect Clone()
         => new StandardEffect(this);
+
+    /// <inheritdoc/>
+    protected override void OnApply()
+    {
+        base.OnApply();
+
+        string techniqueName = NormalBuffer != null ? ColorNormalTechnique : ColorTechnique;
+
+        CurrentTechnique = Techniques[techniqueName];
+    }
 
     [MemberNotNull(nameof(_alphaParam), nameof(_normalBufferParam))]
     private void CacheEffectParameters()
