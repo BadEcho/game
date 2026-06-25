@@ -25,11 +25,13 @@ namespace BadEcho.Game.Effects;
 /// <param name="RasterizerState">State of the rasterization.</param>
 /// <param name="Effect">An effect to override the default sprite effect with.</param>
 /// <param name="MatrixTransform">A matrix used to transform the sprite geometry.</param>
+/// <param name="Alpha">The transparency of the material being rendered.</param>
 /// <param name="DepthStencilState">State of the depth-stencil buffer.</param>
 public sealed record RenderStates(SpriteSortMode SortMode,
                                   BlendState? BlendState = null,
                                   SamplerState? SamplerState = null,
                                   RasterizerState? RasterizerState = null,
-                                  StandardEffect? Effect = null,
+                                  OrthographicEffect? Effect = null,
                                   Matrix? MatrixTransform = null,
+                                  float? Alpha = null,
                                   DepthStencilState? DepthStencilState = null);

@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
@@ -54,6 +55,6 @@ public sealed class Image : Control<Image>
         => Visual?.Draw(spriteBatch, ContentBounds);
 
     /// <inheritdoc/>
-    protected override void DrawPrimitivesCore(IStandardEffect? effect)
+    protected override void DrawPrimitivesCore(Matrix? transform, float alpha)
     { }
 }

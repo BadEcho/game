@@ -58,7 +58,7 @@ public abstract class ScreenScene : GameScene
 
         spriteBatch.End();
 
-        _screen.DrawPrimitives(RenderStates.Effect);
+        _screen.DrawPrimitives(RenderStates.MatrixTransform, RenderStates.Alpha ?? 1.0f);
     }
 
     /// <inheritdoc/>

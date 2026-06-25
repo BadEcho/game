@@ -11,52 +11,62 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Effects;
 
+/// <summary>
+/// Provides an effect that renders a tile map.
+/// </summary>
 public sealed class TileMapEffect : Effect, ITextureEffect
 {
     private EffectParameter _textureParam;
-    private EffectParameter _worldViewProjectionParam;
-    private EffectParameter _alphaParam;
+    private EffectParameter _matrixTransformParam;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TileMapEffect"/> class.
+    /// </summary>
+    /// <param name="device">The graphics device used for sprite rendering.</param>
     public TileMapEffect(GraphicsDevice device)
         : base(device, Shaders.TileMapEffect)
     {
         CacheEffectParameters();
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TileMapEffect"/> class.
+    /// </summary>
+    /// <param name="cloneSource">The <see cref="TileMapEffect"/> instance to clone.</param>
+    private TileMapEffect(TileMapEffect cloneSource)
+        : base (cloneSource)
+    {
+        CacheEffectParameters();
+    }
+
+    /// <inheritdoc/>
     public Texture2D Texture
     {
         get => _textureParam.GetValueTexture2D();
         set => _textureParam.SetValue(value);
     }
 
-    public Matrix WorldViewProjection
+    /// <inheritdoc/>
+    public Matrix? MatrixTransform
     {
-        get => _worldViewProjectionParam.GetValueMatrix();
-        set => _worldViewProjectionParam.SetValue(value);
+        get => _matrixTransformParam.GetValueMatrix();
+        set => _matrixTransformParam.SetValue(value ?? Matrix.Identity);
     }
 
-    public Matrix? MatrixTransform { get; set; }
+    /// <inheritdoc/>
+    public override Effect Clone()
+        => new TileMapEffect(this);
 
-    public float Alpha
-    {
-        get => _alphaParam.GetValueSingle();
-        set => _alphaParam.SetValue(value);
-    }
-
-    [MemberNotNull(nameof(_textureParam), nameof(_worldViewProjectionParam), nameof(_alphaParam))]
+    [MemberNotNull(nameof(_textureParam), nameof(_matrixTransformParam))]
     private void CacheEffectParameters()
     {
         _textureParam = Parameters[nameof(Texture)];
-        _worldViewProjectionParam = Parameters[nameof(WorldViewProjection)];
-        _alphaParam = Parameters[nameof(Alpha)];
+        _matrixTransformParam = Parameters[nameof(MatrixTransform)];
     }
 }

@@ -188,8 +188,9 @@ public interface IControl : IArrangeable, IInputElement
     /// <summary>
     /// Draws primitives required by the user interface to the screen outside the main sprite batch.
     /// </summary>
-    /// <param name="effect">Shaders currently being used during rendering passes, if any.</param>
-    void DrawPrimitives(IStandardEffect? effect);
+    /// <param name="transform">An optional matrix to apply to position, rotation, scale, and depth data.</param>
+    /// <param name="alpha">The transparency of the material being rendered.</param>
+    void DrawPrimitives(Matrix? transform, float alpha);
 
     /// <summary>
     /// Processes events related to user input.

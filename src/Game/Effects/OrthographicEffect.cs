@@ -20,7 +20,7 @@ namespace BadEcho.Game.Effects;
 /// <summary>
 /// Provides an effect that uses orthographic projection.
 /// </summary>
-public abstract class OrthographicEffect : Effect
+public abstract class OrthographicEffect : Effect, IEffect
 {
     private EffectParameter _matrixParam;
     private Viewport _lastViewport;
@@ -41,7 +41,7 @@ public abstract class OrthographicEffect : Effect
     /// <summary>
     /// Initializes a new instance of the <see cref="OrthographicEffect"/> class.
     /// </summary>
-    /// <param name="cloneSource">The <see cref="Effect"/> instance to clone.</param>
+    /// <param name="cloneSource">The <see cref="OrthographicEffect"/> instance to clone.</param>
     protected OrthographicEffect(Effect cloneSource)
         : base(cloneSource)
     {

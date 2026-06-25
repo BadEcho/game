@@ -199,7 +199,7 @@ public sealed class TileMap : Extensible, IModelRenderer
 
             var effect = new TileMapEffect(_device)
                          {
-                             WorldViewProjection = worldViewProjection
+                             MatrixTransform = worldViewProjection
                          };
 
             foreach (var layerModel in _layerModelMap[layer])
@@ -262,7 +262,7 @@ public sealed class TileMap : Extensible, IModelRenderer
         var imageData = new QuadTextureModelData();
 
         imageData.AddTexture(layer.Image.Bounds, layer.Image.Bounds, layer.Position);
-
+        
         _layerModelMap.Add(layer,
                            new StaticModel(_device, layer.Image, imageData).AsEnumerable());
     }

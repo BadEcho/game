@@ -266,7 +266,6 @@ public sealed class DeferredRenderer
 
         _compositeEffect.AmbientLight = ambientLight;
         _compositeEffect.LightBuffer = LightBuffer;
-        _compositeEffect.ScreenSize = new Vector2(viewportBounds.Width, viewportBounds.Height);
         _compositeEffect.BoxBlurStride = 0.05f;
 
         spriteBatch.Begin(effect: _compositeEffect);

@@ -100,7 +100,9 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
         set => _matrixParam.SetValue(value ?? Matrix.Identity);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the transparency of the material being rendered.
+    /// </summary>
     public float Alpha
     {
         get => _alphaParam.GetValueSingle();

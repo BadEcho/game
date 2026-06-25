@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
@@ -71,6 +72,6 @@ public abstract class ContentControl<T,TSelf> : Control<TSelf>
         => Content.Draw(spriteBatch);
 
     /// <inheritdoc/>
-    protected override void DrawPrimitivesCore(IStandardEffect? effect) 
-        => Content.DrawPrimitives(effect);
+    protected override void DrawPrimitivesCore(Matrix? transform, float alpha) 
+        => Content.DrawPrimitives(transform, alpha);
 }

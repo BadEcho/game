@@ -39,7 +39,7 @@ public sealed class ShadowEffect : OrthographicEffect
     /// Initializes a new instance of the <see cref="ShadowEffect"/> class.
     /// </summary>
     /// <param name="cloneSource">The <see cref="ShadowEffect"/> instance to clone.</param>
-    public ShadowEffect(ShadowEffect cloneSource)
+    private ShadowEffect(ShadowEffect cloneSource)
         : base(cloneSource)
     {
         CacheEffectParameters();

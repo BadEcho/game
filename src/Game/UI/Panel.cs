@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.UI;
@@ -88,11 +89,11 @@ public abstract class Panel<TSelf> : Control<TSelf>, IPanel
     }
 
     /// <inheritdoc/>
-    protected override void DrawPrimitivesCore(IStandardEffect? effect)
+    protected override void DrawPrimitivesCore(Matrix? transform, float alpha)
     {
         foreach (IControl control in Children.Where(c => c.IsVisible))
         {
-            control.DrawPrimitives(effect);
+            control.DrawPrimitives(transform, alpha);
         }
     }
 }

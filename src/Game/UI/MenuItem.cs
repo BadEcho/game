@@ -153,6 +153,6 @@ public sealed class MenuItem : Control<MenuItem>
         => _innerPanel.Draw(spriteBatch);
 
     /// <inheritdoc/>
-    protected override void DrawPrimitivesCore(IStandardEffect? effect)
-        => _innerPanel.DrawPrimitives(effect);
+    protected override void DrawPrimitivesCore(Matrix? transform, float alpha)
+        => _innerPanel.DrawPrimitives(transform, alpha);
 }
