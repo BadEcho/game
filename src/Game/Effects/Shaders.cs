@@ -58,7 +58,7 @@ internal static class Shaders
     /// Gets the data for an effect that casts a shadow.
     /// </summary>
     public static byte[] ShadowEffect
-        => GetStreamBytes($"{nameof(ShadowEffect)}.{_PlatformExtension}");
+        => GetStreamBytes($"{nameof(ShadowEffect)}.{_Platform1Extension}");
     
     /// <summary>
     /// Gets the data for an effect that renders a tile map.
