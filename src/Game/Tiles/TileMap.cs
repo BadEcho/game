@@ -33,6 +33,7 @@ public sealed class TileMap : Extensible, IModelRenderer
     private readonly List<AnimatedTileModelData> _animatedTiles = [];
     private readonly List<TileSet> _tileSets = [];
     private readonly List<Layer> _layers = [];
+    private readonly TileMapEffect _mapEffect;
     private readonly GraphicsDevice _device;
     
     /// <summary>
@@ -53,6 +54,7 @@ public sealed class TileMap : Extensible, IModelRenderer
         Require.NotNull(device, nameof(device));
 
         _device = device;
+        _mapEffect = new TileMapEffect(device);
 
         Name = name;
         Size = size;
@@ -188,23 +190,20 @@ public sealed class TileMap : Extensible, IModelRenderer
         var projection = Matrix.Identity.MultiplyBy2DProjection(_device.Viewport.Bounds.Size);
 
         _device.SamplerStates[0] = SamplerState;
-
+        
         foreach (var layer in Layers)
         {
             Matrix world = Matrix.Identity;
 
             world.Translation = new Vector3(layer.Offset, 0);
 
-            Matrix worldViewProjection = world * view * projection;
-
-            var effect = new TileMapEffect(_device)
-                         {
-                             MatrixTransform = worldViewProjection
-                         };
+            _mapEffect.World = world;
+            _mapEffect.View = view;
+            _mapEffect.Projection = projection;
 
             foreach (var layerModel in _layerModelMap[layer])
             {
-                layerModel.Draw(effect);
+                layerModel.Draw(_mapEffect);
             }
         }
     }

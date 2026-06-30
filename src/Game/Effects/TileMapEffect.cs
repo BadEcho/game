@@ -23,7 +23,10 @@ namespace BadEcho.Game.Effects;
 public sealed class TileMapEffect : Effect, ITextureEffect
 {
     private EffectParameter _textureParam;
-    private EffectParameter _matrixTransformParam;
+    private EffectParameter _worldViewProjectionParam;
+   
+    private Viewport _lastViewport;
+    private bool _matrixDirty;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TileMapEffect"/> class.
@@ -52,21 +55,80 @@ public sealed class TileMapEffect : Effect, ITextureEffect
         set => _textureParam.SetValue(value);
     }
 
-    /// <inheritdoc/>
-    public Matrix? MatrixTransform
+    /// <summary>
+    /// Gets or sets the world view projection matrix used by the effect.
+    /// </summary>
+    private Matrix WorldViewProjection
+    { get; set; }
+
+    /// <summary>
+    /// Gets or sets the world matrix.
+    /// </summary>
+    public Matrix World
     {
-        get => _matrixTransformParam.GetValueMatrix();
-        set => _matrixTransformParam.SetValue(value ?? Matrix.Identity);
+        get;
+        set
+        {
+            _matrixDirty = field != value;
+            field = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the view matrix.
+    /// </summary>
+    public Matrix View
+    {
+        get;
+        set
+        {
+            _matrixDirty = field != value;
+            field = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the projection matrix.
+    /// </summary>
+    public Matrix Projection
+    {
+        get;
+        set
+        {
+            _matrixDirty = field != value;
+            field = value;
+        }
     }
 
     /// <inheritdoc/>
     public override Effect Clone()
         => new TileMapEffect(this);
 
-    [MemberNotNull(nameof(_textureParam), nameof(_matrixTransformParam))]
+    /// <inheritdoc/>
+    protected override void OnApply()
+    {
+        base.OnApply();
+
+        Viewport viewport = GraphicsDevice.Viewport;
+
+        bool parametersChanged =
+            viewport.Width != _lastViewport.Width || viewport.Height != _lastViewport.Height || _matrixDirty;
+
+        if (parametersChanged)
+        {
+            WorldViewProjection = World * View * Projection;
+
+            _lastViewport = viewport;
+            _matrixDirty = false;
+        }
+
+        _worldViewProjectionParam.SetValue(WorldViewProjection);
+    }
+
+    [MemberNotNull(nameof(_textureParam), nameof(_worldViewProjectionParam))]
     private void CacheEffectParameters()
     {
         _textureParam = Parameters[nameof(Texture)];
-        _matrixTransformParam = Parameters[nameof(MatrixTransform)];
+        _worldViewProjectionParam = Parameters[nameof(WorldViewProjection)];
     }
 }

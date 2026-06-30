@@ -11,7 +11,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game;
@@ -21,11 +20,6 @@ namespace BadEcho.Game;
 /// </summary>
 public interface IEffect
 {
-    /// <summary>
-    /// Gets or sets an optional matrix to apply to position, rotation, scale, and depth data.
-    /// </summary>
-    Matrix? MatrixTransform { get; set; }
-
     /// <summary>
     /// Gets or sets the active technique.
     /// </summary>

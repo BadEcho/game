@@ -20,7 +20,7 @@ sampler2D TextureSampler : register(s0) = sampler_state
 };
 
 BEGIN_PARAMETERS
-    float4x4 MatrixTransform;
+    float4x4 WorldViewProjection;
 END_PARAMETERS
 
 struct TileMapPSOutput
@@ -62,7 +62,7 @@ TileMapVSOutput TileMapVS(TileMapVSInput input)
 {
     TileMapVSOutput output;
 
-    output.Position = mul(input.Position, MatrixTransform);
+    output.Position = mul(input.Position, WorldViewProjection);
     output.TexCoord = input.TexCoord;
 
     return output;
