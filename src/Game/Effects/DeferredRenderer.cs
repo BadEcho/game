@@ -11,9 +11,6 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using BadEcho.Game.Lighting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,348 +18,299 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.Effects;
 
 /// <summary>
-/// Provides a multiphase renderer that breaks up the drawing of sprites into several different phases (diffuse, lighting, etc.),
+/// Provides a multiphase renderer that breaks up the drawing of sprites into several different phases (color, lighting, etc.),
 /// producing a composite image at the end that's drawn to the screen.
 /// </summary>
-public sealed class DeferredRenderer
+public sealed class DeferredRenderer : IDisposable
 {
+    private readonly DepthStencilState _stencilWrite =
+        new()
+        {
+            StencilEnable = true,
+            // Only fragments that aren't excluded from shadowing (i.e., greater than 0) will be
+            // interacted with.
+            StencilFunction = CompareFunction.GreaterEqual,
+            // Every operation will increase the value up to a maximum of 255.
+            StencilPass = StencilOperation.IncrementSaturation,
+            ReferenceStencil = 1,
+            DepthBufferEnable = false
+        };
+
+    private readonly DepthStencilState _stencilTest =
+        new()
+        {
+            StencilEnable = true,
+            // The new pixel value needs to be greater or equal to the reference stencil 
+            // in order to pass the test.
+            StencilFunction = CompareFunction.GreaterEqual,
+            ReferenceStencil = 1,
+            StencilPass = StencilOperation.Keep,
+            DepthBufferEnable = false
+        };
+
+    private readonly DepthStencilState _stencilShadowExclude =
+        new()
+        {
+            StencilEnable = true,
+            // Pixel is always set to 0, excluding it from shadowing.
+            StencilFunction = CompareFunction.Always,
+            ReferenceStencil = 0,
+            StencilPass = StencilOperation.Replace,
+            DepthBufferEnable = false
+        };
+
+    private readonly BlendState _shadowBlendState =
+        new()
+        {   // Shadow related draws write only to the stencil buffer.
+            ColorWriteChannels = ColorWriteChannels.None
+        };
+
+    private readonly RasterizerState _lightRasterizerState =
+        new()
+        {
+            CullMode = CullMode.None,
+            ScissorTestEnable = true
+        };
+
     private readonly GraphicsDevice _device;
-    
+
+    private readonly StandardEffect _standardEffect;
+    private readonly PointLightEffect _pointLightEffect;
+    private readonly ShadowEffect _shadowEffect;
     private readonly CompositeEffect _compositeEffect;
 
-    private DepthStencilState _stencilWrite;
+    private readonly RenderTarget2D _colorBuffer;
+    private readonly RenderTarget2D _normalBuffer;
+    private readonly RenderTarget2D _lightBuffer;
 
-    private DepthStencilState _stencilTest;
-    private DepthStencilState _stencilShadowExclude;
+    private bool _disposed;
 
-
-    private BlendState _shadowBlendState;
-    private RasterizerState _lightRasterizerState = new RasterizerState()
-                                                    {
-                                                        CullMode = CullMode.None,
-                                                        ScissorTestEnable = true
-                                                    };
-
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DeferredRenderer"/> class.
+    /// </summary>
+    /// <param name="device">The graphics device used for rendering.</param>
     public DeferredRenderer(GraphicsDevice device)
     {
+        Require.NotNull(device, nameof(device));
 
         _device = device;
         
-        _rectangle = new Texture2D(_device, 1, 1, false, SurfaceFormat.Color);
-        _rectangle.SetData([
-            //new Color(0x80, 0x80, 0xff, 0xff)
-            Color.White
-        ]);
+        _standardEffect = new StandardEffect(device);
+        _pointLightEffect = new PointLightEffect(device);
+        _shadowEffect = new ShadowEffect(device);
         _compositeEffect = new CompositeEffect(device);
 
         Rectangle viewportBounds = device.Viewport.Bounds;
 
-        BackgroundBuffer = new RenderTarget2D(device,
-                                           viewportBounds.Width,
-                                           viewportBounds.Height,
-                                           false,
-                                           SurfaceFormat.Color,
-                                           DepthFormat.None
-            );
-
-        ColorBuffer = new RenderTarget2D(device,
+        _colorBuffer = new RenderTarget2D(device,
                                            viewportBounds.Width,
                                            viewportBounds.Height,
                                            false,
                                            SurfaceFormat.Color,
                                            DepthFormat.None);
 
-        LightBuffer = new RenderTarget2D(device,
+        _lightBuffer = new RenderTarget2D(device,
                                          viewportBounds.Width,
                                          viewportBounds.Height,
                                          false,
                                          SurfaceFormat.Color,
                                          DepthFormat.Depth24Stencil8);
 
-        NormalBuffer = new RenderTarget2D(device,
+        _normalBuffer = new RenderTarget2D(device,
                                           viewportBounds.Width,
                                           viewportBounds.Height,
                                           false,
                                           SurfaceFormat.Color,
                                           DepthFormat.None);
-
-        _stencilWrite = new DepthStencilState
-                        {
-                            // instruct MonoGame to use the stencil buffer
-                            StencilEnable = true,
-
-                            // instruct every fragment to interact with the stencil buffer
-                            StencilFunction = CompareFunction.LessEqual,
-
-                            // every operation will replace the current value in the stencil buffer
-                            //  with whatever value is in the ReferenceStencil variable
-                            StencilPass = StencilOperation.IncrementSaturation,
-
-                            // this is the value that will be written into the stencil buffer
-                            ReferenceStencil = 1,
-
-                            // ignore depth from the stencil buffer write/reads  
-                            DepthBufferEnable = false
-                        };
-
-        _stencilTest = new DepthStencilState
-                       {
-                           // instruct MonoGame to use the stencil buffer
-                           StencilEnable = true,
-
-                           // instruct only fragments that have a current value EQUAl to the
-                           //  ReferenceStencil value to interact
-                           StencilFunction = CompareFunction.GreaterEqual,
-
-                           // shadow hulls wrote `1`, so `0` means "not" shadow. 
-                           ReferenceStencil = 1,
-
-                           // do not change the value of the stencil buffer. KEEP the current value.
-                           StencilPass = StencilOperation.Keep,
-
-                           // ignore depth from the stencil buffer write/reads
-                           DepthBufferEnable = false
-                       };
-
-
-        _shadowBlendState = new BlendState
-                            {
-                                ColorWriteChannels = ColorWriteChannels.None
-                            };
-
-        _stencilShadowExclude = new DepthStencilState
-                                {
-                                    // instruct MonoGame to use the stencil buffer
-                                    StencilEnable = true,
-
-                                    // in the setup, always set the pixel to '0'
-                                    StencilFunction = CompareFunction.Always,
-
-                                    // Write a '0' anywhere we don't want a shadow to appear
-                                    ReferenceStencil = 0,
-
-                                    // Overwrite the current value
-                                    StencilPass = StencilOperation.Replace,
-
-                                    // ignore depth from the stencil buffer write/reads
-                                    DepthBufferEnable = false
-                                };
-
     }
 
-    public RenderTarget2D ColorBuffer
-    { get; }
-
-    public RenderTarget2D NormalBuffer
-    { get; }
-
-    public RenderTarget2D LightBuffer
-    { get; }
-
-    public RenderTarget2D BackgroundBuffer
+    /// <summary>
+    /// Starts rendering to the color buffer.
+    /// </summary>
+    /// <param name="renderStates">Device render states to use when drawing.</param>
+    /// <returns>The effect to use when starting a new sprite batch.</returns>
+    public StandardEffect StartColorPhase(RenderStates renderStates)
     {
-        get;
-    }
+        Require.NotNull(renderStates, nameof(renderStates));
 
-    public DepthStencilState StencilWrite
-        => _stencilWrite;
-
-    public DepthStencilState StencilTest
-        => _stencilTest;
-
-
-    public void StartBackgroundPhase()
-    {
-        _device.SetRenderTarget(BackgroundBuffer);
+        _device.SetRenderTarget(_colorBuffer);
         _device.Clear(Color.Transparent);
+
+        _standardEffect.NormalBuffer = null;
+        _standardEffect.Alpha = renderStates.Alpha ?? 1.0f;
+        _standardEffect.MatrixTransform = renderStates.MatrixTransform;
+
+        return _standardEffect;
     }
 
-    public StandardEffect StartDiffusePhase(RenderStates renderStates)
+    /// <summary>
+    /// Starts simultaneous rendering to the color and normal buffers.
+    /// </summary>
+    /// <param name="renderStates">Device render states to use when drawing.</param>
+    /// <param name="normalAtlas">The atlas containing normals for the sprites that will be drawn.</param>
+    /// <returns>The effect to use when starting a new sprite batch.</returns>
+    public StandardEffect StartColorPhase(RenderStates renderStates, Texture2D normalAtlas)
     {
-        _device.SetRenderTarget(ColorBuffer);
+        Require.NotNull(renderStates, nameof(renderStates));
 
-        var effect = new  StandardEffect(_device);
-
-        effect.Alpha = renderStates.Alpha ?? 1.0f;
-        effect.MatrixTransform = renderStates.MatrixTransform;
-
-        //spriteBatch.Begin();
-        //spriteBatch.Draw(BackgroundBuffer, BackgroundBuffer.Bounds, Color.White);
-        //spriteBatch.End();
-
-        return effect;
-    }
-
-    public StandardEffect StartDiffusePhase(RenderStates renderStates, Texture2D normalAtlas)
-    {
-        _device.SetRenderTargets(
-            new RenderTargetBinding[]
-            {
-                new RenderTargetBinding(ColorBuffer),
-                new RenderTargetBinding(NormalBuffer)
-            }
-        );
+        _device.SetRenderTargets(new RenderTargetBinding(_colorBuffer),
+                                 new RenderTargetBinding(_normalBuffer));
 
         _device.Clear(Color.Transparent);
 
-        var effect = new StandardEffect(_device) { NormalBuffer = normalAtlas };
+        _standardEffect.NormalBuffer = normalAtlas;
+        _standardEffect.Alpha = renderStates.Alpha ?? 1.0f;
+        _standardEffect.MatrixTransform = renderStates.MatrixTransform;
 
-        effect.Alpha = renderStates.Alpha ?? 1.0f;
-        effect.MatrixTransform = renderStates.MatrixTransform;
-
-        return effect;
+        return _standardEffect;
     }
 
-    public void StartLightPhase()
+    /// <summary>
+    /// Starts rendering to the normal buffer.
+    /// </summary>
+    /// <param name="renderStates">Device render states to use when drawing.</param>
+    /// <returns>The effect to use when starting a new sprite batch.</returns>
+    public StandardEffect StartNormalPhase(RenderStates renderStates)
     {
-        _device.SetRenderTarget(LightBuffer);
-        _device.Clear(Color.Black);
+        Require.NotNull(renderStates, nameof(renderStates));
+
+        _device.SetRenderTarget(_normalBuffer);
+        _device.Clear(Color.Transparent);
+
+        _standardEffect.NormalBuffer = null;
+        _standardEffect.Alpha = renderStates.Alpha ?? 1.0f;
+        _standardEffect.MatrixTransform = renderStates.MatrixTransform;
+
+        return _standardEffect;
     }
 
-    public void DrawLights(SpriteBatch spriteBatch, PointLightEffect effect, ShadowEffect shadowEffect, RenderStates renderStates, IEnumerable<PointLight> lights, Sprite sprite,
-                           Action<BlendState, DepthStencilState> prepareStencil)
+    /// <summary>
+    /// Draws shadows and lights to the light buffer.
+    /// </summary>
+    /// <param name="spriteBatch">The sprite batch to use to draw the shadows and lights.</param>
+    /// <param name="renderStates">Device render states to use when drawing.</param>
+    /// <param name="lights">The light sources to render.</param>
+    /// <param name="shadowCasters">The sprites to cast shadows when hit by the light sources.</param>
+    public void DrawLights(SpriteBatch spriteBatch, RenderStates renderStates, IEnumerable<ILight> lights, IEnumerable<Sprite> shadowCasters)
     {
-        _device.SetRenderTarget(LightBuffer);
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+        Require.NotNull(renderStates, nameof(renderStates));
+        Require.NotNull(lights, nameof(lights));
+        Require.NotNull(shadowCasters, nameof(shadowCasters));
+
+        shadowCasters = shadowCasters.ToList();
+
+        _device.SetRenderTarget(_lightBuffer);
         _device.Clear(Color.Black);
+
+        _pointLightEffect.LightBrightness = 0.8f;
+        _pointLightEffect.LightSharpness = 0.1f;
+
+        _pointLightEffect.MatrixTransform = renderStates.MatrixTransform;
 
         foreach (var light in lights)
         {
-            int diameter = light.Radius * 2;
-
-            var destination = new Rectangle((int)(light.Position.X - light.Radius), (int)(light.Position.Y - light.Radius), diameter, diameter);
-
-            //            var screenSize = new Vector2(_device.Viewport.Width, _device.Viewport.Height);
-            var screenSize = new Vector2(LightBuffer.Width, LightBuffer.Height);
-
-
             _device.Clear(ClearOptions.Stencil, Color.Black, 0, 1);
-            prepareStencil?.Invoke(_shadowBlendState, _stencilShadowExclude);
+            
+            _shadowEffect.LightPosition = light.Position;
+            _shadowEffect.MatrixTransform = renderStates.MatrixTransform;
+            
+            spriteBatch.Begin(renderStates with
+                              {
+                                  BlendState = _shadowBlendState,
+                                  DepthStencilState = _stencilShadowExclude
+                              });
 
-            //shadowEffect.ScreenSize = screenSize;
-            //shadowEffect.MatrixTransform = renderStates.MatrixTransform ?? Matrix.Identity;
-            //shadowEffect.LightPosition = light.Position;
-            ////shadowHull.ShadowFadeStart = 0.00f;
-            ////shadowHull.ShadowFadeEnd = 0.005f;
-
-            spriteBatch.Begin(
-                depthStencilState: _stencilWrite,
-
-                effect: shadowEffect, blendState: _shadowBlendState, rasterizerState:
-                RasterizerState.CullNone
-                //_lightRasterizerState
-                );
-
-            sprite.Draw(spriteBatch);
+            foreach (var shadowCaster in shadowCasters)
+            {
+                shadowCaster.Draw(spriteBatch);
+            }
 
             spriteBatch.End();
-            //foreach (var shadow in shadows)
-            //{
-            //    for (int i = 0; i < shadow.Points.Count; i++)
-            //    {
-            //        var a = shadow.Position + shadow.Points[i];
-            //        var b = shadow.Position + shadow.Points[(i + 1) % shadow.Points.Count];
 
-            //        var aToB = (b - a) / screenSize;
-            //        var packed = PointLight.PackVector2_SNorm(aToB);
-            //        spriteBatch.Draw(_rectangle, a, packed);
-            //    }
-            //}
+            spriteBatch.Begin(depthStencilState: _stencilWrite,
+                              effect: _shadowEffect,
+                              blendState: _shadowBlendState,
+                              rasterizerState: _lightRasterizerState);
 
-            //spriteBatch.End();
 
-            spriteBatch.Begin(effect: effect,
+            foreach (var shadowCaster in shadowCasters)
+            {
+                var shadowOrigin = shadowCaster.Bounds.Center.Add(new SizeF(0, shadowCaster.Bounds.Size.Height / 2 - 1.25f));
+                var shadowOriginColor = PackShadowOrigin(shadowOrigin);
+
+                shadowCaster.Draw(spriteBatch, shadowOriginColor);
+            }
+
+            spriteBatch.End();
+
+            spriteBatch.Begin(effect: _pointLightEffect,
                               depthStencilState:  _stencilTest,
                               blendState: BlendState.Additive);
-            
-            spriteBatch.Draw(NormalBuffer, destination, light.Color);
+
+            light.Draw(spriteBatch, _normalBuffer);
 
             spriteBatch.End();
         }
     }
 
+    /// <summary>
+    /// Draws a composite image comprising the color, light, and other buffers to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The sprite batch to use to draw the image.</param>
+    /// <param name="ambientLight">The amount of ambient light to apply to the final image.</param>
     public void DrawComposite(SpriteBatch spriteBatch, float ambientLight)
     {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
         Rectangle viewportBounds = _device.Viewport.Bounds;
 
         _compositeEffect.AmbientLight = ambientLight;
-        _compositeEffect.LightBuffer = LightBuffer;
+        _compositeEffect.LightBuffer = _lightBuffer;
         _compositeEffect.BoxBlurStride = 0.05f;
 
         spriteBatch.Begin(effect: _compositeEffect);
-        spriteBatch.Draw(ColorBuffer, viewportBounds, Color.White);
+        spriteBatch.Draw(_colorBuffer, viewportBounds, Color.White);
         spriteBatch.End();
     }
 
-    public void Finish()
+    /// <summary>
+    /// Finishes the current rendering phase.
+    /// </summary>
+    public void Finish() 
+        => _device.SetRenderTarget(null);
+
+    /// <inheritdoc/>
+    public void Dispose()
     {
+        if (_disposed)
+            return;
 
-        //Color[] p = new Color[NormalBuffer.Width * NormalBuffer.Height];
+        _colorBuffer.Dispose();
+        _normalBuffer.Dispose();
+        _lightBuffer.Dispose();
 
-        //NormalBuffer.GetData<Color>(p);
-        _device.SetRenderTarget(null);
+        _standardEffect.Dispose();
+        _pointLightEffect.Dispose();
+        _shadowEffect.Dispose();
+        _compositeEffect.Dispose();
+
+        _lightRasterizerState.Dispose();
+        _shadowBlendState.Dispose();
+
+        _stencilWrite.Dispose();
+        _stencilTest.Dispose();
+        _stencilShadowExclude.Dispose();
+
+        _disposed = true;
     }
-    private readonly Texture2D _rectangle;
 
-    public void DebugDraw(SpriteBatch s)
+    private static Color PackShadowOrigin(PointF origin)
     {
-        var viewportBounds = _device.Viewport.Bounds;
+        // Pack the X and Y screen coordinates as 16-bit values: R,G encode X and B,A encode Y.
+        ushort x = (ushort) Math.Clamp((int) Math.Round(origin.X), 0, 65535);
+        ushort y = (ushort) Math.Clamp((int) Math.Round(origin.Y), 0, 65535);
 
-        // the debug view for the color buffer lives in the top-left.
-        var colorBorderRect = new Rectangle(
-            x: viewportBounds.X,
-            y: viewportBounds.Y,
-            width: viewportBounds.Width / 2,
-            height: viewportBounds.Height / 2);
-
-        // shrink the color rect by 8 pixels
-        var colorRect = colorBorderRect;
-        colorRect.Inflate(-8, -8);
-
-
-        // the debug view for the light buffer lives in the top-right.
-        var lightBorderRect = new Rectangle(
-            x: viewportBounds.Width / 2,
-            y: viewportBounds.Y,
-            width: viewportBounds.Width / 2,
-            height: viewportBounds.Height / 2);
-
-        // shrink the light rect by 8 pixels
-        var lightRect = lightBorderRect;
-        lightRect.Inflate(-8, -8);
-
-        // the debug view for the normal buffer lives in the top-right.
-        var normalBorderRect = new Rectangle(
-            x: viewportBounds.X,
-            y: viewportBounds.Height / 2,
-            width: viewportBounds.Width / 2,
-            height: viewportBounds.Height / 2);
-
-        // shrink the normal rect by 8 pixels
-        var normalRect = normalBorderRect;
-        normalRect.Inflate(-8, -8);
-
-
-        s.Begin();
-
-        // draw a debug border
-        s.Draw(_rectangle, colorBorderRect, Color.MonoGameOrange);
-
-        // draw the color buffer
-        s.Draw(ColorBuffer, colorRect, Color.White);
-
-        //draw a debug border
-        s.Draw(_rectangle, lightBorderRect, Color.CornflowerBlue);
-
-        // draw the light buffer
-        s.Draw(LightBuffer, lightRect, Color.White);
-
-
-        // draw a debug border
-        s.Draw(_rectangle, normalBorderRect, Color.MintCream);
-
-        // draw the normal buffer
-        s.Draw(NormalBuffer, normalRect, Color.White);
-
-        s.End();
+        return new Color((byte) (x >> 8), (byte) (x & 0xFF), (byte) (y >> 8), (byte) (y & 0xFF));
     }
 }

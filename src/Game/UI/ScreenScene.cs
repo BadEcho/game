@@ -52,6 +52,8 @@ public abstract class ScreenScene : GameScene
     /// <inheritdoc/>
     protected override void DrawCore(SpriteBatch spriteBatch)
     {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
         spriteBatch.Begin(RenderStates);
 
         _screen.Draw(spriteBatch);

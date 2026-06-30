@@ -23,7 +23,6 @@ namespace BadEcho.Game.Effects;
 public sealed class ShadowEffect : OrthographicEffect
 {
     private EffectParameter _lightPositionParam;
-    private EffectParameter _shadowOriginParam;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ShadowEffect"/> class.
@@ -54,23 +53,13 @@ public sealed class ShadowEffect : OrthographicEffect
         set => _lightPositionParam.SetValue(value);
     }
 
-    /// <summary>
-    /// Gets or sets the center of the shadow's rotation.
-    /// </summary>
-    public Vector2 ShadowOrigin
-    {
-        get => _shadowOriginParam.GetValueVector2();
-        set => _shadowOriginParam.SetValue(value);
-    }
-
     /// <inheritdoc/>
     public override Effect Clone()
         => new ShadowEffect(this);
 
-    [MemberNotNull(nameof(_lightPositionParam), nameof(_shadowOriginParam))]
+    [MemberNotNull(nameof(_lightPositionParam))]
     private void CacheEffectParameters()
     {
         _lightPositionParam = Parameters[nameof(LightPosition)];
-        _shadowOriginParam = Parameters[nameof(ShadowOrigin)];
     }
 }

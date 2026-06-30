@@ -141,6 +141,18 @@ public class Sprite : IEntity
     /// Draws the sprite to the screen.
     /// </summary>
     /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite.</param>
+    /// <param name="color">A color mask.</param>
+    public void Draw(SpriteBatch spriteBatch, Color color)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        spriteBatch.Draw(Texture, (Rectangle) GetTargetArea(), GetSourceArea(), color);
+    }
+
+    /// <summary>
+    /// Draws the sprite to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the sprite.</param>
     /// <param name="color">The color mask the sprite is drawn with.</param>
     /// <param name="size">The size of the sprite.</param>
     public void Draw(SpriteBatch spriteBatch, Color color, float size)
@@ -158,6 +170,17 @@ public class Sprite : IEntity
                          size,
                          SpriteEffects.None,
                          0f);
+    }
+
+    /// <summary>
+    /// Draws normals for the sprite to the screen.
+    /// </summary>
+    /// <param name="spriteBatch">The <see cref="SpriteBatch"/> instance to use to draw the normals.</param>
+    public void DrawNormals(SpriteBatch spriteBatch)
+    {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        spriteBatch.Draw(NormalMap, (Rectangle) GetTargetArea(), GetSourceArea(), Color.White);
     }
 
     /// <summary>

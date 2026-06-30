@@ -17,35 +17,29 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game.Lighting;
 
 /// <summary>
-/// Provides a light source that emits light from a point. 
+/// Defines a light source.
 /// </summary>
-public sealed class PointLight : ILight
+public interface ILight
 {
-    /// <inheritdoc/>
-    public Vector2 Position
-    { get; set; }
+    /// <summary>
+    /// Gets or sets the position of the point light.
+    /// </summary>
+    Vector2 Position { get; set; }
 
-    /// <inheritdoc/>
-    public Color Color
-    { get; set; } = Color.White;
+    /// <summary>
+    /// Gets or sets the color of the light.
+    /// </summary>
+    Color Color { get; set; }
 
-    /// <inheritdoc/>
-    public int Radius
-    { get; set; }
-
+    /// <summary>
+    /// Gets or sets the radius of the light.
+    /// </summary>
+    int Radius { get; set; }
+    
     /// <summary>
     /// Draws the light using the provided active sprite batch against the provided normal buffer.
     /// </summary>
     /// <param name="spriteBatch">An active sprite batch.</param>
     /// <param name="normalBuffer">A buffer containing normals to draw the light against.</param>
-    public void Draw(SpriteBatch spriteBatch, Texture2D normalBuffer)
-    {
-        Require.NotNull(spriteBatch, nameof(spriteBatch));
-
-        int diameter = Radius * 2;
-
-        var destination = new Rectangle((int) (Position.X - Radius), (int) (Position.Y - Radius), diameter, diameter);
-
-        spriteBatch.Draw(normalBuffer, destination, Color);
-    }
+    void Draw(SpriteBatch spriteBatch, Texture2D normalBuffer);
 }
