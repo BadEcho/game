@@ -236,7 +236,7 @@ public sealed class DeferredRenderer : IDisposable
 
             foreach (var shadowCaster in shadowCasters)
             {
-                var shadowOrigin = shadowCaster.Bounds.Center.Add(new SizeF(0, shadowCaster.Bounds.Size.Height / 2 - 1.25f));
+                var shadowOrigin = shadowCaster.Bounds.Center.Add(new SizeF(0, shadowCaster.Bounds.Size.Height / 2 - 2.05f));
                 var shadowOriginColor = PackShadowOrigin(shadowOrigin);
 
                 shadowCaster.Draw(spriteBatch, shadowOriginColor);

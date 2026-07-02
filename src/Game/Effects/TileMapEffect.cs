@@ -69,7 +69,9 @@ public sealed class TileMapEffect : Effect, ITextureEffect
         get;
         set
         {
-            _matrixDirty = field != value;
+            if (field != value)
+                _matrixDirty = true;
+
             field = value;
         }
     }
@@ -82,7 +84,9 @@ public sealed class TileMapEffect : Effect, ITextureEffect
         get;
         set
         {
-            _matrixDirty = field != value;
+            if (field != value)
+                _matrixDirty = true;
+            
             field = value;
         }
     }
@@ -95,7 +99,9 @@ public sealed class TileMapEffect : Effect, ITextureEffect
         get;
         set
         {
-            _matrixDirty = field != value;
+            if (field != value)
+                _matrixDirty = true;
+
             field = value;
         }
     }

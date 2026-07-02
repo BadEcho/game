@@ -26,15 +26,18 @@ namespace BadEcho.Game.Tiles;
 /// Tile maps supported by the Bad Echo Game Framework are based on the TMX map format, used by various popular tile map editors such
 /// as Tiled.
 /// </remarks>
-public sealed class TileMap : Extensible, IModelRenderer
+public sealed class TileMap : Extensible, IModelRenderer, IDisposable
 {
     private readonly Dictionary<Layer, IEnumerable<IPrimitiveModel>> _layerModelMap = [];
     private readonly Dictionary<TileSet, int> _tileSetFirstIdMap = [];
     private readonly List<AnimatedTileModelData> _animatedTiles = [];
     private readonly List<TileSet> _tileSets = [];
     private readonly List<Layer> _layers = [];
-    private readonly TileMapEffect _mapEffect;
+    private readonly Dictionary<Layer, TileMapEffect> _layerEffectMap = [];
+    
     private readonly GraphicsDevice _device;
+
+    private bool _disposed;
     
     /// <summary>
     /// Initializes a new instance of the <see cref="TileMap"/> class.
@@ -54,7 +57,6 @@ public sealed class TileMap : Extensible, IModelRenderer
         Require.NotNull(device, nameof(device));
 
         _device = device;
-        _mapEffect = new TileMapEffect(device);
 
         Name = name;
         Size = size;
@@ -151,6 +153,7 @@ public sealed class TileMap : Extensible, IModelRenderer
         Require.NotNull(layer, nameof(layer));
 
         _layers.Add(layer);
+        _layerEffectMap.Add(layer, new TileMapEffect(_device));
     }
 
     /// <summary>
@@ -197,13 +200,15 @@ public sealed class TileMap : Extensible, IModelRenderer
 
             world.Translation = new Vector3(layer.Offset, 0);
 
-            _mapEffect.World = world;
-            _mapEffect.View = view;
-            _mapEffect.Projection = projection;
+            TileMapEffect mapEffect = _layerEffectMap[layer];
+
+            mapEffect.World = world;
+            mapEffect.View = view;
+            mapEffect.Projection = projection;
 
             foreach (var layerModel in _layerModelMap[layer])
             {
-                layerModel.Draw(_mapEffect);
+                layerModel.Draw(mapEffect);
             }
         }
     }
@@ -243,6 +248,22 @@ public sealed class TileMap : Extensible, IModelRenderer
                  .Where(l => l.CustomProperties.Booleans
                               .TryGetValue(KnownProperties.Collidable, out bool collidable) && collidable)
                  .SelectMany(l => l.ToCollidableLayer());
+
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        if (_disposed)
+            return;
+
+        foreach (Layer layer in Layers)
+        {
+            TileMapEffect mapEffect = _layerEffectMap[layer];
+
+            mapEffect.Dispose();
+        }
+
+        _disposed = true;
+    }
 
     private void ClearModels()
     {

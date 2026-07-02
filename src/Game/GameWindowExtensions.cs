@@ -34,17 +34,12 @@ public static class GameWindowExtensions
     {
         Require.NotNull(window, nameof(window));
 
-        switch (PlatformInfo.MonoGamePlatform)
+        return PlatformInfo.MonoGamePlatform switch
         {
-            case MonoGamePlatform.DesktopGL:
-                return GetSdlWindowHandle(window);
-                
-            case MonoGamePlatform.Windows:
-                return window.Handle;
-
-            default:
-                throw new InvalidOperationException();
-        }
+            MonoGamePlatform.DesktopGL => GetSdlWindowHandle(window),
+            MonoGamePlatform.Windows => window.Handle,
+            _ => throw new InvalidOperationException()
+        };
     }
 
     private static unsafe nint GetSdlWindowHandle(GameWindow window)
