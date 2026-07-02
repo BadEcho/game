@@ -26,24 +26,41 @@ sampler2D NormalBufferSampler : register(s1) = sampler_state
 };
 
 BEGIN_PARAMETERS
-    float4x4 MatrixTransform _vs(c0) _cb(c0);
-    float Alpha _vs(c4) _cb(c4);
+    float4x4 MatrixTransform;
+    float Alpha;
 END_PARAMETERS
 
-struct StandardPSOutput
+// Fully transparent pixels are clipped so they aren't factored into any active stencil buffers.
+#define SetColorPSOutput \
+    color = sample2D(SpriteTexture, input.TexCoord) * input.Color; \
+	clip(color.a - .01);
+
+struct ColorNormalStandardPSOutput
 {
-	float4 Color: COLOR0;
-    float4 Normal: COLOR1;
+	float4 Color: SV_Target0;
+    float4 Normal: SV_Target1;
 };
 
-StandardPSOutput StandardPS(VSOutput input)
+ColorNormalStandardPSOutput ColorNormalStandardPS(VSOutput input)
 {
-	StandardPSOutput output;
+    float4 color;
+	ColorNormalStandardPSOutput output;
 
-    output.Color = sample2D(SpriteTexture, input.TexCoord) * input.Color;
+    SetColorPSOutput;
+    
+    output.Color = color;
     output.Normal = sample2D(NormalBuffer, input.TexCoord);
-
+    
     return output;
+}
+
+float4 ColorStandardPS(VSOutput input) : SV_Target
+{
+    float4 color;
+    
+    SetColorPSOutput;
+
+    return color;
 }
 
 VSOutput StandardVS(VSInput input)
@@ -52,6 +69,7 @@ VSOutput StandardVS(VSInput input)
     
     output.Position = mul(input.Position, MatrixTransform);
     output.Color = input.Color;
+    // We don't want existing alpha data overwritten, so we just multiply the current value by the parameter.
     output.Color.a *= Alpha;
     output.Color.rgb *= Alpha;    
     output.TexCoord = input.TexCoord;
@@ -59,11 +77,20 @@ VSOutput StandardVS(VSInput input)
     return output;
 }
 
-technique SpriteBatch
+technique ColorStandard
 {
     pass
     {
         VertexShader = compile VS_MODEL StandardVS();
-        PixelShader = compile PS_MODEL StandardPS();
+        PixelShader = compile PS_MODEL ColorStandardPS();
+    }
+};
+
+technique ColorNormalStandard
+{
+    pass
+    {
+        VertexShader = compile VS_MODEL StandardVS();
+        PixelShader = compile PS_MODEL ColorNormalStandardPS();
     }
 };

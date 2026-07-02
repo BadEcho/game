@@ -61,7 +61,7 @@ public sealed class PointLightEffect : OrthographicEffect
         get => _lightSharpnessParam.GetValueSingle();
         set => _lightSharpnessParam.SetValue(value);
     }
-    
+
     /// <inheritdoc/>
     public override Effect Clone()
         => new PointLightEffect(this);

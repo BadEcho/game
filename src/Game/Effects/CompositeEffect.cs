@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Effects;
@@ -24,6 +25,9 @@ public sealed class CompositeEffect : Effect
     private EffectParameter _ambientLightParam;
     private EffectParameter _lightBufferParam;
 
+    private EffectParameter _screenSizeParam;
+
+    private EffectParameter _boxBlurStrideParam;
     /// <summary>
     /// Initializes a new instance of the <see cref="CompositeEffect"/> class.
     /// </summary>
@@ -42,6 +46,16 @@ public sealed class CompositeEffect : Effect
         : base(cloneSource)
     {
         CacheEffectParameters();
+    }
+
+    /// <summary>
+    /// Gets or sets strength of the blur that affects the number of nearby pixels the filter moves across.
+    /// </summary>
+    /// <remarks>The blur will affect the compositing of the light buffer, specifically the shadow data found in it.</remarks>
+    public float BoxBlurStride
+    {
+        get => _boxBlurStrideParam.GetValueSingle();
+        set => _boxBlurStrideParam.SetValue(value);
     }
 
     /// <summary>
@@ -65,12 +79,32 @@ public sealed class CompositeEffect : Effect
     /// <inheritdoc/>
     public override Effect Clone()
         => new CompositeEffect(this);
-  
+
+    /// <summary>
+    /// The size of the screen, used by the shader to calculate the size of a pixel.
+    /// </summary>
+    private Vector2 ScreenSize
+        => _screenSizeParam.GetValueVector2();
+
+    /// <inheritdoc/>
+    protected override void OnApply()
+    {
+        base.OnApply();
+
+        Viewport viewport = GraphicsDevice.Viewport;
+
+        _screenSizeParam.SetValue(new Vector2(viewport.Width, viewport.Height));
+    }
+
     [MemberNotNull(nameof(_ambientLightParam),
-                   nameof(_lightBufferParam))]
+                   nameof(_lightBufferParam), 
+                   nameof(_screenSizeParam),
+                   nameof(_boxBlurStrideParam))]
     private void CacheEffectParameters()
     {
         _ambientLightParam = Parameters[nameof(AmbientLight)];
         _lightBufferParam = Parameters[nameof(LightBuffer)];
+        _screenSizeParam = Parameters[nameof(ScreenSize)];
+        _boxBlurStrideParam = Parameters[nameof(BoxBlurStride)];
     }
 }

@@ -20,22 +20,51 @@ namespace BadEcho.Game.Effects;
 /// </summary>
 public static class SpriteBatchExtensions
 {
-    /// <summary>
-    /// Begins a new sprite and text batch with the specified render states.
-    /// </summary>
-    /// <param name="spriteBatch">The <see cref="SpriteBatch" /> instance to begin the new batch with.</param>
-    /// <param name="renderStates">The device render states to use with the new batch.</param>
-    public static void Begin(this SpriteBatch spriteBatch, RenderStates renderStates)
+    /// <param name="spriteBatch">A <see cref="SpriteBatch" /> instance.</param>
+    extension(SpriteBatch spriteBatch)
     {
-        Require.NotNull(spriteBatch, nameof(spriteBatch));
-        Require.NotNull(renderStates, nameof(renderStates));
+        /// <summary>
+        /// Begins a new sprite and text batch with the specified render states.
+        /// </summary>
+        /// <param name="renderStates">The device render states to use with the new batch.</param>
+        public void Begin(RenderStates renderStates)
+        {
+            Require.NotNull(spriteBatch, nameof(spriteBatch));
+            Require.NotNull(renderStates, nameof(renderStates));
 
-        spriteBatch.Begin(renderStates.SortMode,
-                          renderStates.BlendState,
-                          renderStates.SamplerState,
-                          renderStates.DepthStencilState,
-                          renderStates.RasterizerState,
-                          renderStates.Effect,
-                          renderStates.MatrixTransform);
+            var effect = new StandardEffect(spriteBatch.GraphicsDevice)
+                         {
+                             Alpha = renderStates.Alpha ?? 1.0f,
+                             MatrixTransform = renderStates.MatrixTransform
+                         };
+
+            spriteBatch.Begin(renderStates.SortMode,
+                              renderStates.BlendState,
+                              renderStates.SamplerState,
+                              renderStates.DepthStencilState,
+                              renderStates.RasterizerState,
+                              effect,
+                              renderStates.MatrixTransform);
+        }
+
+        /// <summary>
+        /// Begins a new sprite and text batch with the specified render states.
+        /// </summary>
+        /// <param name="renderStates">The device render states to use with the new batch.</param>
+        /// <param name="effect">An effect to override the default sprite effect with.</param>
+        public void Begin(RenderStates renderStates, Effect effect)
+        {
+            Require.NotNull(spriteBatch, nameof(spriteBatch));
+            Require.NotNull(renderStates, nameof(renderStates));
+            Require.NotNull(effect, nameof(effect));
+
+            spriteBatch.Begin(renderStates.SortMode,
+                              renderStates.BlendState,
+                              renderStates.SamplerState,
+                              renderStates.DepthStencilState,
+                              renderStates.RasterizerState,
+                              effect,
+                              renderStates.MatrixTransform);
+        }
     }
 }

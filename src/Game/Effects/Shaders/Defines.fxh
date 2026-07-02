@@ -19,6 +19,7 @@
 	#define _vs(r)  : register(vs, r)
 	#define _ps(r)  : register(ps, r)
 	#define _cb(r)
+	#define SV_POSITION POSITION
 	#define VS_MODEL vs_3_0	
 	#define PS_MODEL ps_3_0
 	
@@ -28,6 +29,20 @@
 	#define sample2D(texture, texCoord) tex2D(texture##Sampler, texCoord)
 	#define declare_texture(name, index) \
 		sampler2D name : register(s##index);
+#elif VULKAN
+	#define _vs(r)
+	#define _ps(r)
+	#define _cb(r)
+	#define VS_MODEL vs_6_0
+	#define PS_MODEL ps_6_0
+
+	#define BEGIN_PARAMETERS    cbuffer Parameters : register(b0) {
+	#define END_PARAMETERS      };
+
+	#define sample2D(texture, texCoord) texture.Sample(texture##Sampler, texCoord)
+	#define sampler2D SamplerState
+	#define declare_texture(name, index) \
+		Texture2D<float4> name : register(t##index);
 #else
 	#define _vs(r)
 	#define _ps(r)

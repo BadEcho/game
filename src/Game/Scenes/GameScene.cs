@@ -26,7 +26,6 @@ public abstract class GameScene : IDisposable
     private const Transitions MOVEMENT_FLAGS =
         Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
 
-    private StandardEffect? _alphaEffect;
     private bool _isClosing;
     private bool _disposed;
 
@@ -42,6 +41,7 @@ public abstract class GameScene : IDisposable
         Game = game;
 
         RenderStates = new RenderStates(SpriteSortMode.Deferred,
+                                        Matrix.Identity,
                                         BlendState.AlphaBlend,
                                         SamplerState.PointClamp);
     }
@@ -208,15 +208,11 @@ public abstract class GameScene : IDisposable
         bool clippingEnabled
             = TransitionStatus is TransitionStatus.Entered or TransitionStatus.Exited || ClipDuringTransitions;
 
-        _alphaEffect ??= new StandardEffect(spriteBatch.GraphicsDevice);
-        _alphaEffect.Alpha = alpha;
-        _alphaEffect.MatrixTransform = transform;
-
         RenderStates = RenderStates with
                        {
                            RasterizerState = new RasterizerState { ScissorTestEnable = clippingEnabled },
-                           Effect = _alphaEffect,
-                           MatrixTransform = transform
+                           MatrixTransform = transform,
+                           Alpha = alpha
                        };
         
         DrawCore(spriteBatch);

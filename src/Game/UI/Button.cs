@@ -159,7 +159,7 @@ public sealed class Button : Control<Button>
         => _innerPanel.Draw(spriteBatch);
 
     /// <inheritdoc/>
-    protected override void DrawPrimitivesCore(IStandardEffect? effect)
+    protected override void DrawPrimitivesCore(Matrix? transform, float alpha)
     { }
 
     /// <inheritdoc/>

@@ -107,7 +107,7 @@ DistanceVSOutput DistanceVS(DistanceVSInput input)
 }
 
 // A pixel shader to use for normal- and large-sized text.
-float4 DistancePS(DistanceVSOutput input) : COLOR
+float4 DistancePS(DistanceVSOutput input) : SV_Target
 {   // Divide the distance field range by the atlas size to give us a distance range applicable to texels.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float3 sample = sample2D(Texture, input.TexCoord).rgb;
@@ -127,7 +127,7 @@ float4 DistancePS(DistanceVSOutput input) : COLOR
 }
 
 // A pixel shader to use for normal- and large-sized outlined text.
-float4 StrokedDistancePS(DistanceVSOutput input) : COLOR
+float4 StrokedDistancePS(DistanceVSOutput input) : SV_Target
 {   // Refer to DistancePS for documentation on the code common to both shaders.
     float2 texelDistanceRange = DistanceRange / AtlasSize;
     float medianSample = Median(sample2D(Texture, input.TexCoord).rgb);
@@ -155,7 +155,7 @@ float4 StrokedDistancePS(DistanceVSOutput input) : COLOR
 // A pixel shader to use for small- and normal-sized text.
 // This will render small-sized text more accurately without artifacts. As the text size increases however, the text may appear 'phatter' than it should.
 // In that case, use the standard DistancePS.
-float4 SmallDistancePS(DistanceVSOutput input) : COLOR
+float4 SmallDistancePS(DistanceVSOutput input) : SV_Target
 {   // A downside of SDF fonts is that small font sizes will experience a degradation in quality when working from the same, large
     // resolution font atlas that all other sizes are working from. Because creating a separate font atlas specifically for small font sizes
     // defeats the purpose of MSDF altogether, a special shader needs to be provided for when the font size is small enough.
@@ -181,7 +181,7 @@ float4 SmallDistancePS(DistanceVSOutput input) : COLOR
 // A pixel shader to use for small- and normal-sized outlined text.
 // This will render small-sized outline text more accurately without artifacts; however, as text continues to decrease in size, eventually it becomes
 // unfeasible to try outline text due to the ever-shrinking amount of fill pixels that can be replaced.
-float4 StrokedSmallDistancePS(DistanceVSOutput input) : COLOR
+float4 StrokedSmallDistancePS(DistanceVSOutput input) : SV_Target
 {   // Refer to SmallDistancePS and StrokedDistancePS for documentation on code common to both shaders.
     float2 pixelCoord = input.TexCoord * AtlasSize;
     float2 Jdx = ddx(pixelCoord);

@@ -11,16 +11,17 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework.Graphics;
+
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines a generated model of 3D triangle primitives for rendering.
+/// Defines a shader effect.
 /// </summary>
-public interface IPrimitiveModel : IDisposable
+public interface IEffect
 {
     /// <summary>
-    /// Draws the model to the screen.
+    /// Gets or sets the active technique.
     /// </summary>
-    /// <param name="effect">Custom shaders that support texture mapping to be used during the rendering of this model.</param>
-    void Draw(ITextureEffect effect);
+    EffectTechnique CurrentTechnique { get; set; }
 }

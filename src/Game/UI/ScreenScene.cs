@@ -52,13 +52,15 @@ public abstract class ScreenScene : GameScene
     /// <inheritdoc/>
     protected override void DrawCore(SpriteBatch spriteBatch)
     {
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
+
         spriteBatch.Begin(RenderStates);
 
         _screen.Draw(spriteBatch);
 
         spriteBatch.End();
 
-        _screen.DrawPrimitives(RenderStates.Effect);
+        _screen.DrawPrimitives(RenderStates.MatrixTransform, RenderStates.Alpha ?? 1.0f);
     }
 
     /// <inheritdoc/>

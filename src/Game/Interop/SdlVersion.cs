@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -11,28 +11,26 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
-namespace BadEcho.Game;
+namespace BadEcho.Game.Interop;
 
 /// <summary>
-/// Defines shaders that support a standard set of parameters.
+/// Represents information about the version of SDL in use.
 /// </summary>
-public interface IStandardEffect
+/// <suppressions>
+/// ReSharper disable InconsistentNaming
+/// </suppressions>
+internal struct SdlVersion
 {
     /// <summary>
-    /// Gets or sets an optional matrix to apply to position, rotation, scale, and depth data.
+    /// The major version.
     /// </summary>
-    Matrix? MatrixTransform { get; set; }
-
+    public byte major;
     /// <summary>
-    /// Gets or sets the transparency of the material being rendered.
+    /// The minor version.
     /// </summary>
-    float Alpha { get; set; }
-
+    public byte minor;
     /// <summary>
-    /// Gets or sets the active technique.
+    /// The patch/update version.
     /// </summary>
-    EffectTechnique CurrentTechnique { get; set; }
+    public byte patch;
 }

@@ -20,9 +20,9 @@ sampler2D NormalBufferSampler : register(s0) = sampler_state
 };
 
 BEGIN_PARAMETERS
-    float LightBrightness _ps(c0) _cb(c0);
-    float LightSharpness _ps(c1) _cb(c1);	
-	float4x4 MatrixTransform _vs(c2) _cb(c2);
+    float LightBrightness;
+    float LightSharpness;
+	float4x4 MatrixTransform;
 END_PARAMETERS
 
 struct PointLightVSOutput
@@ -58,7 +58,7 @@ PointLightVSOutput PointLightVS(VSInput input)
     return output;
 }
 
-float4 PointLightPS(PointLightVSOutput input) : COLOR
+float4 PointLightPS(PointLightVSOutput input) : SV_Target
 {
     float distance = length(input.TexCoord - 0.5);
     float range = 5;
@@ -94,8 +94,7 @@ float4 PointLightPS(PointLightVSOutput input) : COLOR
     // Calculate the degree to which the normal and light vectors are pointing in the same direction.
     float lightAmount = (dot(normalDir, lightDir));
 
-    color.a *= lightAmount;
-    //color.a = falloff;
+    color.a *= lightAmount;    
 
     return color;
 }

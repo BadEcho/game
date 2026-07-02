@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Remove="Properties\Effects.resources" />
+		<None Remove="Effects\Shaders\*.mgfxo" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -46,22 +46,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<UpToDateCheckInput Include="Effects\Shaders\*.fx"/>
-		<ShaderInput Include="Effects\Shaders\*.fx">
-			<Visible>true</Visible>
-		</ShaderInput>
-		<ShaderOutput Include="Effects\Shaders.resources">
-			<Visible>false</Visible>
-		</ShaderOutput>
+		<UpToDateCheckInput Include="Effects\Shaders\*.fx" />
+		<ShaderInput Include="Effects\Shaders\*.fx" />
+		<ShaderOutput Include="Effects\Shaders.resources" />
 	</ItemGroup>
 
-	<Target Name="RestoreDotnetTools" BeforeTargets="RebuildShaders">
-		<Message Text="Restoring dotnet tools" Importance="High" />
+	<Target Name="RestoreDotnetTools" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
 		<Exec Command="dotnet tool restore" />
 	</Target>
 
-	<Target Name="RebuildShaders" BeforeTargets="BeforeBuild" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
-		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShaders.cmd"/>
+	<Target Name="CompileShaders" BeforeTargets="BeforeBuild" DependsOnTargets="RestoreDotnetTools" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
+		<Exec Command="$(MSBuildThisFileDirectory)Effects\Shaders\RebuildShader.cmd %(ShaderInput.Identity)" />
 	</Target>
 
+	<Target Name="CreateShaderResources" AfterTargets="CompileShaders" Inputs="@(ShaderInput)" Outputs="@(ShaderOutput)">
+		<Exec Command="dotnet tool run resource-creator $(MSBuildThisFileDirectory)Effects\Shaders -f *.mgfxo -o $(MSBuildThisFileDirectory)Effects\Shaders.resources" />
+	</Target>
+	<ItemGroup>
+		<Watch Include="**\*.fx"/>
+	</ItemGroup>
 </Project>

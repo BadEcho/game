@@ -11,16 +11,26 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-namespace BadEcho.Game;
+using System.Runtime.InteropServices;
+
+namespace BadEcho.Game.Interop;
 
 /// <summary>
-/// Defines a generated model of 3D triangle primitives for rendering.
+/// Represents custom window manager information.
 /// </summary>
-public interface IPrimitiveModel : IDisposable
+[StructLayout(LayoutKind.Sequential)]
+internal struct SdlWindowManagerInfo
 {
     /// <summary>
-    /// Draws the model to the screen.
+    /// The version of SDL.
     /// </summary>
-    /// <param name="effect">Custom shaders that support texture mapping to be used during the rendering of this model.</param>
-    void Draw(ITextureEffect effect);
+    public SdlVersion version;
+    /// <summary>
+    /// The subsystem type for the window.
+    /// </summary>
+    public SdlWindowManagerType subsystem;
+    /// <summary>
+    /// The handle to the underlying native window.
+    /// </summary>
+    public nint window;
 }

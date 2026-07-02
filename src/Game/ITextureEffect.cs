@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -16,9 +16,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace BadEcho.Game;
 
 /// <summary>
-/// Defines shaders that support mapping a texture onto vertex data.
+/// Defines an effect that supports mapping a texture onto vertex data.
 /// </summary>
-public interface ITextureEffect : IStandardEffect
+public interface ITextureEffect : IEffect
 {
     /// <summary>
     /// Gets or sets the texture to be applied by this effect.

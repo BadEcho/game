@@ -453,12 +453,12 @@ public abstract class Control<TSelf> : IControl
     }
 
     /// <inheritdoc/>
-    public void DrawPrimitives(IStandardEffect? effect)
+    public void DrawPrimitives(Matrix? transform, float alpha)
     {
         if (!IsVisible)
             return;
 
-        DrawPrimitivesCore(effect);
+        DrawPrimitivesCore(transform, alpha);
     }
 
     /// <inheritdoc/>
@@ -613,8 +613,9 @@ public abstract class Control<TSelf> : IControl
     /// <summary>
     /// Executes the custom rendering logic required to draw primitives required by the control to the screen.
     /// </summary>
-    /// <param name="effect">Shaders currently being used during rendering passes, if any.</param>
-    protected abstract void DrawPrimitivesCore(IStandardEffect? effect);
+    /// <param name="transform">An optional matrix to apply to position, rotation, scale, and depth data.</param>
+    /// <param name="alpha">The transparency of the material being rendered.</param>
+    protected abstract void DrawPrimitivesCore(Matrix? transform, float alpha);
 
     /// <summary>
     /// When overridden in a derived class, provides custom logic for selecting the background visual of the control based on its

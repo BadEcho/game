@@ -72,7 +72,7 @@ public sealed class Label : Control<Label>
     { }
 
     /// <inheritdoc/>
-    protected override void DrawPrimitivesCore(IStandardEffect? effect)
+    protected override void DrawPrimitivesCore(Matrix? transform, float alpha)
     {
         if (_textRenderer == null)
         {
@@ -81,13 +81,8 @@ public sealed class Label : Control<Label>
         }
 
         Matrix textTranslation = Matrix.CreateTranslation(ContentBounds.X, ContentBounds.Y, 0);
-        float alpha = 1.0f;
 
-        if (effect != null)
-        {
-            textTranslation *= effect.MatrixTransform ?? Matrix.Identity;
-            alpha = effect.Alpha;
-        }
+        textTranslation *= transform ?? Matrix.Identity;
 
         _textRenderer.Draw(textTranslation, alpha);
     }

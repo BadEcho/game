@@ -93,14 +93,18 @@ public sealed class DistanceFieldFontEffect : Effect, ITextureEffect
         set => _distanceRangeParam.SetValue(value);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets an optional matrix to apply to position, rotation, scale, and depth data.
+    /// </summary>
     public Matrix? MatrixTransform
     {
         get => _matrixParam.GetValueMatrix();
         set => _matrixParam.SetValue(value ?? Matrix.Identity);
     }
 
-    /// <inheritdoc/>
+    /// <summary>
+    /// Gets or sets the transparency of the material being rendered.
+    /// </summary>
     public float Alpha
     {
         get => _alphaParam.GetValueSingle();
