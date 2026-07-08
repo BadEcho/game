@@ -22,6 +22,7 @@ sampler2D SpriteTextureSampler : register(s0) = sampler_state
 BEGIN_PARAMETERS
     float4x4 MatrixTransform;
     float2 LightPosition;
+    float LightRadius;
 END_PARAMETERS
 
 float4 ShadowPS(VSOutput input) : SV_Target
@@ -47,14 +48,33 @@ VSOutput ShadowVS(VSInput input)
 
     // Find the vector pointing from our light to our current vertex.
     float2 lightVector = input.Position.xy - LightPosition;
+	
+    float centerDistance = distance(shadowOrigin, LightPosition) / LightRadius;   
+    
+	// if (abs(centerDistance) <= 0.24)
+	// {
+    //     // The sprite is directly under the light, so render a blob shadow: a flat ellipse beneath the sprite.
+    //     //         float2 localOffset = input.Position.xy - shadowOrigin;
+    //     // float spriteHeight = (shadowOrigin.y - input.Position.y + 2.05) * 2.0;
+    //     // float2 feetOrigin = float2(shadowOrigin.x, shadowOrigin.y + spriteHeight);
+    //     // input.Position.xy = feetOrigin + float2(localOffset.x, localOffset.y * 0.25);
+    //     float2 localOffset = input.Position.xy - shadowOrigin;
+    //     input.Position.xy = shadowOrigin + float2(localOffset.x, localOffset.y * 0.25);
+    //     input.Position.y += 4;
+	// }
 
     // Ensure the light vector is not a zero vector (which would happen if the vertex is exactly on the light) in order to prevent a divide-by-zero error with normalize().
-    if (any(lightVector))
+     if (any(lightVector))
     {   // This is the unit vector that will point in the direction the shadow will be cast.
         float2 castDir = normalize(lightVector);
+        // castDir.x = clamp(castDir.x, -0.8, 0.8);
+        // castDir.y = clamp(castDir.y, -0.8, 0.8);
 
         // Get coordinates in world space relative to the sprite's center. This is needed in order to pivot the shadow around the desired center.
         float2 localOffset = input.Position.xy - shadowOrigin;
+        //localOffset = (abs(lightVector) < abs(localOffset)) ? (lightVector) * localOffset/localOffset : localOffset;
+         localOffset.x = (abs(lightVector.x) < abs(localOffset.x) && abs(lightVector.y) < abs(localOffset.y)) ? abs(lightVector.x) * abs(localOffset.x) / localOffset.x : localOffset.x;
+         localOffset.y = (abs(lightVector.y) < abs(localOffset.y) && abs(lightVector.x) < abs(localOffset.x)) ? abs(lightVector.y) * abs(localOffset.y) / localOffset.y : localOffset.y;
 
         // We use the shadow cast direction and the following unit vector to define a rotated coordinate frame aligned to the light.        
         // The shadow cast direction rotated 90 degrees counter-clockwise. This basically gives us the direction of the shadow's width.
