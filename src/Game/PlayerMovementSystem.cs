@@ -27,23 +27,39 @@ public sealed class PlayerMovementSystem : Component
     private const Keys MOVEMENT_RIGHT = Keys.D;
     private const Keys MOVEMENT_DOWN = Keys.S;
     // TODO: Will be configurable based on entity.
-    private const float VELOCITY_MAX = 50f;
-    private const float VELOCITY_MIN = -50f;
+    private const float VELOCITY_MAX = 120f;
+    private const float VELOCITY_MIN = -120f;
+    private const float ACCELERATION = 5;
+    private const float DECELERATION = 15f;
 
     /// <inheritdoc/>
     public override bool Update(IEntity entity, GameUpdateTime time)
     {
         Require.NotNull(entity, nameof(entity));
+        
+        var deltaTime = (float) time.ElapsedGameTime.TotalSeconds;
 
-        float xVelocity = CalculateUpdatedVelocity(MOVEMENT_RIGHT, MOVEMENT_LEFT);
-        float yVelocity = CalculateUpdatedVelocity(MOVEMENT_DOWN, MOVEMENT_UP);
+        float xTarget = CalculateTargetVelocity(MOVEMENT_RIGHT, MOVEMENT_LEFT);
+        float yTarget= CalculateTargetVelocity(MOVEMENT_DOWN, MOVEMENT_UP);
 
-        entity.Velocity = new Vector2(xVelocity, yVelocity);
+        Vector2 updatedVelocity = new Vector2(xTarget, yTarget);
+        
+        float change = ACCELERATION;
+        
+        if (updatedVelocity == Vector2.Zero)
+            change = DECELERATION;
+        
+        updatedVelocity = Vector2.Lerp(entity.Velocity, updatedVelocity, change * deltaTime);
+        
+        if (updatedVelocity.LengthSquared() - 0.5f < 0)
+            updatedVelocity = Vector2.Zero;
+
+        entity.Velocity = updatedVelocity;
 
         return true;
     }
     
-    private static float CalculateUpdatedVelocity(Keys positiveDirectionKey, Keys negativeDirectionKey)
+    private static float CalculateTargetVelocity(Keys positiveDirectionKey, Keys negativeDirectionKey)
     {
         KeyboardState keyboardState = Keyboard.GetState();
 
@@ -53,6 +69,8 @@ public sealed class PlayerMovementSystem : Component
         if (!positiveMovement && !negativeMovement)
             return 0;
 
-        return positiveMovement ? VELOCITY_MAX : VELOCITY_MIN;
+        var targetVelocity = positiveMovement ? VELOCITY_MAX : VELOCITY_MIN;
+
+        return targetVelocity;
     }
 }
