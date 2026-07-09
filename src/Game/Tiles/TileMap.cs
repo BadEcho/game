@@ -162,6 +162,9 @@ public sealed class TileMap : Extensible, IModelRenderer, IDisposable
     /// <param name="time">The game timing configuration and state for this update.</param>
     public void Update(GameUpdateTime time)
     {
+        if (_layerModelMap.Count == 0)
+            CreateModels();
+
         foreach (AnimatedTileModelData tileData in _animatedTiles)
         {
             tileData.Update(time);
