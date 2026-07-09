@@ -213,6 +213,7 @@ public sealed class DeferredRenderer : IDisposable
             _device.Clear(ClearOptions.Stencil, Color.Black, 0, 1);
             
             _shadowEffect.LightPosition = light.Position;
+            _shadowEffect.LightRadius = light.Radius;
             _shadowEffect.MatrixTransform = renderStates.MatrixTransform;
             
             spriteBatch.Begin(renderStates with
