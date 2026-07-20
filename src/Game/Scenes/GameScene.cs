@@ -271,9 +271,7 @@ public abstract class GameScene : IDisposable
     /// </summary>
     /// <param name="manager">The scene manager this scene is being loaded into.</param>
     protected virtual void OnLoad(SceneManager manager)
-    {
-        Require.NotNull(manager, nameof(manager));
-    }
+    { }
 
     /// <summary>
     /// Releases unmanaged and (optionally) managed resources.

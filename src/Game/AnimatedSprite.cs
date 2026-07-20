@@ -23,7 +23,7 @@ public sealed class AnimatedSprite : Sprite
 {
     private readonly SpriteSheet _sheet;
     private SpriteAnimation _currentAnimation;
-    private MovementDirection _currentDirection; 
+    private MovementDirection? _currentDirection; 
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AnimatedSprite"/> class.
@@ -45,11 +45,13 @@ public sealed class AnimatedSprite : Sprite
 
         if (_currentDirection != newDirection)
         {
-            if (newDirection == MovementDirection.None)
+            string animationName = newDirection.ToString();
+
+            if (!_sheet.HasAnimation(animationName))
                 _currentAnimation.Pause();
             else
             {
-                _currentAnimation = _sheet.GetAnimation(newDirection.ToString());
+                _currentAnimation = _sheet.GetAnimation(animationName);
                 _currentAnimation.Play();
             }
 

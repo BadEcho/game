@@ -99,6 +99,14 @@ public sealed class SpriteSheet
     }
 
     /// <summary>
+    /// Checks if a sprite animation for the specified name exists.
+    /// </summary>
+    /// <param name="name">The name to check for.</param>
+    /// <returns>True if an animation for <c>name</c> exists; otherwise, false.</returns>
+    public bool HasAnimation(string name)
+        => _nameAnimationMap.ContainsKey(name);
+
+    /// <summary>
     /// Gets the named sprite animation.
     /// </summary>
     /// <param name="name">The name of the sprite animation.</param>

@@ -42,7 +42,7 @@ public sealed class PlayerMovementSystem : Component
         float xTarget = CalculateTargetVelocity(MOVEMENT_RIGHT, MOVEMENT_LEFT);
         float yTarget= CalculateTargetVelocity(MOVEMENT_DOWN, MOVEMENT_UP);
 
-        Vector2 updatedVelocity = new Vector2(xTarget, yTarget);
+        var updatedVelocity = new Vector2(xTarget, yTarget);
         
         float change = ACCELERATION;
         
