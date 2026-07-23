@@ -63,6 +63,6 @@
 		<Exec Command="dotnet tool run resource-creator $(MSBuildThisFileDirectory)Effects\Shaders -f *.mgfxo -o $(MSBuildThisFileDirectory)Effects\Shaders.resources" />
 	</Target>
 	<ItemGroup>
-		<Watch Include="**\*.fx"/>
+		<Watch Include="**\*.fx" />
 	</ItemGroup>
 </Project>
