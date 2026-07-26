@@ -123,3 +123,8 @@ $endif
 /importer:SpriteSheetImporter
 /processor:SpriteSheetProcessor
 /build:Images/StickMan.spritesheet
+
+#begin Areas/Simple.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/Simple.area

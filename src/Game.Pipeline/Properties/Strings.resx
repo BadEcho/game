@@ -138,6 +138,9 @@
   <data name="AtlasRegionNoRightSlices" xml:space="preserve">
 		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its right side.</value>
 	</data>
+	<data name="AreaIsNull" xml:space="preserve">
+		<value>The .area asset identified by {0} consists of a single 'null' literal token, which cannot be processed as an area. A JSON document conforming to the .area schema found at https://BadEcho.com/area.json must be provided.</value>
+	</data>
   <data name="SheetIsNull" xml:space="preserve">
 	  <value>The .spritesheet asset identified by {0} consists of a single 'null' literal token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at https://BadEcho.com/spritesheet.json must be provided.</value>
   </data>
@@ -189,6 +192,9 @@
 	<data name="ImportingDependency" xml:space="preserve">
 		<value>Adding dependency: {0}</value>
 	</data>
+	<data name="ImportingArea" xml:space="preserve">
+		<value>Importing area: {0}</value>
+	</data>
   <data name="ImportingSpriteSheet" xml:space="preserve">
 		<value>Importing sprite sheet: {0}</value>
 	</data>
@@ -203,6 +209,9 @@
 	</data>
   <data name="ProcessingFinished" xml:space="preserve">
 		<value>Finished processing {0}</value>
+	</data>
+	<data name="ProcessingArea" xml:space="preserve">
+		<value>Processing area: {0}</value>
 	</data>
   <data name="ProcessingSpriteSheet" xml:space="preserve">
 		<value>Processing sprite sheet: {0}</value>

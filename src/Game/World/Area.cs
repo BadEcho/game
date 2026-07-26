@@ -28,40 +28,53 @@ public sealed class Area : IDisposable
     private readonly List<Sprite> _actors = [];
     private readonly List<ILight> _lights = [];
     private readonly CollisionEngine _collisionEngine;
-    private readonly TileMap _tileMap;
 
-    private bool _collidersRegistered;
     private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Area"/> class.
     /// </summary>
+    /// <param name="device">The graphics device used for rendering.</param>
     /// <param name="tileMap">The tile map defining the layout of this area.</param>
-    public Area(TileMap tileMap)
+    public Area(GraphicsDevice device, TileMap tileMap)
     {
+        Require.NotNull(device, nameof(device));
         Require.NotNull(tileMap, nameof(tileMap));
+        
+        TileMap = tileMap;
 
-        _tileMap = tileMap;
+        PresentationParameters parameters = device.PresentationParameters;
 
-        var bounds = new RectangleF(PointF.Empty,
-                                    new SizeF(tileMap.Size.Width * tileMap.TileSize.Width,
-                                              tileMap.Size.Height * tileMap.TileSize.Height));
+        var bounds = new RectangleF(new PointF(-parameters.BackBufferWidth, -parameters.BackBufferHeight),
+                                    new SizeF(-parameters.BackBufferWidth * 2,
+                                              -parameters.BackBufferHeight * 2));
 
         _collisionEngine = new CollisionEngine(bounds);
+
+        foreach (Collider tileCollider in TileMap.ToCollidableMap())
+        {
+            _collisionEngine.Register(tileCollider);
+        }
     }
 
     /// <summary>
     /// Gets the tile map defining the layout of this area.
     /// </summary>
-    public TileMap TileMap
-        => _tileMap;
+    public TileMap TileMap 
+    { get; }
+
+    /// <summary>
+    /// Gets or sets the human-readable name for the area.
+    /// </summary>
+    public string Name
+    { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets the size of this area, measured in pixels.
     /// </summary>
     public SizeF Size
-        => new(_tileMap.Size.Width * _tileMap.TileSize.Width,
-               _tileMap.Size.Height * _tileMap.TileSize.Height);
+        => new(TileMap.Size.Width * TileMap.TileSize.Width,
+               TileMap.Size.Height * TileMap.TileSize.Height);
 
     /// <summary>
     /// Gets or sets the amount of ambient light applied to this area when its composite image is drawn.
@@ -90,9 +103,7 @@ public sealed class Area : IDisposable
         Require.NotNull(actor, nameof(actor));
 
         _actors.Add(actor);
-
-        if (_collidersRegistered)
-            _collisionEngine.Register(actor.Collider);
+        _collisionEngine.Register(actor.Collider);
     }
 
     /// <summary>
@@ -107,27 +118,6 @@ public sealed class Area : IDisposable
     }
 
     /// <summary>
-    /// Wires all of this area's colliders, including those of its tile map and actors, to its collision engine.
-    /// </summary>
-    public void Load()
-    {
-        if (_collidersRegistered)
-            return;
-
-        foreach (Collider tileCollider in _tileMap.ToCollidableMap())
-        {
-            _collisionEngine.Register(tileCollider);
-        }
-
-        foreach (Sprite actor in _actors)
-        {
-            _collisionEngine.Register(actor.Collider);
-        }
-
-        _collidersRegistered = true;
-    }
-
-    /// <summary>
     /// Advances the state of this area's tile map and actors by one tick, then processes collisions.
     /// </summary>
     /// <param name="time">The game timing configuration and state for this update.</param>
@@ -135,7 +125,7 @@ public sealed class Area : IDisposable
     {
         Require.NotNull(time, nameof(time));
 
-        _tileMap.Update(time);
+        TileMap.Update(time);
 
         foreach (Sprite actor in _actors)
         {
@@ -163,7 +153,7 @@ public sealed class Area : IDisposable
         // Color + normal phase: tile map and actors.
         renderer.StartColorPhase(worldStates);
 
-        _tileMap.Draw(view);
+        TileMap.Draw(view);
 
         spriteBatch.Begin(worldStates);
 
@@ -189,7 +179,7 @@ public sealed class Area : IDisposable
             return;
 
         _collisionEngine.UnregisterAll();
-        _tileMap.Dispose();
+        TileMap.Dispose();
 
         _disposed = true;
     }
