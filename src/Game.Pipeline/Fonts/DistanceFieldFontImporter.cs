@@ -44,8 +44,7 @@ public sealed class DistanceFieldFontImporter : ContentImporter<DistanceFieldFon
 
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.FontPath));
 
-        asset.FontPath
-            = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.FontPath);
+        asset.FontPath = NormalizeDependencyPath(filename, asset.FontPath);
 
         string name = Path.GetFileNameWithoutExtension(asset.FontPath);
 

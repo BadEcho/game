@@ -28,8 +28,9 @@ public class TextureAtlasTests : IClassFixture<ContentManagerFixture>
     public void Load_BlackShuttleGrass_NotNull()
     {
         TextureAtlas atlas = _content.Load<TextureAtlas>("Atlases\\BlackShuttleGrass");
-
+        
         Assert.NotNull(atlas);
+        Assert.NotNull(atlas.Texture);
     }
 
     [Fact]

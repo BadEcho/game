@@ -34,17 +34,16 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
 
         XElement assetRoot = XElement.Load(filename);
         var asset = new TileMapAsset(assetRoot);
-        string mapDirectory = Path.GetDirectoryName(filename) ?? string.Empty;
 
-        ImportTileSets(asset, mapDirectory, context);
-        ImportLayers(asset, mapDirectory, context);
+        ImportTileSets(asset, filename, context);
+        ImportLayers(asset, filename, context);
 
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));
 
         return new TileMapContent(asset) { Identity = new ContentIdentity(filename) };
     }
 
-    private static void ImportTileSets(TileMapAsset asset, string mapDirectory, ContentImporterContext context)
+    private static void ImportTileSets(TileMapAsset asset, string assetPath, ContentImporterContext context)
     {
         foreach (TileSetAsset tileSet in asset.TileSets)
         {
@@ -52,7 +51,7 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
             {   // This is a referenced tile set that is defined in its own file.
                 context.Log(Strings.ImportingDependency.InvariantFormat(tileSet.Source));
 
-                tileSet.Source = Path.Combine(mapDirectory, tileSet.Source);
+                tileSet.Source = NormalizeDependencyPath(assetPath, tileSet.Source);
 
                 context.AddDependency(tileSet.Source);
             }
@@ -60,14 +59,14 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
             {   // The tile set is embedded inside the map.
                 context.Log(Strings.ImportingDependency.InvariantFormat(tileSet.Image.Source));
 
-                tileSet.Image.Source = Path.Combine(mapDirectory, tileSet.Image.Source);
+                tileSet.Image.Source = NormalizeDependencyPath(assetPath, tileSet.Image.Source);
 
                 context.AddDependency(tileSet.Image.Source);
             }
         }
     }
 
-    private static void ImportLayers(TileMapAsset asset, string mapDirectory, ContentImporterContext context)
+    private static void ImportLayers(TileMapAsset asset, string assetPath, ContentImporterContext context)
     {
         foreach (LayerAsset layer in asset.Layers)
         {
@@ -76,7 +75,7 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
                 case ImageLayerAsset imageLayer:
                     context.Log(Strings.ImportingDependency.InvariantFormat(imageLayer.Image.Source));
 
-                    imageLayer.Image.Source = Path.Combine(mapDirectory, imageLayer.Image.Source);
+                    imageLayer.Image.Source = NormalizeDependencyPath(assetPath, imageLayer.Image.Source);
 
                     context.AddDependency(imageLayer.Image.Source);
                     break;
