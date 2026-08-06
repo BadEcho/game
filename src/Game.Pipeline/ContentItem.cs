@@ -54,6 +54,9 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
     {
         Require.NotNull(context, nameof(context));
 
+        if (_references.ContainsKey(sourcePath))
+            return;
+
         var sourceAsset = new ExternalReference<TContent>(sourcePath);
 
         var reference =
