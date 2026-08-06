@@ -128,3 +128,18 @@ $endif
 /importer:AreaImporter
 /processor:AreaProcessor
 /build:Areas/Simple.area
+
+#begin Areas/NoActors.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/NoActors.area
+
+#begin Areas/MultipleActors.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/MultipleActors.area
+
+#begin Areas/SharedSpriteSheet.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/SharedSpriteSheet.area

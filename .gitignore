@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
+# Generated files
+docs/
+
 # vcpkg build files
 **/vcpkg_installed/
 
