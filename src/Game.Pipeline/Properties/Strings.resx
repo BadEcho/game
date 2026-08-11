@@ -150,6 +150,12 @@
 	<data name="SheetHasNoColumns" xml:space="preserve">
 		<value>The sprite sheet must be configured to have one or more columns in order to be considered valid.</value>
 	</data>
+	<data name="DependencyPathIsEmpty" xml:space="preserve">
+		<value>No path for the dependency '{0}' was provided.</value>
+	</data>
+	<data name="DependencyFileIsADirectory" xml:space="preserve">
+		<value>The dependency '{0}': '{1}' is a directory instead of a file.</value>
+	</data>
   <data name="NoReferenceInContentItem" xml:space="preserve">
 		<value>No reference to the asset '{0}' was found on this content item.</value>
 	</data>

@@ -75,6 +75,19 @@ public class TileSetPipelineTests
         Assert.NotNull(imageReference);
     }
 
+    [Fact]
+    public void Import_EmptyImageSource_ThrowsPipelineException()
+        => Assert.Throws<PipelineException>(
+            () => _importer.Import(GetAssetPath("EmptyImageSource.tsx"), _importerContext));
+
+    [Fact]
+    public void Process_DirectoryImage_ThrowsPipelineException()
+    {
+        TileSetContent content = _importer.Import(GetAssetPath("DirectoryImage.tsx"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+    }
+
     private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")
         => $"{Path.GetDirectoryName(rootPath)}\\Content\\Tiles\\{assetName}";
 }

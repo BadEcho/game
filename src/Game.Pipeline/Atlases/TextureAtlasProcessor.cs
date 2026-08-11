@@ -23,7 +23,7 @@ namespace BadEcho.Game.Pipeline.Atlases;
 /// Provides a processor of texture atlas asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Texture Atlas Processor - Bad Echo")]
-public sealed class TextureAtlasProcessor : ContentProcessor<TextureAtlasContent, TextureAtlasContent>
+public sealed class TextureAtlasProcessor : ContentProcessor<TextureAtlasContent>
 {
     /// <inheritdoc />
     public override TextureAtlasContent Process(TextureAtlasContent input, ContentProcessorContext context)
@@ -44,6 +44,8 @@ public sealed class TextureAtlasProcessor : ContentProcessor<TextureAtlasContent
 
     private static void ValidateAsset(TextureAtlasAsset asset)
     {
+        ValidateDependencyPath(asset.TexturePath);
+
         foreach (TextureRegionAsset region in asset.Regions)
         {
             if (region.NineSliceArea.IsEmpty)

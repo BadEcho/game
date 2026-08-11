@@ -22,15 +22,13 @@ namespace BadEcho.Game.World;
 /// Provides a self-contained, playable region of the game world, composed of a tile map, a population of
 /// sprite actors, and light sources, all wired to a dedicated collision engine.
 /// </summary>
-public sealed class Area : IDisposable
+public sealed class Area
 {
     private readonly List<Sprite> _actors = [];
     private readonly List<Sprite> _actorsWithNormals = [];
     private readonly List<Sprite> _actorsWithShadows = [];
     private readonly List<ILight> _lights = [];
     private readonly CollisionEngine _collisionEngine;
-
-    private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Area"/> class.
@@ -104,6 +102,9 @@ public sealed class Area : IDisposable
     {
         Require.NotNull(actor, nameof(actor));
 
+        if (_actors.Contains(actor))
+            return;
+
         _actors.Add(actor);
 
         if (actor.NormalMap != null)
@@ -123,7 +124,9 @@ public sealed class Area : IDisposable
     {
         Require.NotNull(actor, nameof(actor));
 
-        _actors.Remove(actor);
+        if (!_actors.Remove(actor))
+            return;
+
         _actorsWithNormals.Remove(actor);
         _actorsWithShadows.Remove(actor);
 
@@ -201,17 +204,5 @@ public sealed class Area : IDisposable
         // Composite to screen.
         renderer.Finish();
         renderer.DrawComposite(spriteBatch, AmbientLight);
-    }
-
-    /// <inheritdoc/>
-    public void Dispose()
-    {
-        if (_disposed)
-            return;
-
-        _collisionEngine.UnregisterAll();
-        TileMap.Dispose();
-
-        _disposed = true;
     }
 }

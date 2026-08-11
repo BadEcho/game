@@ -160,6 +160,24 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The dependency &apos;{0}&apos;: &apos;{1}&apos; is a directory instead of a file..
+        /// </summary>
+        internal static string DependencyFileIsADirectory {
+            get {
+                return ResourceManager.GetString("DependencyFileIsADirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No path for the dependency &apos;{0}&apos; was provided..
+        /// </summary>
+        internal static string DependencyPathIsEmpty {
+            get {
+                return ResourceManager.GetString("DependencyPathIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The .sdfont asset identified by {0} consists of a single &apos;null&apos; literal token, which cannot be processed as a distance field font. A JSON document conforming to the .sdfont schema found at https://BadEcho.com/sdfont.json must be provided..
         /// </summary>
         internal static string DistanceFieldFontIsNull {

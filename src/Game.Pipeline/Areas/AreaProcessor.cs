@@ -23,7 +23,7 @@ namespace BadEcho.Game.Pipeline.Areas;
 /// Provides a processor of area asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Area Processor - Bad Echo")]
-public sealed class AreaProcessor : ContentProcessor<AreaContent, AreaContent>
+public sealed class AreaProcessor : ContentProcessor<AreaContent>
 {
     /// <inheritdoc/>
     public override AreaContent Process(AreaContent input, ContentProcessorContext context)
@@ -33,10 +33,14 @@ public sealed class AreaProcessor : ContentProcessor<AreaContent, AreaContent>
 
         context.Log(Strings.ProcessingArea.InvariantFormat(input.Identity.SourceFilename));
 
+        ValidateDependencyPath(input.Asset.TileMapPath);
+
         input.AddReference<TileMapContent>(context, input.Asset.TileMapPath, []);
 
         foreach (AreaActorAsset actor in input.Asset.Actors)
         {
+            ValidateDependencyPath(actor.SpriteSheetPath);
+
             input.AddReference<SpriteSheetContent>(context, actor.SpriteSheetPath, []);
         }
 

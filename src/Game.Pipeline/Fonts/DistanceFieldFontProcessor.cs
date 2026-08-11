@@ -28,7 +28,7 @@ namespace BadEcho.Game.Pipeline.Fonts;
 /// Provides a processor of multi-channel signed distance field font asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Distance Field Font Processor - Bad Echo")]
-public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldFontContent, DistanceFieldFontContent>
+public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldFontContent>
 {
     private const string UNICODE_PROPERTY_NAME = "unicode";
 
@@ -75,6 +75,8 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         Require.NotNull(context, nameof(context));
 
         context.Log(Strings.ProcessingDistanceFieldFont.InvariantFormat(input.Identity.SourceFilename));
+
+        ValidateDependencyPath(input.Asset.FontPath);
 
         string intermediatePath = context.ResolveIntermediatePath(input.Identity.SourceFilename);
 

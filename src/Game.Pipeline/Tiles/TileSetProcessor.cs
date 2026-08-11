@@ -27,7 +27,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// Provides a processor of tile set asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Tile Set Processor - Bad Echo")]
-public sealed class TileSetProcessor : ContentProcessor<TileSetContent, TileSetContent>
+public sealed class TileSetProcessor : ContentProcessor<TileSetContent>
 {
     /// <summary>
     /// Initializes the <see cref="TileSetProcessor"/> class.
@@ -79,6 +79,8 @@ public sealed class TileSetProcessor : ContentProcessor<TileSetContent, TileSetC
                                       { nameof(TextureProcessor.ColorKeyColor), asset.Image.ColorKey },
                                       { nameof(TextureProcessor.ColorKeyEnabled), true }
                                   };
+
+        ValidateDependencyPath(asset.Image.Source);
 
         input.AddReference<Texture2DContent>(
             context,

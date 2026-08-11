@@ -13,6 +13,7 @@
 
 using BadEcho.Game.Pipeline.Tiles;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework.Content.Pipeline;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -53,6 +54,30 @@ public class TileMapPipelineTests
 
         Assert.Collection(content.Asset.TileSets, t => Assert.Equal(tileSetPath, t.Source));
         Assert.Equal([tileSetPath], _importerContext.Dependencies);
+    }
+
+    [Fact]
+    public void Import_EmptyImageLayerSource_ThrowsPipelineException()
+        => Assert.Throws<PipelineException>(
+            () => _importer.Import(GetAssetPath("EmptyImageLayerSource.tmx"), _importerContext));
+
+    [Fact]
+    public void Process_DirectoryTileSetSource_ThrowsPipelineException()
+        => AssertProcessThrows("DirectoryTileSetSource.tmx");
+
+    [Fact]
+    public void Process_DirectoryEmbeddedImage_ThrowsPipelineException()
+        => AssertProcessThrows("DirectoryEmbeddedImage.tmx");
+
+    [Fact]
+    public void Process_DirectoryImageLayerSource_ThrowsPipelineException()
+        => AssertProcessThrows("DirectoryImageLayerSource.tmx");
+
+    private void AssertProcessThrows(string assetName)
+    {
+        TileMapContent content = _importer.Import(GetAssetPath(assetName), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
     }
 
     private void ValidateTileMap(string assetName)

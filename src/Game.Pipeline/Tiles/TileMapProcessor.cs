@@ -25,7 +25,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// Provides a processor of tile map asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Tile Map Processor - Bad Echo")]
-public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapContent>
+public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
 {
     private const string COMPRESSION_GZIP = "gzip";
     private const string COMPRESSION_ZLIB = "zlib";
@@ -55,7 +55,10 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         foreach (TileSetAsset tileSet in asset.TileSets)
         {
             if (!string.IsNullOrEmpty(tileSet.Source))
-            {   // Leverage our tile set content loader to load this external tile set.
+            {
+                ValidateDependencyPath(tileSet.Source);
+
+                // Leverage our tile set content loader to load this external tile set.
                 input.AddReference<TileSetContent>(context, tileSet.Source, []);
             }
             else if (tileSet.Image != null)
@@ -65,6 +68,8 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
                                               { nameof(TextureProcessor.ColorKeyColor), tileSet.Image.ColorKey },
                                               { nameof(TextureProcessor.ColorKeyEnabled), true }
                                           };
+
+                ValidateDependencyPath(tileSet.Image.Source);
 
                 input.AddReference<Texture2DContent>(context, tileSet.Image.Source, processorParameters);
             }
@@ -85,6 +90,8 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
                                                   { nameof(TextureProcessor.ColorKeyColor), imageLayer.Image.ColorKey },
                                                   { nameof(TextureProcessor.ColorKeyEnabled), true }
                                               };
+
+                    ValidateDependencyPath(imageLayer.Image.Source);
 
                     input.AddReference<Texture2DContent>(context, imageLayer.Image.Source, processorParameters);
                     break;

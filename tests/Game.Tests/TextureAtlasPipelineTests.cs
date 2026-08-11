@@ -13,6 +13,7 @@
 
 using BadEcho.Game.Pipeline.Atlases;
 using System.Runtime.CompilerServices;
+using Microsoft.Xna.Framework.Content.Pipeline;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -35,6 +36,19 @@ public class TextureAtlasPipelineTests
         content = _processor.Process(content, _processorContext);
 
         Assert.Equal(3, content.Asset.Regions.Count);
+    }
+
+    [Fact]
+    public void Import_EmptyTexturePath_ThrowsPipelineException()
+        => Assert.Throws<PipelineException>(
+            () => _importer.Import(GetAssetPath("EmptyTexturePath.atlas"), _importerContext));
+
+    [Fact]
+    public void Process_DirectoryTexturePath_ThrowsPipelineException()
+    {
+        TextureAtlasContent content = _importer.Import(GetAssetPath("DirectoryTexturePath.atlas"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
     }
 
     private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")

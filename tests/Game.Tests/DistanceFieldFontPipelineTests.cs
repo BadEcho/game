@@ -15,6 +15,7 @@ using BadEcho.Game.Pipeline.Fonts;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using BadEcho.Game.Fonts;
+using Microsoft.Xna.Framework.Content.Pipeline;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -119,6 +120,19 @@ public class DistanceFieldFontPipelineTests
         {
             Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}", e.Data);
         }
+    }
+
+    [Fact]
+    public void Import_EmptyFontPath_ThrowsPipelineException()
+        => Assert.Throws<PipelineException>(
+            () => _importer.Import(GetAssetPath("EmptyFontPath.sdfont"), _importerContext));
+
+    [Fact]
+    public void Process_DirectoryFontPath_ThrowsPipelineException()
+    {
+        DistanceFieldFontContent content = _importer.Import(GetAssetPath("DirectoryFontPath.sdfont"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
     }
 
     private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")

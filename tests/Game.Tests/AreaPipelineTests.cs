@@ -124,6 +124,32 @@ public class AreaPipelineTests
             () => _importer.Import(GetAssetPath("NullArea.area"), _importerContext));
 
     [Fact]
+    public void Import_EmptyTileMapPath_ThrowsPipelineException()
+        => Assert.Throws<PipelineException>(
+            () => _importer.Import(GetAssetPath("EmptyTileMapPath.area"), _importerContext));
+
+    [Fact]
+    public void Import_EmptySpriteSheetPath_ThrowsPipelineException()
+        => Assert.Throws<PipelineException>(
+            () => _importer.Import(GetAssetPath("EmptySpriteSheetPath.area"), _importerContext));
+
+    [Fact]
+    public void Process_DirectoryTileMapPath_ThrowsPipelineException()
+    {
+        AreaContent content = _importer.Import(GetAssetPath("DirectoryTileMapPath.area"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+    }
+
+    [Fact]
+    public void Process_DirectorySpriteSheetPath_ThrowsPipelineException()
+    {
+        AreaContent content = _importer.Import(GetAssetPath("DirectorySpriteSheetPath.area"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+    }
+
+    [Fact]
     public void Import_NullFilename_ThrowsArgumentNullException()
         => Assert.Throws<ArgumentNullException>(() => _importer.Import(null!, _importerContext));
 
