@@ -22,7 +22,7 @@ namespace BadEcho.Game.World;
 /// Provides a self-contained, playable region of the game world, composed of a tile map, a population of
 /// sprite actors, and light sources, all wired to a dedicated collision engine.
 /// </summary>
-public sealed class Area
+public class Area
 {
     private readonly List<Sprite> _actors = [];
     private readonly List<Sprite> _actorsWithNormals = [];
@@ -54,6 +54,26 @@ public sealed class Area
         {
             _collisionEngine.Register(tileCollider);
         }
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Area"/> class.
+    /// </summary>
+    /// <param name="source">The <see cref="Area"/> instance to source common properties from.</param>
+    protected Area(Area source)
+    {
+        Require.NotNull(source, nameof(source));
+
+        TileMap = source.TileMap;
+        _collisionEngine = source._collisionEngine;
+        
+        _actors.AddRange(source.Actors);
+        _actorsWithNormals.AddRange(source._actorsWithNormals);
+        _actorsWithShadows.AddRange(source._actorsWithShadows);
+        _lights.AddRange(source.Lights);
+
+        AmbientLight = source.AmbientLight;
+        Name = source.Name;
     }
 
     /// <summary>

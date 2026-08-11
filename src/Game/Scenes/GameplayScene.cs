@@ -11,8 +11,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Game.UI;
+using System.Diagnostics.CodeAnalysis;
 using BadEcho.Game.Effects;
+using BadEcho.Game.World;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -21,9 +22,13 @@ namespace BadEcho.Game.Scenes;
 /// <summary>
 /// Provides a game scene for hosting core gameplay.
 /// </summary>
-public abstract class GameplayScene : GameScene
+public class GameplayScene : GameScene
 {
+    private readonly ScreenScene _loadingScene;
     private readonly Brush _pauseOverlay = new(Color.Black);
+    private readonly DeferredRenderer _renderer;
+
+    private Area? _loadedArea;
 
     private bool _disposed;
 
@@ -31,15 +36,32 @@ public abstract class GameplayScene : GameScene
     /// Initializes a new instance of the <see cref="GameplayScene"/> class.
     /// </summary>
     /// <param name="game">The game this scene is for.</param>
-    protected GameplayScene(Microsoft.Xna.Framework.Game game)
+    /// <param name="loadingScene">The loading <see cref="ScreenScene"/> to use when loading assets and areas.</param>
+    public GameplayScene(Microsoft.Xna.Framework.Game game, ScreenScene loadingScene)
         : base(game)
-    { }
+    {
+        _loadingScene = loadingScene;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GameplayScene"/> class.
+    /// </summary>
+    /// <param name="game">The game this scene is for.</param>
+    public GameplayScene(Microsoft.Xna.Framework.Game game)
+        : base(game)
+    {
+        _renderer = new DeferredRenderer(game.GraphicsDevice);
+    }
 
     /// <summary>
     /// Gets a value indicating if gameplay is paused.
     /// </summary>
     public bool IsPaused
     { get; protected set; }
+
+    [MemberNotNullWhen(true, nameof(_loadedArea))]
+    public bool IsAreaLoaded
+        => _loadedArea != null;
 
     /// <summary>
     /// Gets or sets the transparency of the overlay that appears when the game is paused.
@@ -51,8 +73,15 @@ public abstract class GameplayScene : GameScene
     protected override bool AlwaysDisplay 
         => true;
 
+    public void LoadArea(Area area)
+    {
+        Require.NotNull(area, nameof(area));
+
+
+    }
+
     /// <inheritdoc/>
-    protected override void UpdateCore(GameUpdateTime time, bool isActive)
+    protected sealed override void UpdateCore(GameUpdateTime time, bool isActive)
     {
         IsPaused = !isActive;
 
@@ -80,13 +109,25 @@ public abstract class GameplayScene : GameScene
     /// Executes custom gameplay-specific update logic.
     /// </summary>
     /// <param name="time">The game timing configuration and scene for this update.</param>
-    protected abstract void UpdateGameplay(GameUpdateTime time);
+    protected virtual void UpdateGameplay(GameUpdateTime time)
+    {
+        if (!IsAreaLoaded)
+            return;
+
+        _loadedArea.Update(time);
+    }
 
     /// <summary>
     /// Executes the custom rendering logic required to draw the gameplay to the screen.
     /// </summary>
     /// <param name="spriteBatch">A sprite batch for drawing the scene.</param>
-    protected abstract void DrawGameplay(SpriteBatch spriteBatch);
+    protected virtual void DrawGameplay(SpriteBatch spriteBatch)
+    {
+        if (!IsAreaLoaded)
+            return;
+
+        _loadedArea.Draw(spriteBatch, _renderer, RenderStates);
+    }
 
     /// <inheritdoc/>
     protected override void Dispose(bool disposing)
@@ -94,6 +135,7 @@ public abstract class GameplayScene : GameScene
         if (disposing && !_disposed)
         {
             _pauseOverlay.Dispose();
+            _renderer.Dispose();
 
             _disposed = true;
         }
