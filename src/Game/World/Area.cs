@@ -47,8 +47,8 @@ public sealed class Area : IDisposable
         PresentationParameters parameters = device.PresentationParameters;
 
         var bounds = new RectangleF(new PointF(-parameters.BackBufferWidth, -parameters.BackBufferHeight),
-                                    new SizeF(-parameters.BackBufferWidth * 2,
-                                              -parameters.BackBufferHeight * 2));
+                                    new SizeF(parameters.BackBufferWidth * 2,
+                                              parameters.BackBufferHeight * 2));
 
         _collisionEngine = new CollisionEngine(bounds);
 
@@ -172,11 +172,11 @@ public sealed class Area : IDisposable
         Require.NotNull(renderStates, nameof(renderStates));
         
         // Color + normal phase: tile map and actors.
-        renderer.StartColorPhase(renderStates);
+        StandardEffect effect = renderer.StartColorPhase(renderStates);
 
         TileMap.Draw(renderStates.MatrixTransform);
 
-        spriteBatch.Begin(renderStates);
+        spriteBatch.Begin(renderStates, effect);
 
         foreach (Sprite actor in _actors)
         {
