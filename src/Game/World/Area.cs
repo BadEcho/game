@@ -14,7 +14,6 @@
 using BadEcho.Game.Effects;
 using BadEcho.Game.Lighting;
 using BadEcho.Game.Tiles;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.World;
@@ -26,6 +25,8 @@ namespace BadEcho.Game.World;
 public sealed class Area : IDisposable
 {
     private readonly List<Sprite> _actors = [];
+    private readonly List<Sprite> _actorsWithNormals = [];
+    private readonly List<Sprite> _actorsWithShadows = [];
     private readonly List<ILight> _lights = [];
     private readonly CollisionEngine _collisionEngine;
 
@@ -95,15 +96,38 @@ public sealed class Area : IDisposable
         => _lights;
 
     /// <summary>
-    /// Adds a sprite actor to this area, registering its collider with the area's collision engine.
+    /// Adds a sprite actor to this area.
     /// </summary>
     /// <param name="actor">The sprite actor to add to this area.</param>
-    public void AddActor(Sprite actor)
+    /// <param name="isShadowless">Value indicating if the actor does not cast a shadow.</param>
+    public void AddActor(Sprite actor, bool isShadowless)
     {
         Require.NotNull(actor, nameof(actor));
 
         _actors.Add(actor);
+
+        if (actor.NormalMap != null)
+            _actorsWithNormals.Add(actor);
+
+        if (!isShadowless)
+            _actorsWithShadows.Add(actor);
+
         _collisionEngine.Register(actor.Collider);
+    }
+
+    /// <summary>
+    /// Removes a sprite actor from this area.
+    /// </summary>
+    /// <param name="actor">The sprite actor to remove from this area.</param>
+    public void RemoveActor(Sprite actor)
+    {
+        Require.NotNull(actor, nameof(actor));
+
+        _actors.Remove(actor);
+        _actorsWithNormals.Remove(actor);
+        _actorsWithShadows.Remove(actor);
+
+        _collisionEngine.Unregister(actor.Collider);
     }
 
     /// <summary>
@@ -141,21 +165,18 @@ public sealed class Area : IDisposable
     /// <param name="spriteBatch">The sprite batch to use to draw the area.</param>
     /// <param name="renderer">The deferred renderer orchestrating the drawing phases.</param>
     /// <param name="renderStates">Device render states to use when drawing.</param>
-    /// <param name="view">The camera view matrix mapping world-space to view-space.</param>
-    public void Draw(SpriteBatch spriteBatch, DeferredRenderer renderer, RenderStates renderStates, Matrix view)
+    public void Draw(SpriteBatch spriteBatch, DeferredRenderer renderer, RenderStates renderStates)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         Require.NotNull(renderer, nameof(renderer));
         Require.NotNull(renderStates, nameof(renderStates));
-
-        RenderStates worldStates = renderStates with { MatrixTransform = view };
-
+        
         // Color + normal phase: tile map and actors.
-        renderer.StartColorPhase(worldStates);
+        renderer.StartColorPhase(renderStates);
 
-        TileMap.Draw(view);
+        TileMap.Draw(renderStates.MatrixTransform);
 
-        spriteBatch.Begin(worldStates);
+        spriteBatch.Begin(renderStates);
 
         foreach (Sprite actor in _actors)
         {
@@ -164,8 +185,18 @@ public sealed class Area : IDisposable
 
         spriteBatch.End();
 
+        StandardEffect normalEffect = renderer.StartNormalPhase(renderStates);
+        spriteBatch.Begin(renderStates, normalEffect);
+
+        foreach (Sprite actor in _actorsWithNormals)
+        {
+            actor.DrawNormals(spriteBatch);
+        }
+
+        spriteBatch.End();
+
         // Light + shadow phase.
-        renderer.DrawLights(spriteBatch, worldStates, _lights, _actors);
+        renderer.DrawLights(spriteBatch, renderStates, _lights, _actorsWithShadows);
 
         // Composite to screen.
         renderer.Finish();

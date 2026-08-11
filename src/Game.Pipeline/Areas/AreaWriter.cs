@@ -46,6 +46,7 @@ public sealed class AreaWriter : ContentTypeWriter<AreaContent>
         {
             output.WriteExternalReference(value.GetReference<SpriteSheetContent>(actor.SpriteSheetPath));
             output.Write(actor.Position);
+            output.Write(actor.IsShadowless);
         }
     }
 }

@@ -31,4 +31,10 @@ public sealed class AreaActorAsset
     /// </summary>
     public Vector2 Position
     { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating if the actor does not cast a shadow.
+    /// </summary>
+    public bool IsShadowless
+    { get;init; }
 }

@@ -39,10 +39,11 @@ public sealed class AreaReader : ContentTypeReader<Area>
         {
             var spriteSheet = input.ReadExternalReference<SpriteSheet>();
             var position = input.ReadVector2();
+            var isShadowless = input.ReadBoolean();
 
             var actor = new AnimatedSprite(spriteSheet) { Position = position };
 
-            area.AddActor(actor);
+            area.AddActor(actor, isShadowless);
 
             actorsToRead--;
         }
