@@ -51,7 +51,7 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
             {   // This is a referenced tile set that is defined in its own file.
                 context.Log(Strings.ImportingDependency.InvariantFormat(tileSet.Source));
 
-                tileSet.Source = NormalizeDependencyPath(assetPath, tileSet.Source);
+                tileSet.Source = ResolveAssetRelativePath(assetPath, tileSet.Source);
 
                 context.AddDependency(tileSet.Source);
             }
@@ -59,7 +59,7 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
             {   // The tile set is embedded inside the map.
                 context.Log(Strings.ImportingDependency.InvariantFormat(tileSet.Image.Source));
 
-                tileSet.Image.Source = NormalizeDependencyPath(assetPath, tileSet.Image.Source);
+                tileSet.Image.Source = ResolveAssetRelativePath(assetPath, tileSet.Image.Source);
 
                 context.AddDependency(tileSet.Image.Source);
             }
@@ -75,7 +75,7 @@ public sealed class TileMapImporter : ContentImporter<TileMapContent>
                 case ImageLayerAsset imageLayer:
                     context.Log(Strings.ImportingDependency.InvariantFormat(imageLayer.Image.Source));
 
-                    imageLayer.Image.Source = NormalizeDependencyPath(assetPath, imageLayer.Image.Source);
+                    imageLayer.Image.Source = ResolveAssetRelativePath(assetPath, imageLayer.Image.Source);
 
                     context.AddDependency(imageLayer.Image.Source);
                     break;

@@ -39,7 +39,7 @@ public sealed class TileSetImporter : ContentImporter<TileSetContent>
         {
             context.Log(Strings.ImportingDependency.InvariantFormat(asset.Image.Source));
 
-            asset.Image.Source = NormalizeDependencyPath(filename, asset.Image.Source);
+            asset.Image.Source = ResolveAssetRelativePath(filename, asset.Image.Source);
 
             context.AddDependency(asset.Image.Source);
         }
@@ -59,7 +59,7 @@ public sealed class TileSetImporter : ContentImporter<TileSetContent>
         {
             context.Log(Strings.ImportingDependency.InvariantFormat(tileImage.Source));
 
-            tileImage.Source = NormalizeDependencyPath(assetPath, tileImage.Source);
+            tileImage.Source = ResolveAssetRelativePath(assetPath, tileImage.Source);
 
             context.AddDependency(tileImage.Source);
         }

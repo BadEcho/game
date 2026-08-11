@@ -32,10 +32,24 @@ public abstract class ContentImporter<T> : Microsoft.Xna.Framework.Content.Pipel
     /// directory it is assumed to be relative to the MGCB file and returned as-is, otherwise it is resolved relative
     /// to <c>assetPath</c>.
     /// </returns>
+    /// <remarks>
+    /// This convention applies only to Bad Echo's own asset formats. Dependencies declared by externally authored
+    /// formats must be resolved with <see cref="ResolveAssetRelativePath"/> instead.
+    /// </remarks>
     protected static string NormalizeDependencyPath(string assetPath, string dependencyPath)
     {
         return string.IsNullOrEmpty(Path.GetDirectoryName(dependencyPath))
-            ? Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, dependencyPath)
+            ? ResolveAssetRelativePath(assetPath, dependencyPath)
             : dependencyPath;
     }
+
+    /// <summary>
+    /// Resolves the path to a dependency that is always expressed relative to the asset file referencing it.
+    /// </summary>
+    /// <param name="assetPath">The path to the asset that references the dependency.</param>
+    /// <param name="dependencyPath">The path to the dependency referenced by the asset.</param>
+    /// <returns>A path to the dependency located at <c>dependencyPath</c>, resolved relative to <c>assetPath</c>.</returns>
+    /// <remarks>Used if an asset references a dependency that is always relative to itself, never to the MGCB file.</remarks>
+    protected static string ResolveAssetRelativePath(string assetPath, string dependencyPath)
+        => Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, dependencyPath);
 }

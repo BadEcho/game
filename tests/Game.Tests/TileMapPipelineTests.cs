@@ -40,6 +40,21 @@ public class TileMapPipelineTests
     public void ImportProcess_UncompressedBase64_ReturnsValid()
         => ValidateTileMap("GrassUncompressedBase64Format.tmx");
 
+    [Fact]
+    public void Import_NestedGrass_ResolvesTileSetRelativeToMap()
+    {
+        string assetPath = GetAssetPath("Nested\\NestedGrass.tmx");
+
+        TileMapContent content = _importer.Import(assetPath, _importerContext);
+
+        // Tiled always writes dependency paths relative to the file they appear in, regardless of whether
+        // the path includes a directory.
+        string tileSetPath = Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, "..\\Grasslands.tsx");
+
+        Assert.Collection(content.Asset.TileSets, t => Assert.Equal(tileSetPath, t.Source));
+        Assert.Equal([tileSetPath], _importerContext.Dependencies);
+    }
+
     private void ValidateTileMap(string assetName)
     {
         TileMapContent content = _importer.Import(GetAssetPath(assetName), _importerContext);
