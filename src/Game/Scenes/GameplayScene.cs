@@ -14,7 +14,6 @@
 using System.Diagnostics.CodeAnalysis;
 using BadEcho.Game.Effects;
 using BadEcho.Game.World;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Scenes;
@@ -24,41 +23,33 @@ namespace BadEcho.Game.Scenes;
 /// </summary>
 public class GameplayScene : GameScene
 {
-    private readonly ScreenScene _loadingScene;
-    private readonly Brush _pauseOverlay = new(Color.Black);
+    private readonly WorkerScene _loadingScene;
     private readonly DeferredRenderer _renderer;
 
     private Area? _loadedArea;
-
     private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GameplayScene"/> class.
     /// </summary>
     /// <param name="game">The game this scene is for.</param>
-    /// <param name="loadingScene">The loading <see cref="ScreenScene"/> to use when loading assets and areas.</param>
-    public GameplayScene(Microsoft.Xna.Framework.Game game, ScreenScene loadingScene)
+    /// <param name="loadingScene">The loading <see cref="WorkerScene"/> to use when loading assets and areas.</param>
+    public GameplayScene(Microsoft.Xna.Framework.Game game, WorkerScene loadingScene)
         : base(game)
     {
         _loadingScene = loadingScene;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GameplayScene"/> class.
-    /// </summary>
-    /// <param name="game">The game this scene is for.</param>
-    public GameplayScene(Microsoft.Xna.Framework.Game game)
-        : base(game)
-    {
         _renderer = new DeferredRenderer(game.GraphicsDevice);
     }
-
+    
     /// <summary>
     /// Gets a value indicating if gameplay is paused.
     /// </summary>
     public bool IsPaused
     { get; protected set; }
 
+    /// <summary>
+    /// Gets a value indicating if an area has been loaded.
+    /// </summary>
     [MemberNotNullWhen(true, nameof(_loadedArea))]
     public bool IsAreaLoaded
         => _loadedArea != null;
@@ -73,11 +64,13 @@ public class GameplayScene : GameScene
     protected override bool AlwaysDisplay 
         => true;
 
-    public void LoadArea(Area area)
+    /// <summary>
+    /// Loads the named area into the scene.
+    /// </summary>
+    /// <param name="areaName">The name of the area to load.</param>
+    public void LoadArea(string areaName)
     {
-        Require.NotNull(area, nameof(area));
-
-
+        _loadingScene.Execute(() => _loadedArea = Content.Load<Area>(areaName));
     }
 
     /// <inheritdoc/>
@@ -99,8 +92,6 @@ public class GameplayScene : GameScene
         if (IsPaused)
         {
             spriteBatch.Begin(RenderStates);
-            _pauseOverlay.Color = Color.Black * PauseOverlayAlpha;
-            _pauseOverlay.Draw(spriteBatch, spriteBatch.GraphicsDevice.Viewport.Bounds);
             spriteBatch.End();
         }
     }
@@ -134,7 +125,6 @@ public class GameplayScene : GameScene
     {
         if (disposing && !_disposed)
         {
-            _pauseOverlay.Dispose();
             _renderer.Dispose();
 
             _disposed = true;
