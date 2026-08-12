@@ -165,6 +165,14 @@ public readonly struct SizeF : IEquatable<SizeF>
         => !left.Equals(right);
 
     /// <summary>
+    /// Negates the <see cref="SizeF"/> value.
+    /// </summary>
+    /// <param name="size">The size to negate.</param>
+    /// <returns><c>size</c> with the opposite sign.</returns>
+    public static SizeF operator -(SizeF size)
+        => size.Negate();
+
+    /// <summary>
     /// Adds two <see cref="SizeF"/> values together via vector addition to compute their sum.
     /// </summary>
     /// <param name="left">The size to which <c>right</c> is added.</param>
@@ -293,7 +301,14 @@ public readonly struct SizeF : IEquatable<SizeF>
     /// <inheritdoc/>
     public bool Equals(SizeF other)
         => Width.ApproximatelyEquals(other.Width) && Height.ApproximatelyEquals(other.Height);
-    
+
+    /// <summary>
+    /// Negates this size.
+    /// </summary>
+    /// <returns>This size, but with the opposite sign.</returns>
+    public SizeF Negate()
+        => new(-Width, -Height);
+
     /// <summary>
     /// Adds this size with the specified <see cref="SizeF"/> value via vector addition to compute their sum.
     /// </summary>

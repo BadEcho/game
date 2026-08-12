@@ -42,11 +42,7 @@ public class Area
         
         TileMap = tileMap;
 
-        PresentationParameters parameters = device.PresentationParameters;
-
-        var bounds = new RectangleF(new PointF(-parameters.BackBufferWidth, -parameters.BackBufferHeight),
-                                    new SizeF(parameters.BackBufferWidth * 2,
-                                              parameters.BackBufferHeight * 2));
+        var bounds = new RectangleF(-Size, Size * 2);
 
         _collisionEngine = new CollisionEngine(bounds);
 
@@ -63,7 +59,7 @@ public class Area
     protected Area(Area source)
     {
         Require.NotNull(source, nameof(source));
-
+        
         TileMap = source.TileMap;
         _collisionEngine = source._collisionEngine;
         
