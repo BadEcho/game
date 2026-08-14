@@ -47,7 +47,7 @@ public class WorkerScene : GameScene
         }
 
         // MonoGame does not establish a SynchronizationContext, so we poll for task completion, allowing for the "continuation" to be run on the game thread.
-        if (!_execution.IsCanceled)
+        if (!_execution.IsCompleted)
             return;
 
         // This will force any faults to be rethrown here on the game thread, so they don't end up swallowed and gone forever!
