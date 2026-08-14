@@ -48,9 +48,8 @@ public class TileMapPipelineTests
 
         TileMapContent content = _importer.Import(assetPath, _importerContext);
 
-        // Tiled always writes dependency paths relative to the file they appear in, regardless of whether
-        // the path includes a directory.
-        string tileSetPath = Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, "..\\Grasslands.tsx");
+        string tileSetPath = Path.GetFullPath(
+            Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, "../Grasslands.tsx"));
 
         Assert.Collection(content.Asset.TileSets, t => Assert.Equal(tileSetPath, t.Source));
         Assert.Equal([tileSetPath], _importerContext.Dependencies);

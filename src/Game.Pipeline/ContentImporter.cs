@@ -73,6 +73,6 @@ public abstract class ContentImporter<T> : Microsoft.Xna.Framework.Content.Pipel
     {
         return string.IsNullOrWhiteSpace(dependencyPath)
             ? throw new PipelineException(Strings.DependencyPathIsEmpty.InvariantFormat(dependencyName))
-            : Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, dependencyPath);
+            : Path.GetFullPath(Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, dependencyPath));
     }
 }

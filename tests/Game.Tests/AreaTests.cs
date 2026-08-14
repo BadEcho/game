@@ -38,7 +38,7 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
         Assert.Collection(area.Actors,
                           a1 =>
                           {
-                              Assert.Equal("Images\\StickMan_2", a1.Texture.Name);
+                              Assert.Equal("Images\\StickMan_0", a1.Texture.Name);
                               Assert.Equal(new Vector2(16, 16), a1.Position);
                           });
 
