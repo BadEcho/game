@@ -31,6 +31,8 @@ public class WorkerScene : GameScene
     public WorkerScene(Microsoft.Xna.Framework.Game game, Action action)
         : base(game)
     {
+        Require.NotNull(action, nameof(action));
+
         _action = action;
     }
 
