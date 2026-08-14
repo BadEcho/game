@@ -21,23 +21,20 @@ namespace BadEcho.Game.Scenes;
 /// <summary>
 /// Provides a game scene for hosting core gameplay.
 /// </summary>
-public class GameplayScene : GameScene
+public abstract class GameplayScene : GameScene
 {
-    private readonly WorkerScene _loadingScene;
+    private readonly List<Area> _areas = [];
     private readonly DeferredRenderer _renderer;
 
-    private Area? _loadedArea;
     private bool _disposed;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GameplayScene"/> class.
     /// </summary>
     /// <param name="game">The game this scene is for.</param>
-    /// <param name="loadingScene">The loading <see cref="WorkerScene"/> to use when loading assets and areas.</param>
-    public GameplayScene(Microsoft.Xna.Framework.Game game, WorkerScene loadingScene)
+    protected GameplayScene(Microsoft.Xna.Framework.Game game)
         : base(game)
     {
-        _loadingScene = loadingScene;
         _renderer = new DeferredRenderer(game.GraphicsDevice);
     }
     
@@ -50,28 +47,31 @@ public class GameplayScene : GameScene
     /// <summary>
     /// Gets a value indicating if an area has been loaded.
     /// </summary>
-    [MemberNotNullWhen(true, nameof(_loadedArea))]
+    [MemberNotNullWhen(true, nameof(CurrentArea))]
     public bool IsAreaLoaded
-        => _loadedArea != null;
+        => CurrentArea != null;
 
     /// <summary>
-    /// Gets or sets the transparency of the overlay that appears when the game is paused.
+    /// Gets the currently loaded area.
     /// </summary>
-    public float PauseOverlayAlpha
-    { get; set; } = 0.5f;
+    public Area? CurrentArea 
+    { get; protected set; }
 
     /// <inheritdoc/>
     protected override bool AlwaysDisplay 
         => true;
 
     /// <summary>
-    /// Loads the named area into the scene.
+    /// Gets the collection of loaded areas.
     /// </summary>
-    /// <param name="areaName">The name of the area to load.</param>
-    public void LoadArea(string areaName)
-    {
-        _loadingScene.Execute(() => _loadedArea = Content.Load<Area>(areaName));
-    }
+    protected IReadOnlyCollection<Area> Areas
+        => _areas;
+
+    /// <summary>
+    /// Loads all areas associated with this scene.
+    /// </summary>
+    /// <returns>The <see cref="Area"/> instances associated with this scene.</returns>
+    protected abstract IEnumerable<Area> LoadAreas();
 
     /// <inheritdoc/>
     protected sealed override void UpdateCore(GameUpdateTime time, bool isActive)
@@ -96,6 +96,14 @@ public class GameplayScene : GameScene
         }
     }
 
+    /// <inheritdoc/>
+    protected override void OnLoad(SceneManager manager)
+    {
+        _areas.AddRange(LoadAreas());
+
+        base.OnLoad(manager);
+    }
+
     /// <summary>
     /// Executes custom gameplay-specific update logic.
     /// </summary>
@@ -105,7 +113,7 @@ public class GameplayScene : GameScene
         if (!IsAreaLoaded)
             return;
 
-        _loadedArea.Update(time);
+        CurrentArea.Update(time);
     }
 
     /// <summary>
@@ -117,7 +125,7 @@ public class GameplayScene : GameScene
         if (!IsAreaLoaded)
             return;
 
-        _loadedArea.Draw(spriteBatch, _renderer, RenderStates);
+        CurrentArea.Draw(spriteBatch, _renderer, RenderStates);
     }
 
     /// <inheritdoc/>
