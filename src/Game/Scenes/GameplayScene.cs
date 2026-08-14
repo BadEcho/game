@@ -88,12 +88,6 @@ public abstract class GameplayScene : GameScene
         Require.NotNull(spriteBatch, nameof(spriteBatch));        
 
         DrawGameplay(spriteBatch);
-
-        if (IsPaused)
-        {
-            spriteBatch.Begin(RenderStates);
-            spriteBatch.End();
-        }
     }
 
     /// <inheritdoc/>
