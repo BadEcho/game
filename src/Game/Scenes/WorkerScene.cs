@@ -28,7 +28,7 @@ public class WorkerScene : GameScene
     /// </summary>
     /// <param name="game">The game this scene is for.</param>
     /// <param name="action">The action to execute once this scene loads.</param>
-    protected WorkerScene(Microsoft.Xna.Framework.Game game, Action action)
+    public WorkerScene(Microsoft.Xna.Framework.Game game, Action action)
         : base(game)
     {
         _action = action;
