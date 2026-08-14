@@ -70,6 +70,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The &apos;{0}&apos; property of the .area asset was provided as a &apos;null&apos; literal token, which is not permitted. Omit the property entirely if it is not needed..
+        /// </summary>
+        internal static string AreaPropertyIsNull {
+            get {
+                return ResourceManager.GetString("AreaPropertyIsNull", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The .atlas asset identified by {0} consists of a single &apos;null&apos; JSON token, which cannot be processed as a texture atlas. Ensure there were no errors when performing the export with TexturePacker..
         /// </summary>
         internal static string AtlasIsNull {

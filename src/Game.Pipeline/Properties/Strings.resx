@@ -162,6 +162,9 @@
 	<data name="ConflictingReferenceInContentItem" xml:space="preserve">
 		<value>The asset '{0}' is already referenced by this content item with different build settings.</value>
 	</data>
+  <data name="AreaPropertyIsNull" xml:space="preserve">
+    <value>The '{0}' property of the .area asset was provided as a 'null' literal token, which is not permitted. Omit the property entirely if it is not needed.</value>
+  </data>
   <data name="ImageLayerNoImage" xml:space="preserve">
 	  <value>Image layer contains no image data.</value>
   </data>
