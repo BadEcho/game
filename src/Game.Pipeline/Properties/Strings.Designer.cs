@@ -160,6 +160,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The asset &apos;{0}&apos; is already referenced by this content item with different build settings..
+        /// </summary>
+        internal static string ConflictingReferenceInContentItem {
+            get {
+                return ResourceManager.GetString("ConflictingReferenceInContentItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The dependency &apos;{0}&apos;: &apos;{1}&apos; is a directory instead of a file..
         /// </summary>
         internal static string DependencyFileIsADirectory {

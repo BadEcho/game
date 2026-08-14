@@ -23,7 +23,7 @@ namespace BadEcho.Game.Pipeline;
 /// <typeparam name="T">The type of asset data described by the content.</typeparam>
 public abstract class ContentItem<T> : ContentItem, IContentItem
 {
-    private readonly Dictionary<string, ContentItem> _references = [];
+    private readonly Dictionary<string, Reference> _references = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContentItem{T}"/> class.
@@ -53,9 +53,21 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
                                        string outputPath)
     {
         Require.NotNull(context, nameof(context));
+        Require.NotNull(processorParameters, nameof(processorParameters));
 
-        if (_references.ContainsKey(sourcePath))
+        if (_references.TryGetValue(sourcePath, out Reference? existingReference))
+        {   // Referencing the same asset more than once (such as two actors sharing a sprite sheet)
+            // is normal and fine; referencing it with different build settings is not.
+            bool conflictsWithReference =
+                existingReference.ContentType != typeof(TContent)
+                || !string.Equals(existingReference.OutputPath, outputPath, StringComparison.OrdinalIgnoreCase)
+                || !AreParametersEquivalent(existingReference.ProcessorParameters, processorParameters);
+
+            if (conflictsWithReference)
+                throw new PipelineException(Strings.ConflictingReferenceInContentItem.InvariantFormat(sourcePath));
+
             return;
+        }
 
         var sourceAsset = new ExternalReference<TContent>(sourcePath);
 
@@ -65,15 +77,36 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
                                                    processorParameters,
                                                    string.Empty,
                                                    outputPath);
-        _references.Add(sourcePath, reference);
+
+        _references.Add(sourcePath, new Reference(typeof(TContent), processorParameters, outputPath, reference));
     }
 
     /// <inheritdoc/>
     public ExternalReference<TContent> GetReference<TContent>(string filename)
     {
-        if (!_references.TryGetValue(filename, out ContentItem? contentItem))
+        if (!_references.TryGetValue(filename, out Reference? reference))
             throw new ArgumentException(Strings.NoReferenceInContentItem.InvariantFormat(filename), nameof(filename));
 
-        return (ExternalReference<TContent>) contentItem;
+        return (ExternalReference<TContent>) reference.ContentItem;
     }
+
+    private static bool AreParametersEquivalent(OpaqueDataDictionary first, OpaqueDataDictionary second)
+    {
+        if (first.Count != second.Count)
+            return false;
+
+        foreach (KeyValuePair<string, object> parameter in first)
+        {
+            if (!second.TryGetValue(parameter.Key, out object? value) || !Equals(parameter.Value, value))
+                return false;
+        }
+
+        return true;
+    }
+
+    private sealed record Reference(
+        Type ContentType,
+        OpaqueDataDictionary ProcessorParameters,
+        string OutputPath,
+        ContentItem ContentItem);
 }

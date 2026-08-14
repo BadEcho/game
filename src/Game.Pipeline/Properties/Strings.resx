@@ -159,6 +159,9 @@
   <data name="NoReferenceInContentItem" xml:space="preserve">
 		<value>No reference to the asset '{0}' was found on this content item.</value>
 	</data>
+	<data name="ConflictingReferenceInContentItem" xml:space="preserve">
+		<value>The asset '{0}' is already referenced by this content item with different build settings.</value>
+	</data>
   <data name="ImageLayerNoImage" xml:space="preserve">
 	  <value>Image layer contains no image data.</value>
   </data>
