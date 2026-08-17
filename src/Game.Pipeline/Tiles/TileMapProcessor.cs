@@ -106,8 +106,46 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
 
                     break;
 
+                case ObjectLayerAsset objectLayer:
+                    ProcessObjects(objectLayer, context);
+                    break;
+
                 default:
                     throw new NotSupportedException(Strings.TileMapUnsupportedLayerType.InvariantFormat(layer.Type));
+            }
+        }
+    }
+
+    private static void ProcessObjects(ObjectLayerAsset objectLayer, ContentProcessorContext context)
+    {
+        foreach (MapObjectAsset unsupportedObject in objectLayer.Objects.Where(o => !o.IsSupportedShape).ToList())
+        {
+            context.Log(
+                Strings.ObjectUnsupportedShape.InvariantFormat(unsupportedObject.Name, unsupportedObject.Id));
+
+            objectLayer.Objects.Remove(unsupportedObject);
+        }
+
+        // The pipeline stays neutral as far as the meaning of a map object goes, with the exception of transition points,
+        // whose data must be complete if the areas sourcing them are to function.
+        IEnumerable<MapObjectAsset> transitionObjects
+            = objectLayer.Objects.Where(
+                o => o.Type.Equals(KnownObjectTypes.TransitionPoint, StringComparison.OrdinalIgnoreCase));
+
+        foreach (MapObjectAsset transitionObject in transitionObjects)
+        {
+            if (!transitionObject.CustomStringProperties.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName)
+                || string.IsNullOrEmpty(targetAreaName))
+            {
+                throw new PipelineException(
+                    Strings.TransitionObjectMissingTargetAreaName.InvariantFormat(transitionObject.Name, transitionObject.Id));
+            }
+
+            // Rectangles are endpoint-exclusive, which makes a zero-sized region a transition point that can never be entered.
+            if (!transitionObject.IsPoint && (transitionObject.Width <= 0 || transitionObject.Height <= 0))
+            {
+                throw new PipelineException(
+                    Strings.TransitionObjectZeroSize.InvariantFormat(transitionObject.Name, transitionObject.Id));
             }
         }
     }

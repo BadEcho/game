@@ -31,6 +31,7 @@ public sealed class TileMapAsset : ExtensibleAsset
     private const string TILE_SET_ELEMENT = "tileset";
     private const string TILE_LAYER_ELEMENT = "layer";
     private const string IMAGE_LAYER_ELEMENT = "imagelayer";
+    private const string OBJECT_LAYER_ELEMENT = "objectgroup";
 
     private readonly List<TileSetAsset> _tileSets = [];
     private readonly List<LayerAsset> _layers = [];
@@ -68,9 +69,17 @@ public sealed class TileMapAsset : ExtensibleAsset
             _layers.Add(new TileLayerAsset(tileLayer));
         }
 
+        // Layers are gathered element name by element name, which means the relative ordering between the different kinds of
+        // layer is lost. This is long-standing behavior for tile and image layers; object layers are never rendered, so the
+        // loss is of no consequence to them either.
         foreach (XElement imageLayer in root.Elements(IMAGE_LAYER_ELEMENT))
         {
             _layers.Add(new ImageLayerAsset(imageLayer));
+        }
+
+        foreach (XElement objectLayer in root.Elements(OBJECT_LAYER_ELEMENT))
+        {
+            _layers.Add(new ObjectLayerAsset(objectLayer));
         }
     }
 

@@ -203,4 +203,22 @@
 	<data name="SdlGetWindowManagerFailed" xml:space="preserve">
 		<value>Failed to retrieve SDL window manager with error: {0}</value>
 	</data>
+	<data name="WorkerAlreadyStarted" xml:space="preserve">
+		<value>The deferred worker has already been started.</value>
+	</data>
+	<data name="TransitionPointNoTargetAreaName" xml:space="preserve">
+		<value>A transition point requires the name of an area to transition to.</value>
+	</data>
+	<data name="TransitionObjectNoTargetAreaName" xml:space="preserve">
+		<value>Map object '{0}' is classed as a transition point, however it lacks a '{1}' custom property; it will be ignored.</value>
+	</data>
+	<data name="TransitionPointDestinationNotFound" xml:space="preserve">
+		<value>No transition point named '{0}' exists in the area named '{1}' to spawn at.</value>
+	</data>
+	<data name="AreaNotFound" xml:space="preserve">
+		<value>No loaded area named '{0}' exists to transition to.</value>
+	</data>
+	<data name="AreaNameDuplicate" xml:space="preserve">
+		<value>Multiple loaded areas share the name '{0}'.</value>
+	</data>
 </root>

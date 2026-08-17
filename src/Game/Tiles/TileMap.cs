@@ -234,6 +234,12 @@ public sealed class TileMap : Extensible, IModelRenderer, IDisposable
                 case TileLayer tileLayer:
                     CreateLayerModels(tileLayer);
                     break;
+
+                case ObjectLayer:
+                    // Object layers render nothing; an empty set of models keeps them from tripping up the layer iteration
+                    // performed when this map is updated and drawn.
+                    _layerModelMap.Add(layer, []);
+                    break;
             }
         }
     }

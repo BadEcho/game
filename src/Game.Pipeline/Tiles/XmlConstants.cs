@@ -83,4 +83,70 @@ internal static class XmlConstants
     /// </summary>
     internal static string ImageElement
         => "image";
+
+    /// <summary>
+    /// The name for attributes defining the identifier of a TMX-related entity.
+    /// </summary>
+    internal static string IdAttribute
+        => "id";
+
+    /// <summary>
+    /// The name for attributes defining the class of a map object, as written by Tiled 1.9 and later.
+    /// </summary>
+    internal static string ClassAttribute
+        => "class";
+
+    /// <summary>
+    /// The name for attributes defining the class of a map object, as written by Tiled versions prior to 1.9.
+    /// </summary>
+    internal static string TypeAttribute
+        => "type";
+
+    /// <summary>
+    /// The name for attributes defining the global tile identifier stamped by a map object.
+    /// </summary>
+    internal static string GidAttribute
+        => "gid";
+
+    /// <summary>
+    /// The name for attributes defining the horizontal coordinate of a TMX-related entity.
+    /// </summary>
+    internal static string XAttribute
+        => "x";
+
+    /// <summary>
+    /// The name for attributes defining the vertical coordinate of a TMX-related entity.
+    /// </summary>
+    internal static string YAttribute
+        => "y";
+
+    /// <summary>
+    /// The name for elements marking a map object as occupying a single coordinate.
+    /// </summary>
+    internal static string PointElement
+        => "point";
+
+    /// <summary>
+    /// The name for elements marking a map object as occupying an elliptical region.
+    /// </summary>
+    internal static string EllipseElement
+        => "ellipse";
+
+    /// <summary>
+    /// The name for elements marking a map object as occupying a closed polygonal region.
+    /// </summary>
+    internal static string PolygonElement
+        => "polygon";
+
+    /// <summary>
+    /// The name for elements marking a map object as tracing an open sequence of connected lines.
+    /// </summary>
+    internal static string PolylineElement
+        => "polyline";
+
+    /// <summary>
+    /// The name for elements marking a map object as displaying text.
+    /// </summary>
+    internal static string TextElement
+        => "text";
 }
