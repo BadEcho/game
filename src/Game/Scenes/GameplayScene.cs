@@ -78,16 +78,6 @@ public abstract class GameplayScene : GameScene
         => _areas;
 
     /// <summary>
-    /// Gets the entity whose movement into a transition point triggers a transition to another area.
-    /// </summary>
-    /// <remarks>
-    /// A null value, which is the default, disables the monitoring of transition points entirely. A scene wanting area
-    /// transitions overrides this to return the entity acting on the player's behalf.
-    /// </remarks>
-    protected virtual ISpatial? TransitionActivator
-        => null;
-
-    /// <summary>
     /// Gets the transition point that initiated the transition currently in progress, if there is one.
     /// </summary>
     /// <remarks>
@@ -97,6 +87,16 @@ public abstract class GameplayScene : GameScene
     /// </remarks>
     protected TransitionPoint? ActiveTransitionPoint
     { get; private set; }
+
+    /// <summary>
+    /// Gets the entity whose movement into a transition point triggers a transition to another area.
+    /// </summary>
+    /// <remarks>
+    /// A scene desiring area transitions should override this to return the entity acting on the player's behalf.
+    /// Returning null will disable the monitoring of transition points entirely.
+    /// </remarks>
+    protected abstract ISpatial? TransitionActivator
+    { get; }
 
     /// <summary>
     /// Loads all areas associated with this scene.
@@ -113,8 +113,11 @@ public abstract class GameplayScene : GameScene
     {
         IsPaused = !isActive;
 
-        if (!IsPaused)
-            UpdateGameplay(time);
+        if (IsPaused)
+            return;
+
+        UpdateGameplay(time);
+        CheckAreaTransitions();
     }
 
     /// <inheritdoc/>
@@ -140,18 +143,12 @@ public abstract class GameplayScene : GameScene
     /// Executes custom gameplay-specific update logic.
     /// </summary>
     /// <param name="time">The game timing configuration and scene for this update.</param>
-    /// <remarks>
-    /// The base implementation is what advances the current area and monitors it for entered transition points. An override
-    /// that does not call it takes on responsibility for both.
-    /// </remarks>
     protected virtual void UpdateGameplay(GameUpdateTime time)
     {
         if (!IsAreaLoaded)
             return;
 
         CurrentArea.Update(time);
-
-        CheckAreaTransitions();
     }
 
     /// <summary>
