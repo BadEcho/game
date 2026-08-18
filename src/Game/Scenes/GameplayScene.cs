@@ -78,24 +78,13 @@ public abstract class GameplayScene : GameScene
         => _areas;
 
     /// <summary>
-    /// Gets the transition point that initiated the transition currently in progress, if there is one.
-    /// </summary>
-    /// <remarks>
-    /// This is set when a transition begins and cleared once <see cref="OnAreaTransitioned"/> has returned, making it readable
-    /// throughout the transition. It is null for a transition completed without having been begun, such as a scripted switch
-    /// from one area to another.
-    /// </remarks>
-    protected TransitionPoint? ActiveTransitionPoint
-    { get; private set; }
-
-    /// <summary>
     /// Gets the entity whose movement into a transition point triggers a transition to another area.
     /// </summary>
     /// <remarks>
     /// A scene desiring area transitions should override this to return the entity acting on the player's behalf.
     /// Returning null will disable the monitoring of transition points entirely.
     /// </remarks>
-    protected abstract ISpatial? TransitionActivator
+    protected abstract IEntity? TransitionActivator
     { get; }
 
     /// <summary>
@@ -167,7 +156,8 @@ public abstract class GameplayScene : GameScene
             return;
 
         IsTransitioningAreas = true;
-        ActiveTransitionPoint = transitionPoint;
+
+        Area? nextArea = FindArea(transitionPoint.TargetAreaName);
 
         OnAreaTransitioning(transitionPoint);
     }
