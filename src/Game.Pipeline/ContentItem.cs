@@ -23,7 +23,7 @@ namespace BadEcho.Game.Pipeline;
 /// <typeparam name="T">The type of asset data described by the content.</typeparam>
 public abstract class ContentItem<T> : ContentItem, IContentItem
 {
-    private readonly Dictionary<string, Reference> _references = [];
+    private readonly Dictionary<string, Reference> _references = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ContentItem{T}"/> class.
@@ -53,9 +53,10 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
                                        string outputPath)
     {
         Require.NotNull(context, nameof(context));
+        Require.NotNull(sourcePath, nameof(sourcePath));
         Require.NotNull(processorParameters, nameof(processorParameters));
 
-        if (_references.TryGetValue(sourcePath, out Reference? existingReference))
+        if (_references.TryGetValue(NormalizeReferenceKey(sourcePath), out Reference? existingReference))
         {   // Referencing the same asset more than once (such as two actors sharing a sprite sheet)
             // is normal and fine; referencing it with different build settings is not.
             bool conflictsWithReference =
@@ -78,16 +79,26 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
                                                    string.Empty,
                                                    outputPath);
 
-        _references.Add(sourcePath, new Reference(typeof(TContent), processorParameters, outputPath, reference));
+        _references.Add(NormalizeReferenceKey(sourcePath),
+                        new Reference(typeof(TContent), processorParameters, outputPath, reference));
     }
 
     /// <inheritdoc/>
     public ExternalReference<TContent> GetReference<TContent>(string filename)
     {
-        if (!_references.TryGetValue(filename, out Reference? reference))
+        Require.NotNull(filename, nameof(filename));
+
+        if (!_references.TryGetValue(NormalizeReferenceKey(filename), out Reference? reference))
             throw new ArgumentException(Strings.NoReferenceInContentItem.InvariantFormat(filename), nameof(filename));
 
         return (ExternalReference<TContent>) reference.ContentItem;
+    }
+
+    private static string NormalizeReferenceKey(string path)
+    {   // Separators are unified and the comparer is case-insensitive because the same physical file is reachable by
+        // more than one spelling of its MGCB-relative path, and each spelling has to land on the same reference. Only
+        // the key is normalized; the path handed to the content build stays exactly as it was authored.
+        return path.Replace('\\', '/');
     }
 
     private static bool AreParametersEquivalent(OpaqueDataDictionary first, OpaqueDataDictionary second)

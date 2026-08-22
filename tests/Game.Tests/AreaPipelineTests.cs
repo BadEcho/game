@@ -255,6 +255,40 @@ public class AreaPipelineTests
     }
 
     [Fact]
+    public void AddReference_PathSpelledDifferently_SharesSingleReference()
+    {
+        AreaContent content = _importer.Import(GetAssetPath("Simple.area"), _importerContext);
+
+        var assetsBuilt = 0;
+        _processorContext.AssetBuilt += (_, _) => assetsBuilt++;
+
+        content.AddReference<SpriteSheetContent>(_processorContext, "Images/StickMan.spritesheet", new OpaqueDataDictionary());
+        content.AddReference<SpriteSheetContent>(_processorContext, "images\\StickMan.SpriteSheet", new OpaqueDataDictionary());
+
+        // One physical file spelled two ways is still one dependency; building it twice would fail the content build.
+        Assert.Equal(1, assetsBuilt);
+        Assert.Same(content.GetReference<SpriteSheetContent>("Images/StickMan.spritesheet"),
+                    content.GetReference<SpriteSheetContent>("images\\StickMan.SpriteSheet"));
+    }
+
+    [Fact]
+    public void AddReference_NullSourcePath_ThrowsArgumentNullException()
+    {
+        AreaContent content = _importer.Import(GetAssetPath("Simple.area"), _importerContext);
+
+        Assert.Throws<ArgumentNullException>(
+            () => content.AddReference<SpriteSheetContent>(_processorContext, null!, new OpaqueDataDictionary()));
+    }
+
+    [Fact]
+    public void GetReference_NullFilename_ThrowsArgumentNullException()
+    {
+        AreaContent content = _importer.Import(GetAssetPath("Simple.area"), _importerContext);
+
+        Assert.Throws<ArgumentNullException>(() => content.GetReference<SpriteSheetContent>(null!));
+    }
+
+    [Fact]
     public void Process_NullInput_ThrowsArgumentNullException()
         => Assert.Throws<ArgumentNullException>(() => _processor.Process(null!, _processorContext));
 

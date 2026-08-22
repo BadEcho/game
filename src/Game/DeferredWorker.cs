@@ -56,6 +56,10 @@ public sealed class DeferredWorker
     /// <summary>
     /// Gets a value indicating if this worker's action has completed and had its completion observed by the game thread.
     /// </summary>
+    /// <remarks>
+    /// An action that faulted counts as completed; its fault is rethrown by the <see cref="Update"/> that observes it,
+    /// and only by that one.
+    /// </remarks>
     public bool IsFinished
     { get; private set; }
 
@@ -78,7 +82,8 @@ public sealed class DeferredWorker
     /// <returns>True if this worker's action has completed; otherwise, false.</returns>
     /// <remarks>
     /// This is meant to be called from the game thread during each update, and will never block. Any fault experienced
-    /// by the action is rethrown from here, ensuring it surfaces on the game thread instead of being swallowed.
+    /// by the action is rethrown from here, ensuring it surfaces on the game thread instead of being swallowed. A faulted
+    /// action is finished all the same, so its fault is rethrown once and <see cref="Finished"/> is never raised for it.
     /// </remarks>
     public bool Update()
     {
@@ -89,10 +94,12 @@ public sealed class DeferredWorker
         if (!_execution.IsCompleted)
             return false;
 
+        // Marked as finished ahead of the rethrow below, so that a faulted action is observed exactly once rather than
+        // faulting every later poll and never raising anything.
+        IsFinished = true;
+
         // This will force any faults to be rethrown here on the game thread, so they don't end up swallowed and gone forever!
         _execution.GetAwaiter().GetResult();
-
-        IsFinished = true;
 
         Finished?.Invoke(this, EventArgs.Empty);
 

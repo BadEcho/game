@@ -95,6 +95,24 @@ public class DeferredWorkerTests
         Assert.Equal("Faulted.", exception.Message);
     }
 
+    [Fact]
+    public void Update_FaultedAction_FinishesWithoutRethrowingAgain()
+    {
+        var worker = new DeferredWorker(() => throw new InvalidOperationException("Faulted."));
+        int finishedCount = 0;
+
+        worker.Finished += (_, _) => finishedCount++;
+        worker.Start();
+
+        Assert.Throws<InvalidOperationException>(() => SpinUntilFinished(worker));
+
+        // The fault belongs to the poll that observed it; the worker is finished either way, so later polls are quiet.
+        Assert.True(worker.IsFinished);
+        Assert.True(worker.Update());
+        Assert.True(worker.Update());
+        Assert.Equal(0, finishedCount);
+    }
+
     private static bool SpinUntilFinished(DeferredWorker worker)
         => SpinWait.SpinUntil(worker.Update, _Timeout);
 }
