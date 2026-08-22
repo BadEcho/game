@@ -114,6 +114,14 @@ public class TileMapPipelineTests
     }
 
     [Fact]
+    public void Import_GrassTransitionPoints_ParsesRotationOfUnclassedObject()
+    {   // Rotation is only rejected for transition points; every other object carries it through.
+        MapObjectAsset signpost = FindObject("GrassTransitionPoints.tmx", "Signpost");
+
+        Assert.Equal(90, signpost.Rotation);
+    }
+
+    [Fact]
     public void Import_GrassTransitionPoints_EllipseIsUnsupportedShape()
     {
         MapObjectAsset pond = FindObject("GrassTransitionPoints.tmx", "Pond");
@@ -141,6 +149,37 @@ public class TileMapPipelineTests
     [Fact]
     public void Process_TransitionObjectZeroSize_ThrowsPipelineException()
         => AssertProcessThrows("TransitionObjectZeroSize.tmx");
+
+    [Fact]
+    public void Import_GrassTransitionPoints_UnrotatedObjectHasNoRotation()
+    {
+        MapObjectAsset northDoor = FindObject("GrassTransitionPoints.tmx", "NorthDoor");
+
+        Assert.Equal(0, northDoor.Rotation);
+    }
+
+    [Fact]
+    public void Import_TransitionObjectRotated_ParsesRotation()
+    {
+        MapObjectAsset tiltedDoor = FindObject("TransitionObjectRotated.tmx", "TiltedDoor");
+
+        // The shape itself is supported; it is the rotation that the processor goes on to reject.
+        Assert.Equal(45, tiltedDoor.Rotation);
+        Assert.True(tiltedDoor.IsSupportedShape);
+    }
+
+    [Fact]
+    public void Process_TransitionObjectRotated_ThrowsPipelineException()
+    {
+        TileMapContent content = _importer.Import(GetAssetPath("TransitionObjectRotated.tmx"), _importerContext);
+
+        PipelineException exception
+            = Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+
+        // The object is otherwise valid, so the rotation is the only thing left to fail on.
+        Assert.Contains("rotated", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("45", exception.Message, StringComparison.Ordinal);
+    }
 
     [Theory]
     [InlineData("GrassFourTiles.tmx")]

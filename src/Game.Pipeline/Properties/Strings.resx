@@ -291,4 +291,7 @@
 	<data name="TransitionObjectPropertyWrongType" xml:space="preserve">
 		<value>Map object '{0}' (id {1}) declared the custom property '{2}' using the wrong type (expected: '{3}', actual: '{4}').</value>
 	</data>
+	<data name="TransitionObjectRotated" xml:space="preserve">
+		<value>Map object '{0}' (id {1}) is a transition point rotated by {2} degrees; only axis-aligned regions are supported.</value>
+	</data>
 </root>

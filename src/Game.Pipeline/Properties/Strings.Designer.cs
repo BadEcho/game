@@ -574,6 +574,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is a transition point rotated by {2} degrees; only axis-aligned regions are supported..
+        /// </summary>
+        internal static string TransitionObjectRotated {
+            get {
+                return ResourceManager.GetString("TransitionObjectRotated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is a zero-sized transition point region..
         /// </summary>
         internal static string TransitionObjectZeroSize {

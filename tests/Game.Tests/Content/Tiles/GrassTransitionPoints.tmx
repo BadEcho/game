@@ -30,7 +30,7 @@
     <property name="TargetAreaName" value="Attic"/>
    </properties>
   </object>
-  <object id="5" name="Signpost" x="4" y="4" width="4" height="4"/>
+  <object id="5" name="Signpost" x="4" y="4" width="4" height="4" rotation="90"/>
   <object id="6" name="Pond" class="Water" x="0" y="0" width="8" height="8">
    <ellipse/>
   </object>

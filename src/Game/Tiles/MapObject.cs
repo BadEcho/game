@@ -98,4 +98,14 @@ public sealed class MapObject : Extensible
     /// </summary>
     public RectangleF Bounds
     { get; }
+
+    /// <summary>
+    /// Gets the clockwise rotation of this map object, measured in degrees.
+    /// </summary>
+    /// <remarks>
+    /// Both <see cref="Location"/> and <see cref="Bounds"/> are axis-aligned, so a consumer that honors
+    /// rotation has to apply it itself.
+    /// </remarks>
+    public float Rotation
+    { get; init; }
 }

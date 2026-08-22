@@ -145,6 +145,7 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
             output.Write(mapObject.Y);
             output.Write(mapObject.Width);
             output.Write(mapObject.Height);
+            output.Write(mapObject.Rotation);
             output.Write(mapObject.IsPoint);
             output.WriteProperties(mapObject);
         }

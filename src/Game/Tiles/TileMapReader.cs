@@ -168,6 +168,7 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
         var y = input.ReadSingle();
         var width = input.ReadSingle();
         var height = input.ReadSingle();
+        var rotation = input.ReadSingle();
         var isPoint = input.ReadBoolean();
         var customProperties = input.ReadProperties();
 
@@ -177,6 +178,12 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
 
         return isPoint
             ? new MapObject(id, name, type, location, customProperties)
-            : new MapObject(id, name, type, new RectangleF(location, new SizeF(width, height)), customProperties);
+              {
+                  Rotation = rotation
+              }
+            : new MapObject(id, name, type, new RectangleF(location, new SizeF(width, height)), customProperties)
+              {
+                  Rotation = rotation
+              };
     }
 }

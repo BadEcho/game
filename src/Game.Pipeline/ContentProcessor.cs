@@ -29,11 +29,18 @@ public abstract class ContentProcessor<T> : ContentProcessor<T,T>
     /// during the content build phase.
     /// </summary>
     /// <param name="dependencyPath">The path to the asset's dependency.</param>
-    /// <param name="dependencyName">The name of the asset's dependency.</param>
+    /// <param name="dependencyName">
+    /// The name of the asset's dependency; defaults to the expression <c>dependencyPath</c> was passed as, reduced to
+    /// the authored property name by <see cref="DependencyName.FromExpression"/>.
+    /// </param>
     /// <exception cref="PipelineException"><c>dependencyPath</c> points to a directory instead of a file.</exception>
     protected static void ValidateDependencyPath(string dependencyPath, [CallerArgumentExpression(nameof(dependencyPath))]string? dependencyName = null)
     {
         if (Directory.Exists(dependencyPath) || Path.EndsInDirectorySeparator(dependencyPath))
-            throw new PipelineException(Strings.DependencyFileIsADirectory.InvariantFormat(dependencyName, dependencyPath));
+        {
+            throw new PipelineException(
+                Strings.DependencyFileIsADirectory.InvariantFormat(DependencyName.FromExpression(dependencyName),
+                                                                  dependencyPath));
+        }
     }
 }

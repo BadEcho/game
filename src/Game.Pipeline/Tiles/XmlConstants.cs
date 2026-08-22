@@ -121,6 +121,12 @@ internal static class XmlConstants
         => "y";
 
     /// <summary>
+    /// The name for attributes defining the clockwise rotation of a TMX-related entity, in degrees.
+    /// </summary>
+    internal static string RotationAttribute
+        => "rotation";
+
+    /// <summary>
     /// The name for elements marking a map object as occupying a single coordinate.
     /// </summary>
     internal static string PointElement

@@ -32,7 +32,10 @@ public abstract class ContentImporter<T> : Microsoft.Xna.Framework.Content.Pipel
     /// </summary>
     /// <param name="assetPath">The path to the asset that references the dependency.</param>
     /// <param name="dependencyPath">The path to the dependency referenced by the asset.</param>
-    /// <param name="dependencyName">The name of the dependency referenced by the asset.</param>
+    /// <param name="dependencyName">
+    /// The name of the dependency referenced by the asset; defaults to the expression <c>dependencyPath</c> was passed
+    /// as, reduced to the authored property name by <see cref="DependencyName.FromExpression"/>.
+    /// </param>
     /// <returns>
     /// A normalized path to the dependency located at <c>dependencyPath</c>; if <c>dependencyPath</c> includes a
     /// directory it is assumed to be relative to the MGCB file and returned as-is, otherwise it is resolved relative
@@ -57,7 +60,10 @@ public abstract class ContentImporter<T> : Microsoft.Xna.Framework.Content.Pipel
     /// </summary>
     /// <param name="assetPath">The path to the asset that references the dependency.</param>
     /// <param name="dependencyPath">The path to the dependency referenced by the asset.</param>
-    /// <param name="dependencyName">The name of the dependency referenced by the asset.</param>
+    /// <param name="dependencyName">
+    /// The name of the dependency referenced by the asset; defaults to the expression <c>dependencyPath</c> was passed
+    /// as, reduced to the authored property name by <see cref="DependencyName.FromExpression"/>.
+    /// </param>
     /// <returns>A path to the dependency located at <c>dependencyPath</c>, resolved relative to <c>assetPath</c>.</returns>
     /// <exception cref="PipelineException">
     /// <c>dependencyPath</c> is empty, meaning the asset omitted a path required to reference the dependency.
@@ -72,7 +78,8 @@ public abstract class ContentImporter<T> : Microsoft.Xna.Framework.Content.Pipel
                                                      [CallerArgumentExpression(nameof(dependencyPath))]string? dependencyName = null)
     {
         return string.IsNullOrWhiteSpace(dependencyPath)
-            ? throw new PipelineException(Strings.DependencyPathIsEmpty.InvariantFormat(dependencyName))
+            ? throw new PipelineException(
+                Strings.DependencyPathIsEmpty.InvariantFormat(DependencyName.FromExpression(dependencyName)))
             : Path.GetFullPath(Path.Combine(Path.GetDirectoryName(assetPath) ?? string.Empty, dependencyPath));
     }
 }

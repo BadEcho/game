@@ -204,6 +204,13 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
+    public void Load_GrassTransitionPoints_ObjectRotationRoundTrips()
+    {   // Proves the rotation survives the writer and reader, not merely the importer.
+        Assert.Equal(90, FindObject("Signpost").Rotation);
+        Assert.Equal(0, FindObject("NorthDoor").Rotation);
+    }
+
+    [Fact]
     public void Load_GrassTransitionPoints_ClassOverridesType()
     {
         MapObject legacyDoor = FindObject("LegacyDoor");

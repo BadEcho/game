@@ -151,6 +151,15 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
                 throw new PipelineException(
                     Strings.TransitionObjectZeroSize.InvariantFormat(transitionObject.Name, transitionObject.Id));
             }
+
+            // Only axis-aligned bounds are supported for transition objects.
+            if (transitionObject.Rotation != 0)
+            {
+                throw new PipelineException(
+                    Strings.TransitionObjectRotated.InvariantFormat(transitionObject.Name,
+                                                                   transitionObject.Id,
+                                                                   transitionObject.Rotation));
+            }
         }
     }
 

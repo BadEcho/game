@@ -142,6 +142,19 @@ public class AreaPipelineTests
     }
 
     [Fact]
+    public void Process_DirectoryTileMapPath_NamesTheAuthoredProperty()
+    {
+        AreaContent content = _importer.Import(GetAssetPath("DirectoryTileMapPath.area"), _importerContext);
+
+        PipelineException exception
+            = Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+
+        // The author is told which property in their own file is at fault, not which C# expression carried it here.
+        Assert.Contains("tileMapPath", exception.Message, StringComparison.Ordinal);
+        Assert.DoesNotContain("input.Asset", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Process_DirectorySpriteSheetPath_ThrowsPipelineException()
     {
         AreaContent content = _importer.Import(GetAssetPath("DirectorySpriteSheetPath.area"), _importerContext);

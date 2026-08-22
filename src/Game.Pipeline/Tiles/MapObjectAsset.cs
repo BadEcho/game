@@ -22,7 +22,9 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// Only rectangular and point-shaped objects are supported. Rectangles are anchored at their upper-left corner, and points
 /// carry no size. Objects that stamp a tile (identified by a <c>gid</c> attribute) are notable for anchoring their vertical
 /// coordinate at their bottom edge instead; because they are unsupported, and dropped during processing, that discrepancy
-/// never reaches the runtime. Support for these shapes will be added if future needs require them.
+/// never reaches the runtime. Support for these shapes will be added if future needs require them. Rotation is
+/// unsupported for the same reason: only an object's axis-aligned bounds survive into the runtime, so a rotated
+/// transition point is rejected during processing rather than quietly triggering somewhere it was not drawn.
 /// </remarks>
 public sealed class MapObjectAsset : ExtensibleAsset
 {
@@ -47,6 +49,7 @@ public sealed class MapObjectAsset : ExtensibleAsset
         Y = (float?) root.Attribute(XmlConstants.YAttribute) ?? 0;
         Width = (float?) root.Attribute(XmlConstants.WidthAttribute) ?? 0;
         Height = (float?) root.Attribute(XmlConstants.HeightAttribute) ?? 0;
+        Rotation = (float?) root.Attribute(XmlConstants.RotationAttribute) ?? 0;
         IsPoint = root.Element(XmlConstants.PointElement) != null;
 
         IsSupportedShape
@@ -97,6 +100,12 @@ public sealed class MapObjectAsset : ExtensibleAsset
     /// Gets the height of this map object, measured in pixels.
     /// </summary>
     public float Height
+    { get; }
+
+    /// <summary>
+    /// Gets the clockwise rotation of this map object, measured in degrees.
+    /// </summary>
+    public float Rotation
     { get; }
 
     /// <summary>
