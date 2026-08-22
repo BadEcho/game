@@ -175,7 +175,7 @@ public abstract class GameplayScene : GameScene
 
         IsTransitioningAreas = true;
 
-        Area? nextArea =
+        Area nextArea =
             FindArea(transitionPoint.TargetAreaName)
             ?? throw new InvalidOperationException(Strings.AreaNotFound.InvariantFormat(transitionPoint.TargetAreaName));
 
