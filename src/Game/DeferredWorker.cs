@@ -20,33 +20,11 @@ namespace BadEcho.Game;
 /// thread, allowing for continuations to be run on the game thread.
 /// </summary>
 /// <remarks>
-/// <para>
 /// MonoGame's game loop never establishes a <see cref="SynchronizationContext"/>, which means a continuation attached
 /// to a background task will run on the thread pool, not the game thread, regardless of where it was attached. Rather
 /// than attempting to marshal work back to a context that does not exist, the direction is inverted: the game thread,
 /// which is already running an update every frame, polls the task via <see cref="Update"/>.
-/// </para>
-/// <para>
-/// The typical consumer of this type is a loading screen. A game derives a scene from <c>ScreenScene</c>, constructs a
-/// worker around the action that loads the content, starts it when the scene loads, and then calls <see cref="Update"/>
-/// during each update of the scene. Once <see cref="Update"/> returns true, the load is complete and the scene may close
-/// itself and hand the loaded content over to whatever awaits it.
-/// </para>
 /// </remarks>
-/// <example>
-/// <code>
-/// protected override void UpdateCore(GameUpdateTime time, bool isActive)
-/// {
-///     if (TransitionStatus != TransitionStatus.Entered)
-///         return;
-///
-///     if (!_worker.IsStarted)
-///         _worker.Start();
-///     else if (_worker.Update())
-///         Close();
-/// }
-/// </code>
-/// </example>
 public sealed class DeferredWorker
 {
     private readonly Action _action;

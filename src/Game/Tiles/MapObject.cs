@@ -17,10 +17,6 @@ namespace BadEcho.Game.Tiles;
 /// Provides a shape occupying a position on a tile map, giving meaning to that position without contributing anything to
 /// what is rendered.
 /// </summary>
-/// <remarks>
-/// The coordinates exposed by a map object already account for the offset of the object layer it belongs to, having had it
-/// baked in when the map was loaded. A map object therefore lands exactly where the map editor showed it.
-/// </remarks>
 public sealed class MapObject : Extensible
 {
     /// <summary>
@@ -75,7 +71,7 @@ public sealed class MapObject : Extensible
     /// <summary>
     /// Gets the name of the class this map object belongs to, which gives it its meaning.
     /// </summary>
-    /// <remarks>Well-known class names are found on <see cref="KnownObjectTypes"/>.</remarks>
+    /// <remarks>Well-known class names are found in <see cref="KnownObjectTypes"/>.</remarks>
     public string Type
     { get; }
 
@@ -89,6 +85,10 @@ public sealed class MapObject : Extensible
     /// Gets the coordinates this map object occupies, which is the upper-left corner of <see cref="Bounds"/> if this object
     /// occupies a region instead.
     /// </summary>
+    /// <remarks>
+    /// These location coordinates will already account for the offset of the object layer this object belongs to, allowing consumers
+    /// of the map object to be able to use said object without needing to be aware of the layer's offset.
+    /// </remarks>
     public PointF Location
     { get; }
 

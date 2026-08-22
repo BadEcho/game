@@ -37,9 +37,5 @@ public enum LayerType
     /// <summary>
     /// A layer containing map objects.
     /// </summary>
-    /// <remarks>
-    /// New members must always be appended to the end of this enumeration, as its values are serialized as integers into
-    /// every built tile map.
-    /// </remarks>
     Object
 }

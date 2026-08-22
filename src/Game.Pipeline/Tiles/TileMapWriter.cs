@@ -133,8 +133,7 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
 
     private static void WriteObjectLayer(ContentWriter output, ObjectLayerAsset objectLayer)
     {
-        // Need to record how many objects in order to properly direct the reader. Objects with unsupported shapes have
-        // already been pruned by the processor, and so are never written.
+        // Need to record how many objects in order to properly direct the reader.
         output.Write(objectLayer.Objects.Count);
 
         foreach (MapObjectAsset mapObject in objectLayer.Objects)

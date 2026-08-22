@@ -22,7 +22,6 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// </summary>
 public sealed class TileAsset : ExtensibleAsset
 {
-    private const string ID_ATTRIBUTE = "id";
     private const string ANIMATION_ELEMENT = "animation";
     private const string FRAME_ELEMENT = "frame";
     private const string TILE_ID_ATTRIBUTE = "tileid";
@@ -39,7 +38,7 @@ public sealed class TileAsset : ExtensibleAsset
     {
         Require.NotNull(root, nameof(root));
 
-        Id = (int?) root.Attribute(ID_ATTRIBUTE) ?? default;
+        Id = (int?) root.Attribute(XmlConstants.IdAttribute) ?? 0;
 
         XElement? imageElement = root.Element(XmlConstants.ImageElement);
 
@@ -52,8 +51,8 @@ public sealed class TileAsset : ExtensibleAsset
         {
             foreach (XElement frameElement in animationElement.Elements(FRAME_ELEMENT))
             {
-                int tileId = (int?) frameElement.Attribute(TILE_ID_ATTRIBUTE) ?? default;
-                int duration = (int?) frameElement.Attribute(DURATION_ATTRIBUTE) ?? default;
+                int tileId = (int?) frameElement.Attribute(TILE_ID_ATTRIBUTE) ?? 0;
+                int duration = (int?) frameElement.Attribute(DURATION_ATTRIBUTE) ?? 0;
 
                 _animationFrames.Add(
                     new TileAnimationFrame(tileId, TimeSpan.FromMilliseconds(duration)));

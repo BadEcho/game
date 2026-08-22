@@ -17,8 +17,7 @@ namespace BadEcho.Game.Tiles;
 /// Provides a set of known class names used to give meaning to the objects appearing on a tile map's object layers.
 /// </summary>
 /// <remarks>
-/// A map object's class is its <c>class</c> attribute in the TMX map format, named <c>type</c> prior to Tiled 1.9. Objects
-/// are matched against these names without regard to case.
+/// A map object's class is its <c>class</c> attribute in the TMX map format, named <c>type</c> prior to Tiled 1.9.
 /// </remarks>
 public static class KnownObjectTypes
 {

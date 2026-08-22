@@ -209,9 +209,6 @@
 	<data name="TransitionPointNoTargetAreaName" xml:space="preserve">
 		<value>A transition point requires the name of an area to transition to.</value>
 	</data>
-	<data name="TransitionObjectNoTargetAreaName" xml:space="preserve">
-		<value>Map object '{0}' is classed as a transition point, however it lacks a '{1}' custom property; it will be ignored.</value>
-	</data>
 	<data name="TransitionPointDestinationNotFound" xml:space="preserve">
 		<value>No transition point named '{0}' exists in the area named '{1}' to spawn at.</value>
 	</data>

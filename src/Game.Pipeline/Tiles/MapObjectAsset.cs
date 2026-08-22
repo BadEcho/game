@@ -22,7 +22,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// Only rectangular and point-shaped objects are supported. Rectangles are anchored at their upper-left corner, and points
 /// carry no size. Objects that stamp a tile (identified by a <c>gid</c> attribute) are notable for anchoring their vertical
 /// coordinate at their bottom edge instead; because they are unsupported, and dropped during processing, that discrepancy
-/// never reaches the runtime.
+/// never reaches the runtime. Support for these shapes will be added if future needs require them.
 /// </remarks>
 public sealed class MapObjectAsset : ExtensibleAsset
 {
@@ -35,16 +35,18 @@ public sealed class MapObjectAsset : ExtensibleAsset
     {
         Require.NotNull(root, nameof(root));
 
-        Id = (int?) root.Attribute(XmlConstants.IdAttribute) ?? default;
+        Id = (int?) root.Attribute(XmlConstants.IdAttribute) ?? 0;
         Name = (string?) root.Attribute(XmlConstants.NameAttribute) ?? string.Empty;
-        // Tiled 1.9 renamed the object 'type' attribute to 'class'; maps saved by either era of the editor are accepted.
+
+        // Tiled 1.9 renamed the object 'type' attribute to 'class'; both attributes are supported here.
         Type = (string?) root.Attribute(XmlConstants.ClassAttribute)
-            ?? (string?) root.Attribute(XmlConstants.TypeAttribute)
-            ?? string.Empty;
-        X = (float?) root.Attribute(XmlConstants.XAttribute) ?? default;
-        Y = (float?) root.Attribute(XmlConstants.YAttribute) ?? default;
-        Width = (float?) root.Attribute(XmlConstants.WidthAttribute) ?? default;
-        Height = (float?) root.Attribute(XmlConstants.HeightAttribute) ?? default;
+               ?? (string?) root.Attribute(XmlConstants.TypeAttribute)
+               ?? string.Empty;
+
+        X = (float?) root.Attribute(XmlConstants.XAttribute) ?? 0;
+        Y = (float?) root.Attribute(XmlConstants.YAttribute) ?? 0;
+        Width = (float?) root.Attribute(XmlConstants.WidthAttribute) ?? 0;
+        Height = (float?) root.Attribute(XmlConstants.HeightAttribute) ?? 0;
         IsPoint = root.Element(XmlConstants.PointElement) != null;
 
         IsSupportedShape

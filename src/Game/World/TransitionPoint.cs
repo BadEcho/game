@@ -20,15 +20,12 @@ namespace BadEcho.Game.World;
 /// </summary>
 /// <remarks>
 /// <para>
-/// A transition point takes one of two forms, chosen by the constructor used. A point form occupies a single coordinate
-/// and is entered when the entering entity's bounds contain that coordinate. A region form occupies a rectangular area
-/// and is entered when the entering entity's bounds intersect it. The split is deliberate: rectangles are
-/// endpoint-exclusive, which would make a zero-sized region a permanently dead trigger.
+/// A transition point takes one of two forms, chosen by the constructor used. A point form, entered when the entering entity's
+/// bounds contain that coordinate, and a region form, entered when the entering entity's bounds intersect it.
 /// </para>
 /// <para>
 /// The geometry and target of a transition point are immutable; only <see cref="IsEnabled"/> may be changed after
-/// construction. Runtime mutability is a requirement, not an accident: a doorway hidden behind a crumbling wall starts
-/// disabled and is enabled by gameplay, while an appearing portal is added to an area outright.
+/// construction, (which covers cases such as a portal suddenly appearing or a pathway becoming inaccessible due to a cave-in, etc.).
 /// </para>
 /// </remarks>
 public sealed class TransitionPoint
@@ -67,7 +64,7 @@ public sealed class TransitionPoint
     /// </summary>
     /// <remarks>
     /// Names are optional and are not validated for uniqueness; a lookup by name yields the first match found. Map-authored
-    /// points source their name from the name of the object they were folded from.
+    /// points source their name from the name of the object they were loaded from.
     /// </remarks>
     public string Name
     { get; init; } = string.Empty;
@@ -127,10 +124,6 @@ public sealed class TransitionPoint
     /// </summary>
     /// <param name="entityBounds">The spatial bounds of the entity to check.</param>
     /// <returns>True if an entity occupying <c>entityBounds</c> has entered this transition point; otherwise, false.</returns>
-    /// <remarks>
-    /// A disabled transition point is never entered. Folding the enabled state into the predicate itself ensures that no
-    /// detection path can bypass it.
-    /// </remarks>
     public bool IsEntered(IShape entityBounds)
     {
         Require.NotNull(entityBounds, nameof(entityBounds));

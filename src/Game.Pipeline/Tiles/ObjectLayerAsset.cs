@@ -41,7 +41,6 @@ public sealed class ObjectLayerAsset : LayerAsset
     /// <summary>
     /// Gets the collection of objects appearing on this object layer.
     /// </summary>
-    /// <remarks>Objects with unsupported shapes are pruned from this collection during tile map processing.</remarks>
     public ICollection<MapObjectAsset> Objects
     { get; } = new List<MapObjectAsset>();
 }

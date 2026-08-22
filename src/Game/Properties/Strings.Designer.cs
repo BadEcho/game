@@ -68,7 +68,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("AreaNameDuplicate", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to No loaded area named &apos;{0}&apos; exists to transition to..
         /// </summary>
@@ -77,7 +77,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("AreaNotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Texture atlas already has a region named &apos;{0}&apos;..
         /// </summary>
@@ -367,15 +367,6 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Map object &apos;{0}&apos; is classed as a transition point, however it lacks a &apos;{1}&apos; custom property; it will be ignored..
-        /// </summary>
-        internal static string TransitionObjectNoTargetAreaName {
-            get {
-                return ResourceManager.GetString("TransitionObjectNoTargetAreaName", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to No transition point named &apos;{0}&apos; exists in the area named &apos;{1}&apos; to spawn at..
         /// </summary>
         internal static string TransitionPointDestinationNotFound {
@@ -383,7 +374,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("TransitionPointDestinationNotFound", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A transition point requires the name of an area to transition to..
         /// </summary>
@@ -392,7 +383,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("TransitionPointNoTargetAreaName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Graphics device has not been initialized yet..
         /// </summary>
@@ -419,7 +410,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("WorkerAlreadyStarted", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Zoom speed cannot be negative..
         /// </summary>

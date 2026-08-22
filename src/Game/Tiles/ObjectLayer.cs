@@ -18,8 +18,7 @@ namespace BadEcho.Game.Tiles;
 /// </summary>
 /// <remarks>
 /// Object layers contribute nothing to what a tile map renders; they exist so that gameplay concerns anchored to a location
-/// on the map, such as the transition points connecting one area to another, can be authored in the same editor that lays
-/// out the map itself.
+/// on the map can be authored in the same editor that lays out the map itself.
 /// </remarks>
 public sealed class ObjectLayer : Layer
 {

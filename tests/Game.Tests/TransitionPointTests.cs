@@ -127,7 +127,7 @@ public class TransitionPointTests
     }
 
     [Fact]
-    public void IsEntered_Reenabled_ReturnsTrue()
+    public void IsEntered_DisabledThenEnabled_ReturnsTrue()
     {
         var transitionPoint = new TransitionPoint("Cave", new RectangleF(0, 0, 10, 10))
                               {

@@ -126,7 +126,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
             objectLayer.Objects.Remove(unsupportedObject);
         }
 
-        // The pipeline stays neutral as far as the meaning of a map object goes, with the exception of transition points,
+        // The pipeline stays neutral as far as the meaning of a map object goes, except for transition points,
         // whose data must be complete if the areas sourcing them are to function.
         IEnumerable<MapObjectAsset> transitionObjects
             = objectLayer.Objects.Where(

@@ -11,12 +11,9 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Extensions;
 using BadEcho.Game.Effects;
 using BadEcho.Game.Lighting;
-using BadEcho.Game.Properties;
 using BadEcho.Game.Tiles;
-using BadEcho.Logging;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.World;
@@ -55,7 +52,7 @@ public class Area
             _collisionEngine.Register(tileCollider);
         }
 
-        FoldTransitionPoints();
+        LoadTransitionPoints();
     }
 
     /// <summary>
@@ -120,9 +117,9 @@ public class Area
     /// Gets the collection of transition points that, when entered, trigger a transition out of this area.
     /// </summary>
     /// <remarks>
-    /// Transition points authored on this area's tile map are folded into this collection automatically; further points may
-    /// be added and removed at runtime. Because a point's geometry is permanent, a map-authored doorway is normally taken out
-    /// of service by clearing its <see cref="TransitionPoint.IsEnabled"/> property rather than by removing it.
+    /// Transition points authored on this area's tile map are loaded into this collection automatically; further points may
+    /// be added and removed at runtime. Because a point's geometry is permanent, a map-authored transition point should be
+    /// taken out of service by clearing its <see cref="TransitionPoint.IsEnabled"/> property rather than by removing it.
     /// </remarks>
     public IReadOnlyCollection<TransitionPoint> TransitionPoints
         => _transitionPoints;
@@ -278,25 +275,16 @@ public class Area
         renderer.DrawComposite(spriteBatch, AmbientLight);
     }
 
-    private static TransitionPoint? CreateTransitionPoint(MapObject mapObject)
+    private static TransitionPoint CreateTransitionPoint(MapObject mapObject)
     {
         CustomProperties properties = mapObject.CustomProperties;
 
-        if (!properties.Strings.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName)
-            || string.IsNullOrEmpty(targetAreaName))
-        {   // The tile map pipeline rejects transition point objects lacking a target area, however handcrafted content, or
-            // content built before that validation existed, can still reach us. We warn and move on instead of throwing.
-            Logger.Warning(
-                Strings.TransitionObjectNoTargetAreaName.InvariantFormat(mapObject.Name, KnownProperties.TargetAreaName));
-
-            return null;
-        }
+        string targetAreaName = properties.Strings[KnownProperties.TargetAreaName];
 
         if (!properties.Strings.TryGetValue(KnownProperties.TargetPointName, out string? targetPointName))
             targetPointName = string.Empty;
 
-        if (!properties.Booleans.TryGetValue(KnownProperties.Enabled, out bool isEnabled))
-            isEnabled = true;
+        bool isEnabled = properties.Booleans.GetValueOrDefault(KnownProperties.Enabled, true);
 
         TransitionPoint transitionPoint
             = mapObject.IsPoint
@@ -315,16 +303,16 @@ public class Area
     }
 
     /// <summary>
-    /// Folds the transition points authored on this area's tile map into this area's collection of transition points.
+    /// Loads the transition points authored on this area's tile map into this area's collection of transition points.
     /// </summary>
     /// <remarks>
     /// This happens here, at runtime, rather than during the processing of the area's own asset, because the area processor
     /// holds nothing more than an external reference to the tile map, and reparsing the map from there would violate the
-    /// layering between the two assets. Folding from the primary constructor means both content-loaded areas and ones built
-    /// in code get their map's transition points; the copy constructor copies the folded collection instead, so no area is
-    /// ever folded twice.
+    /// layering between the two assets. Loading from the primary constructor means both content-loaded areas and ones built
+    /// in code get their map's transition points; the copy constructor copies the local collection instead, so no area's transition
+    /// points collection is ever loaded twice.
     /// </remarks>
-    private void FoldTransitionPoints()
+    private void LoadTransitionPoints()
     {
         IEnumerable<MapObject> mapObjects
             = TileMap.Layers.OfType<ObjectLayer>().SelectMany(l => l.Objects);
@@ -334,10 +322,9 @@ public class Area
             if (!mapObject.Type.Equals(KnownObjectTypes.TransitionPoint, StringComparison.OrdinalIgnoreCase))
                 continue;
 
-            TransitionPoint? transitionPoint = CreateTransitionPoint(mapObject);
-
-            if (transitionPoint != null)
-                _transitionPoints.Add(transitionPoint);
+            TransitionPoint transitionPoint = CreateTransitionPoint(mapObject);
+            
+            _transitionPoints.Add(transitionPoint);
         }
     }
 }
