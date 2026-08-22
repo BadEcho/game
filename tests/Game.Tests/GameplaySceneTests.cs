@@ -47,7 +47,7 @@ public class GameplaySceneTests
 
             field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor" });
 
-            var activator = new SpatialStub(_AwayFromDoorway);
+            var activator = new EntityStub(_AwayFromDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
 
             scene.Tick();
@@ -88,7 +88,7 @@ public class GameplaySceneTests
 
             field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { IsEnabled = false });
 
-            var activator = new SpatialStub(_InsideDoorway);
+            var activator = new EntityStub(_InsideDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
 
             // A disabled point is invisible to detection, so the guard arms even though the activator stands on the doorway.
@@ -108,7 +108,7 @@ public class GameplaySceneTests
 
             field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway));
 
-            var activator = new SpatialStub(_InsideDoorway);
+            var activator = new EntityStub(_InsideDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
 
             // Detection starts disarmed, so a game start or restored save placing the activator on a doorway is safe.
@@ -136,7 +136,7 @@ public class GameplaySceneTests
             field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor", TargetPointName = "SouthDoor" });
             cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor", TargetPointName = "NorthDoor" });
 
-            var activator = new SpatialStub(_AwayFromDoorway);
+            var activator = new EntityStub(_AwayFromDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
 
             scene.Tick();
@@ -164,69 +164,23 @@ public class GameplaySceneTests
         });
 
     [Fact]
-    public void CompleteAreaTransition_UnknownAreaName_ThrowsException()
-        => RunTest((game, device) =>
-        {
-            using TestGameplayScene scene = LoadScene(game, null, CreateArea(device, "Field"));
-
-            Assert.Throws<ArgumentException>(() => scene.Complete("Atlantis"));
-        });
-
-    [Fact]
-    public void CompleteAreaTransition_DeferredLoader_LoadsAndSwitches()
-        => RunTest((game, device) =>
-        {
-            Area cave = CreateArea(device, "Cave");
-            using TestGameplayScene scene = LoadScene(game, null, CreateArea(device, "Field"));
-
-            scene.DeferredAreaLoader = name => "Cave".Equals(name, StringComparison.Ordinal) ? cave : null;
-
-            scene.Complete("Cave");
-
-            Assert.Same(cave, scene.CurrentArea);
-            Assert.Equal(1, scene.TransitionedCount);
-        });
-
-    [Fact]
     public void CompleteAreaTransition_LoadedArea_HandsOverBackgroundBuiltArea()
         => RunTest((game, device) =>
         {
+            var transitionPoint = 
+                new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor", TargetPointName = "SouthDoor" };
+
             Area cave = CreateArea(device, "Cave");
             using TestGameplayScene scene = LoadScene(game, null, CreateArea(device, "Field"));
 
-            scene.Complete(cave);
+            scene.Complete(transitionPoint, cave);
 
             Assert.Same(cave, scene.CurrentArea);
 
             // Handing the very same instance over a second time is not a duplicate.
-            scene.Complete(cave);
+            scene.Complete(transitionPoint, cave);
 
             Assert.Equal(2, scene.TransitionedCount);
-        });
-
-    [Fact]
-    public void CompleteAreaTransition_LoadedArea_DuplicateNameThrowsException()
-        => RunTest((game, device) =>
-        {
-            using TestGameplayScene scene = LoadScene(game, null, CreateArea(device, "Field"));
-
-            Assert.Throws<InvalidOperationException>(() => scene.Complete(CreateArea(device, "FIELD")));
-        });
-
-    [Fact]
-    public void CompleteAreaTransition_WithoutBegin_PassesNoDestination()
-        => RunTest((game, device) =>
-        {
-            Area cave = CreateArea(device, "Cave");
-
-            cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor" });
-
-            using TestGameplayScene scene = LoadScene(game, null, CreateArea(device, "Field"), cave);
-
-            scene.Complete("Cave");
-
-            Assert.Null(scene.DestinationPoint);
-            Assert.Null(scene.PointActiveWhileTransitioned);
         });
 
     [Fact]
@@ -289,27 +243,21 @@ public class GameplaySceneTests
         });
 
     [Fact]
-    public void OnAreaTransitioned_InitiatingPoint_ReadableThenCleared()
-        => RunTest((game, device) =>
-        {
-            using TestGameplayScene scene = TransitionThroughDoor(game, device, CreateArea(device, "Cave"), "SouthDoor");
-
-            Assert.Equal("NorthDoor", scene.PointActiveWhileTransitioned?.Name);
-            Assert.Null(scene.ObservedActiveTransitionPoint);
-        });
-
-    [Fact]
     public void OnAreaTransitioning_Deferred_StaysTransitioningUntilCompleted()
         => RunTest((game, device) =>
         {
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor", TargetPointName = "SouthDoor" });
+            var fieldTransitionPoint = new TransitionPoint("Cave", _Doorway)
+                                       { Name = "NorthDoor", TargetPointName = "SouthDoor" };
+
+            field.AddTransitionPoint(fieldTransitionPoint);
+            
             cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor" });
 
-            var activator = new SpatialStub(_AwayFromDoorway);
-            using TestGameplayScene scene = LoadScene(game, activator, field);
+            var activator = new EntityStub(_AwayFromDoorway);
+            using TestGameplayScene scene = LoadScene(game, activator, field, cave);
 
             scene.DefersTransitions = true;
 
@@ -328,7 +276,7 @@ public class GameplaySceneTests
             Assert.Equal(0, scene.TransitionedCount);
 
             // The background-built area is handed over directly, as a loading screen's worker would do.
-            scene.Complete(cave);
+            scene.Complete(fieldTransitionPoint, cave);
 
             Assert.False(scene.IsTransitioningAreas);
             Assert.Same(cave, scene.CurrentArea);
@@ -347,7 +295,7 @@ public class GameplaySceneTests
                                      Name = "NorthDoor", TargetPointName = targetPointName
                                  });
 
-        var activator = new SpatialStub(_AwayFromDoorway);
+        var activator = new EntityStub(_AwayFromDoorway);
         TestGameplayScene scene = LoadScene(game, activator, field, cave);
 
         scene.Tick();
@@ -358,7 +306,7 @@ public class GameplaySceneTests
         return scene;
     }
 
-    private static TestGameplayScene LoadScene(TestGame game, ISpatial? activator, params Area[] areas)
+    private static TestGameplayScene LoadScene(TestGame game, IEntity? activator, params Area[] areas)
     {
         var scene = new TestGameplayScene(game, areas) { Activator = activator };
 
@@ -396,11 +344,5 @@ public class GameplaySceneTests
         game.Run();
 
         failure?.Throw();
-    }
-
-    private sealed class SpatialStub(IShape bounds) : ISpatial
-    {
-        public IShape Bounds
-        { get; set; } = bounds;
     }
 }

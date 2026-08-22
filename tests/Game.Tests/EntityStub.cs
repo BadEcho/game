@@ -16,8 +16,16 @@ using Microsoft.Xna.Framework;
 namespace BadEcho.Game.Tests;
 public sealed class EntityStub : IEntity
 {
+    public EntityStub(IShape bounds)
+    {
+        Bounds = bounds;
+    }
+
+    public EntityStub()
+    { }
+
     public IShape Bounds
-        => RectangleF.Empty;
+    { get; set; } = RectangleF.Empty;
 
     public ICollection<Component> Components 
     { get; } = [];

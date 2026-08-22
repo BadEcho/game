@@ -29,11 +29,8 @@ internal sealed class TestGameplayScene : GameplayScene
         : base(game)
         => _loadedAreas.AddRange(areas);
 
-    public ISpatial? Activator
+    public IEntity? Activator
     { get; set; }
-
-    public Func<string, Area?> DeferredAreaLoader
-    { get; set; } = _ => null;
 
     /// <summary>
     /// Gets or sets a value indicating if a begun transition is left for the test to complete itself.
@@ -53,11 +50,8 @@ internal sealed class TestGameplayScene : GameplayScene
     public TransitionPoint? DestinationPoint
     { get; private set; }
 
-    public TransitionPoint? PointActiveWhileTransitioned
-    { get; private set; }
-
     public TransitionPoint? ObservedActiveTransitionPoint
-        => ActiveTransitionPoint;
+    { get; private set; }
 
     /// <summary>
     /// Advances this scene by a single update, exactly as its scene manager would.
@@ -65,30 +59,26 @@ internal sealed class TestGameplayScene : GameplayScene
     public void Tick()
         => Update(new GameUpdateTime(Game, new GameTime()), true);
 
-    public void Complete(string areaName)
-        => CompleteAreaTransition(areaName);
-
-    public void Complete(Area loadedArea)
-        => CompleteAreaTransition(loadedArea);
+    public void Complete(TransitionPoint transitionPoint, Area loadedArea)
+        => CompleteAreaTransition(transitionPoint, loadedArea);
 
     public void MakeCurrent(Area area)
         => CurrentArea = area;
 
-    protected override ISpatial? TransitionActivator
+    protected override IEntity? TransitionActivator
         => Activator;
 
     protected override IEnumerable<Area> LoadAreas()
         => _loadedAreas;
 
-    protected override Area? LoadDeferredArea(string areaName)
-        => DeferredAreaLoader(areaName);
-
-    protected override void OnAreaTransitioning(TransitionPoint transitionPoint)
+    protected override void OnAreaTransitioning(TransitionPoint transitionPoint, Area newArea)
     {
+        ObservedActiveTransitionPoint = transitionPoint;
+
         if (DefersTransitions)
             return;
 
-        base.OnAreaTransitioning(transitionPoint);
+        base.OnAreaTransitioning(transitionPoint, newArea);
     }
 
     protected override void OnAreaTransitioned(Area? previousArea, Area newArea, TransitionPoint? destinationPoint)
@@ -97,7 +87,6 @@ internal sealed class TestGameplayScene : GameplayScene
         PreviousArea = previousArea;
         NewArea = newArea;
         DestinationPoint = destinationPoint;
-        PointActiveWhileTransitioned = ActiveTransitionPoint;
     }
 
     protected override void DrawGameplay(SpriteBatch spriteBatch)
