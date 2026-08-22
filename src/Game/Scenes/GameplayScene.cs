@@ -59,7 +59,15 @@ public abstract class GameplayScene : GameScene
     /// Gets the currently loaded area.
     /// </summary>
     public Area? CurrentArea
-    { get; protected set; }
+    {
+        get;
+        protected set
+        {
+            field = value;
+            IsTransitioningAreas = false;
+            _transitionArmed = false;
+        }
+    }
 
     /// <summary>
     /// Gets a value indicating if a transition from one area to another is in progress.
@@ -173,11 +181,11 @@ public abstract class GameplayScene : GameScene
         if (IsTransitioningAreas)
             return;
 
-        IsTransitioningAreas = true;
-
         Area nextArea =
             FindArea(transitionPoint.TargetAreaName)
             ?? throw new InvalidOperationException(Strings.AreaNotFound.InvariantFormat(transitionPoint.TargetAreaName));
+
+        IsTransitioningAreas = true;
 
         OnAreaTransitioning(transitionPoint, nextArea);
     }
@@ -209,10 +217,7 @@ public abstract class GameplayScene : GameScene
         }
 
         Area? previousArea = CurrentArea;
-
         CurrentArea = newArea;
-        IsTransitioningAreas = false;
-        _transitionArmed = false;
 
         OnAreaTransitioned(previousArea, newArea, destinationPoint);
     }

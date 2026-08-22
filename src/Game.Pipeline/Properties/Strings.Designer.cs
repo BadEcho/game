@@ -356,7 +356,7 @@ namespace BadEcho.Game.Pipeline.Properties {
                 return ResourceManager.GetString("ObjectUnsupportedShape", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Processing area: {0}.
         /// </summary>
@@ -554,7 +554,7 @@ namespace BadEcho.Game.Pipeline.Properties {
                 return ResourceManager.GetString("TileMapUnsupportedRenderOrder", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is classed as a transition point but has no &apos;TargetAreaName&apos; custom property..
         /// </summary>
@@ -563,7 +563,16 @@ namespace BadEcho.Game.Pipeline.Properties {
                 return ResourceManager.GetString("TransitionObjectMissingTargetAreaName", resourceCulture);
             }
         }
-
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) declared the custom property &apos;{2}&apos; using the wrong type (expected: &apos;{3}&apos;, actual: &apos;{4}&apos;)..
+        /// </summary>
+        internal static string TransitionObjectPropertyWrongType {
+            get {
+                return ResourceManager.GetString("TransitionObjectPropertyWrongType", resourceCulture);
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is a zero-sized transition point region..
         /// </summary>

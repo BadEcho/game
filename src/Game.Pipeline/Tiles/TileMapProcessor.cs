@@ -134,6 +134,10 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
 
         foreach (MapObjectAsset transitionObject in transitionObjects)
         {
+            EnsureCustomPropertyType(transitionObject, KnownProperties.Enabled, CustomPropertyType.Bool);
+            EnsureCustomPropertyType(transitionObject, KnownProperties.TargetAreaName, CustomPropertyType.String);
+            EnsureCustomPropertyType(transitionObject, KnownProperties.TargetPointName, CustomPropertyType.String);
+         
             if (!transitionObject.CustomStringProperties.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName)
                 || string.IsNullOrEmpty(targetAreaName))
             {
@@ -146,6 +150,23 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
             {
                 throw new PipelineException(
                     Strings.TransitionObjectZeroSize.InvariantFormat(transitionObject.Name, transitionObject.Id));
+            }
+        }
+    }
+
+    private static void EnsureCustomPropertyType(
+        MapObjectAsset transitionObject, string propertyName, CustomPropertyType expectedType)
+    {
+        if (transitionObject.TryGetPropertyType(propertyName, out CustomPropertyType actualType))
+        {
+            if (actualType != expectedType)
+            {
+                throw new PipelineException(Strings.TransitionObjectPropertyWrongType.InvariantFormat(
+                                                transitionObject.Name,
+                                                transitionObject.Id,
+                                                propertyName,
+                                                expectedType,
+                                                actualType));
             }
         }
     }

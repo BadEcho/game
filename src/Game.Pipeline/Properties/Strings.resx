@@ -288,4 +288,7 @@
   <data name="TransitionObjectZeroSize" xml:space="preserve">
 	  <value>Map object '{0}' (id {1}) is a zero-sized transition point region.</value>
   </data>
+	<data name="TransitionObjectPropertyWrongType" xml:space="preserve">
+		<value>Map object '{0}' (id {1}) declared the custom property '{2}' using the wrong type (expected: '{3}', actual: '{4}').</value>
+	</data>
 </root>
