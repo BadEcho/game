@@ -39,7 +39,7 @@ public abstract class ContentImporter<T> : Microsoft.Xna.Framework.Content.Pipel
     /// to <c>assetPath</c>.
     /// </returns>
     /// <remarks>
-    /// This convention applies only to Bad Echo's own asset formats. Dependencies declared by externally authored
+    /// This convention applies only to all of Bad Echo's own asset formats. Dependencies declared by externally authored
     /// formats must be resolved with <see cref="ResolveAssetRelativePath"/> instead.
     /// </remarks>
     protected static string NormalizeDependencyPath(string assetPath, 

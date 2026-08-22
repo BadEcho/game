@@ -169,6 +169,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is classed as a transition point but has no &apos;{2}&apos; custom property..
+        /// </summary>
+        internal static string MapObjectNoTargetAreaName {
+            get {
+                return ResourceManager.GetString("MapObjectNoTargetAreaName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum amount of zoom must be greater than zero..
         /// </summary>
         internal static string MaximumZoomCannotBeZeroOrLess {

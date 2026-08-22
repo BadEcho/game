@@ -256,7 +256,7 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
     }
 
     private Area CreateEmptyArea()
-        => new(_device, new TileMap(_device, "Empty", new Size(2, 2), new Size(16, 16), new CustomProperties()));
+        => new(new TileMap(_device, "Empty", new Size(2, 2), new Size(16, 16), new CustomProperties()));
 
     private TransitionPoint FindTransitionPoint(string name)
     {

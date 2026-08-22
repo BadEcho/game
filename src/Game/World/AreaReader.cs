@@ -30,7 +30,7 @@ public sealed class AreaReader : ContentTypeReader<Area>
         var tileMap = input.ReadExternalReference<TileMap>();
 
         var actorsToRead = input.ReadInt32();
-        var area = new Area(input.GetGraphicsDevice(), tileMap)
+        var area = new Area(tileMap)
                    {
                        Name = name
                    };

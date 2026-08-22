@@ -11,8 +11,10 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using BadEcho.Extensions;
 using BadEcho.Game.Effects;
 using BadEcho.Game.Lighting;
+using BadEcho.Game.Properties;
 using BadEcho.Game.Tiles;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -34,11 +36,9 @@ public class Area
     /// <summary>
     /// Initializes a new instance of the <see cref="Area"/> class.
     /// </summary>
-    /// <param name="device">The graphics device used for rendering.</param>
     /// <param name="tileMap">The tile map defining the layout of this area.</param>
-    public Area(GraphicsDevice device, TileMap tileMap)
+    public Area(TileMap tileMap)
     {
-        Require.NotNull(device, nameof(device));
         Require.NotNull(tileMap, nameof(tileMap));
         
         TileMap = tileMap;
@@ -279,7 +279,13 @@ public class Area
     {
         CustomProperties properties = mapObject.CustomProperties;
 
-        string targetAreaName = properties.Strings[KnownProperties.TargetAreaName];
+        if (!properties.Strings.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName))
+        {   // Maps built by the tile map processor always carry this property; ones assembled in code may not.
+            throw new InvalidOperationException(
+                Strings.MapObjectNoTargetAreaName.InvariantFormat(mapObject.Name,
+                                                                 mapObject.Id,
+                                                                 KnownProperties.TargetAreaName));
+        }
 
         if (!properties.Strings.TryGetValue(KnownProperties.TargetPointName, out string? targetPointName))
             targetPointName = string.Empty;

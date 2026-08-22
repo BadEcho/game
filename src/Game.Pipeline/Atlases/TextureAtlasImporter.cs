@@ -45,7 +45,7 @@ public sealed class TextureAtlasImporter : ContentImporter<TextureAtlasContent>
 
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
 
-        asset.TexturePath = NormalizeDependencyPath(filename, asset.TexturePath);
+        asset.TexturePath = ResolveAssetRelativePath(filename, asset.TexturePath);
         
         context.AddDependency(asset.TexturePath);
 

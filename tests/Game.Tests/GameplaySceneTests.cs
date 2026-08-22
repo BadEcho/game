@@ -320,7 +320,7 @@ public class GameplaySceneTests
     {
         var tileMap = new TileMap(device, name, new Size(2, 2), new Size(16, 16), new CustomProperties());
 
-        return new Area(device, tileMap) { Name = name };
+        return new Area(tileMap) { Name = name };
     }
 
     private static void RunTest(Action<TestGame, GraphicsDevice> test)

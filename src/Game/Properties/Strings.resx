@@ -218,4 +218,7 @@
 	<data name="AreaNameDuplicate" xml:space="preserve">
 		<value>Multiple loaded areas share the name '{0}'.</value>
 	</data>
+	<data name="MapObjectNoTargetAreaName" xml:space="preserve">
+		<value>Map object '{0}' (id {1}) is classed as a transition point but has no '{2}' custom property.</value>
+	</data>
 </root>
