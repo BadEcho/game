@@ -1,0 +1,5 @@
+{
+    "$schema": "https://BadEcho.com/area.json",
+    "name": "Transitions Area",
+    "tileMapPath": "Tiles/GrassTransitionPoints.tmx"
+}

@@ -1,0 +1,5 @@
+{
+    "$schema": "https://BadEcho.com/area.json",
+    "name": "No Actors Area",
+    "tileMapPath": "Tiles/GrassFourTiles.tmx"
+}

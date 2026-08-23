@@ -24,9 +24,15 @@ using BadEcho.Game.Properties;
                            Target = "~T:BadEcho.Game.Tiles.TileFlips",
                            Justification = "The TMX map format is an external specification which defines its tile flip flags as unsigned integer bitmask values.")]
 
-[assembly: SuppressMessage("Design", 
-                           "CA1045:Do not pass types by reference", 
-                           Scope = "member", 
+[assembly: SuppressMessage("Naming",
+                           "CA1720:Identifier contains type name",
+                           Scope = "member",
+                           Target = "~F:BadEcho.Game.Tiles.LayerType.Object",
+                           Justification = "The TMX map format is an external specification which names this kind of layer an object layer; naming the member anything else would obscure what it maps to.")]
+
+[assembly: SuppressMessage("Design",
+                           "CA1045:Do not pass types by reference",
+                           Scope = "member",
                            Target = "~M:BadEcho.Game.UI.Control`1.RemeasureIfChanged``1(``0@,``0)",
                            Justification = "The method is not public, and the immeasurable amount of convenience provided by this function vastly outweighs the inconvenience of passing an argument by reference. This is a proper use of ref parameters.")]
 

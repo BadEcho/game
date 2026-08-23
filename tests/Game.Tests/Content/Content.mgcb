@@ -30,6 +30,11 @@ $endif
 /processor:TileMapProcessor
 /build:Tiles/GrassAndCollidable.tmx
 
+#begin Tiles/GrassTransitionPoints.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassTransitionPoints.tmx
+
 #begin Tiles/Grasslands.tsx
 /importer:TileSetImporter
 /processor:TileSetProcessor
@@ -123,3 +128,28 @@ $endif
 /importer:SpriteSheetImporter
 /processor:SpriteSheetProcessor
 /build:Images/StickMan.spritesheet
+
+#begin Areas/Simple.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/Simple.area
+
+#begin Areas/NoActors.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/NoActors.area
+
+#begin Areas/MultipleActors.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/MultipleActors.area
+
+#begin Areas/SharedSpriteSheet.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/SharedSpriteSheet.area
+
+#begin Areas/Transitions.area
+/importer:AreaImporter
+/processor:AreaProcessor
+/build:Areas/Transitions.area

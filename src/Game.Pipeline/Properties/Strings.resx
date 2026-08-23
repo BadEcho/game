@@ -138,6 +138,9 @@
   <data name="AtlasRegionNoRightSlices" xml:space="preserve">
 		<value>The atlas region identified by {0} is configured to use 9-slice scaling but has no slices down its right side.</value>
 	</data>
+	<data name="AreaIsNull" xml:space="preserve">
+		<value>The .area asset identified by {0} consists of a single 'null' literal token, which cannot be processed as an area. A JSON document conforming to the .area schema found at https://BadEcho.com/area.json must be provided.</value>
+	</data>
   <data name="SheetIsNull" xml:space="preserve">
 	  <value>The .spritesheet asset identified by {0} consists of a single 'null' literal token, which cannot be processed as sprite sheet. A JSON document conforming to the .spritesheet schema found at https://BadEcho.com/spritesheet.json must be provided.</value>
   </data>
@@ -147,9 +150,21 @@
 	<data name="SheetHasNoColumns" xml:space="preserve">
 		<value>The sprite sheet must be configured to have one or more columns in order to be considered valid.</value>
 	</data>
+	<data name="DependencyPathIsEmpty" xml:space="preserve">
+		<value>No path for the dependency '{0}' was provided.</value>
+	</data>
+	<data name="DependencyFileIsADirectory" xml:space="preserve">
+		<value>The dependency '{0}': '{1}' is a directory instead of a file.</value>
+	</data>
   <data name="NoReferenceInContentItem" xml:space="preserve">
 		<value>No reference to the asset '{0}' was found on this content item.</value>
 	</data>
+	<data name="ConflictingReferenceInContentItem" xml:space="preserve">
+		<value>The asset '{0}' is already referenced by this content item with different build settings.</value>
+	</data>
+  <data name="AreaPropertyIsNull" xml:space="preserve">
+    <value>The '{0}' property of the .area asset was provided as a 'null' literal token, which is not permitted. Omit the property entirely if it is not needed.</value>
+  </data>
   <data name="ImageLayerNoImage" xml:space="preserve">
 	  <value>Image layer contains no image data.</value>
   </data>
@@ -189,6 +204,9 @@
 	<data name="ImportingDependency" xml:space="preserve">
 		<value>Adding dependency: {0}</value>
 	</data>
+	<data name="ImportingArea" xml:space="preserve">
+		<value>Importing area: {0}</value>
+	</data>
   <data name="ImportingSpriteSheet" xml:space="preserve">
 		<value>Importing sprite sheet: {0}</value>
 	</data>
@@ -203,6 +221,9 @@
 	</data>
   <data name="ProcessingFinished" xml:space="preserve">
 		<value>Finished processing {0}</value>
+	</data>
+	<data name="ProcessingArea" xml:space="preserve">
+		<value>Processing area: {0}</value>
 	</data>
   <data name="ProcessingSpriteSheet" xml:space="preserve">
 		<value>Processing sprite sheet: {0}</value>
@@ -258,4 +279,19 @@
   <data name="SheetNonUniqueAnimationNames" xml:space="preserve">
 	  <value>All animations in the sprite sheet must have unique names.</value>
   </data>
+  <data name="ObjectUnsupportedShape" xml:space="preserve">
+	  <value>Map object '{0}' (id {1}) uses an unsupported shape and will be ignored.</value>
+  </data>
+  <data name="TransitionObjectMissingTargetAreaName" xml:space="preserve">
+	  <value>Map object '{0}' (id {1}) is classed as a transition point but has no 'TargetAreaName' custom property.</value>
+  </data>
+  <data name="TransitionObjectZeroSize" xml:space="preserve">
+	  <value>Map object '{0}' (id {1}) is a zero-sized transition point region.</value>
+  </data>
+	<data name="TransitionObjectPropertyWrongType" xml:space="preserve">
+		<value>Map object '{0}' (id {1}) declared the custom property '{2}' using the wrong type (expected: '{3}', actual: '{4}').</value>
+	</data>
+	<data name="TransitionObjectRotated" xml:space="preserve">
+		<value>Map object '{0}' (id {1}) is a transition point rotated by {2} degrees; only axis-aligned regions are supported.</value>
+	</data>
 </root>

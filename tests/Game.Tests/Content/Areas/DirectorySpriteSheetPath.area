@@ -1,0 +1,14 @@
+{
+    "$schema": "https://BadEcho.com/area.json",
+    "name": "Directory Sprite Sheet Path Area",
+    "tileMapPath": "Tiles/GrassFourTiles.tmx",
+    "actors": [
+        {
+            "spriteSheetPath": "Images/",
+            "position": {
+                "x": 16,
+                "y": 16
+            }
+        }
+    ]
+}

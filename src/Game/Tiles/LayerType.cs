@@ -33,5 +33,9 @@ public enum LayerType
     /// <summary>
     /// A group of layers.
     /// </summary>
-    Group
+    Group,
+    /// <summary>
+    /// A layer containing map objects.
+    /// </summary>
+    Object
 }

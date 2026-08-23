@@ -15,6 +15,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using BadEcho.Game.Pipeline.SpriteSheets;
 using BadEcho.Serialization;
+using Microsoft.Xna.Framework.Content.Pipeline;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -66,6 +67,28 @@ public class SpriteSheetPipelineTests
 
         Assert.NotNull(content);
         Assert.NotNull(content.Asset);
+    }
+
+    [Fact]
+    public void Import_NoTexturePath_ThrowsException()
+    {
+        Assert.Throws<PipelineException>(() => _importer.Import(GetAssetPath("NoTexturePath.spritesheet"), _importerContext));
+    }
+
+    [Fact]
+    public void Process_DirectoryTexturePath_ThrowsPipelineException()
+    {
+        SpriteSheetContent content = _importer.Import(GetAssetPath("DirectoryTexturePath.spritesheet"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+    }
+
+    [Fact]
+    public void Process_DirectoryNormalMapPath_ThrowsPipelineException()
+    {
+        SpriteSheetContent content = _importer.Import(GetAssetPath("DirectoryNormalMapPath.spritesheet"), _importerContext);
+
+        Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
     }
 
     private static string GetAssetPath(string assetName, [CallerFilePath] string rootPath = "")

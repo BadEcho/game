@@ -21,9 +21,17 @@ namespace BadEcho.Game.Tests;
 /// </summary>
 internal sealed class TestContentImporterContext : ContentImporterContext
 {
+    private readonly List<string> _dependencies = [];
+
+    /// <summary>
+    /// Gets the paths to the dependencies registered by the importer under test.
+    /// </summary>
+    public IReadOnlyList<string> Dependencies
+        => _dependencies;
+
     /// <inheritdoc />
     public override void AddDependency(string filename)
-    { }
+        => _dependencies.Add(filename);
 
     /// <inheritdoc />
     public override string IntermediateDirectory

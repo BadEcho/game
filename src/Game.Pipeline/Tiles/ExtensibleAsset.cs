@@ -29,6 +29,7 @@ public abstract class ExtensibleAsset
     private const string VALUE_ATTRIBUTE = "value";
     private const string TYPE_ATTRIBUTE = "type";
 
+    private readonly Dictionary<string, CustomPropertyType> _customPropertyTypes = [];
     private readonly Dictionary<string, string> _customStringProperties = [];
     private readonly Dictionary<string, bool> _customBoolProperties = [];
     private readonly Dictionary<string, Color> _customColorProperties = [];
@@ -102,6 +103,18 @@ public abstract class ExtensibleAsset
     public IReadOnlyDictionary<string, string> CustomFileProperties
         => _customFileProperties;
 
+    /// <summary>
+    /// Attempts to the type associated with the named custom property.
+    /// </summary>
+    /// <param name="name">The name of the custom property.</param>
+    /// <param name="type">
+    /// When this method returns, the custom property type associated with the named property, if a property with the name
+    /// <c>name</c> was previously registered.
+    /// </param>
+    /// <returns>True if a type was associated with a property named <c>name</c>; otherwise, false.</returns>
+    internal bool TryGetPropertyType(string name, out CustomPropertyType type)
+        => _customPropertyTypes.TryGetValue(name, out type);
+
     private static bool TryParseFileInfo(string? value, out string? result)
     {   // We can't write a FileInfo instance to the content pipeline, so we just perform validation here to make sure the string path
         // has no chance of causing an exception to be thrown when the reader uses it to initialize the FileInfo.
@@ -147,7 +160,10 @@ public abstract class ExtensibleAsset
     }
 
     private void AddCustomProperty(string name, string value, CustomPropertyType type)
-    {
+    {   // The property value may fail to parse and throw a FormatException after we've already associated the name with a type,
+        // however this is harmless as the exception will abort the build immediately and the object will be discarded.
+        _customPropertyTypes.Add(name, type);
+
         switch (type)
         {
             case CustomPropertyType.Bool:

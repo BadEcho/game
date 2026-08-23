@@ -34,8 +34,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="$(CorePath)\Common\BadEcho.Common.csproj"/>
-		<ProjectReference Include="$(CorePath)\Drawing\BadEcho.Drawing.csproj"/>
+		<ProjectReference Include="$(CorePath)\Common\BadEcho.Common.csproj" />
+		<ProjectReference Include="$(CorePath)\Drawing\BadEcho.Drawing.csproj" />
 		<ProjectReference Include="..\Game\BadEcho.Game.csproj" />
 		<ProjectReference Include="..\MsdfGenerator\BadEcho.MsdfGenerator.vcxproj" />
 	</ItemGroup>

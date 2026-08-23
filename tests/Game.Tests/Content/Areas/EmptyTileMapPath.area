@@ -1,0 +1,5 @@
+{
+    "$schema": "https://BadEcho.com/area.json",
+    "name": "Empty Tile Map Path Area",
+    "actors": []
+}

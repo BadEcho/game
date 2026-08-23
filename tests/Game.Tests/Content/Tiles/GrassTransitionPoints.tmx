@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.9" tiledversion="1.9.0" orientation="orthogonal" renderorder="right-down" width="2" height="2" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="7">
+ <tileset firstgid="1" source="Grasslands.tsx"/>
+ <layer id="1" name="Tiles" width="2" height="2">
+  <data encoding="base64" compression="zlib">
+   eJzjZGBgYAViTiBmAmIAASwAGg==
+  </data>
+ </layer>
+ <objectgroup id="2" name="Transitions" offsetx="8" offsety="4">
+  <object id="1" name="NorthDoor" class="TransitionPoint" x="16" y="0" width="16" height="8">
+   <properties>
+    <property name="TargetAreaName" value="Cave"/>
+    <property name="TargetPointName" value="SouthDoor"/>
+   </properties>
+  </object>
+  <object id="2" name="ShrinePortal" class="TransitionPoint" x="8" y="24">
+   <properties>
+    <property name="TargetAreaName" value="Shrine"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="3" name="SealedDoor" class="TransitionPoint" x="0" y="16" width="8" height="8">
+   <properties>
+    <property name="TargetAreaName" value="Crypt"/>
+    <property name="Enabled" type="bool" value="false"/>
+   </properties>
+  </object>
+  <object id="4" name="LegacyDoor" type="ObsoleteClass" class="TransitionPoint" x="24" y="24" width="8" height="8">
+   <properties>
+    <property name="TargetAreaName" value="Attic"/>
+   </properties>
+  </object>
+  <object id="5" name="Signpost" x="4" y="4" width="4" height="4" rotation="90"/>
+  <object id="6" name="Pond" class="Water" x="0" y="0" width="8" height="8">
+   <ellipse/>
+  </object>
+ </objectgroup>
+</map>

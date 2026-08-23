@@ -159,6 +159,66 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
+    public void Load_GrassTransitionPoints_HasObjectLayer()
+    {
+        ObjectLayer objectLayer = LoadTransitionObjectLayer();
+
+        Assert.Equal("Transitions", objectLayer.Name);
+        // The ellipse-shaped object was dropped during processing, leaving five of the six authored objects.
+        Assert.Equal(5, objectLayer.Objects.Count);
+    }
+
+    [Fact]
+    public void Load_GrassTransitionPoints_RegionObjectValid()
+    {
+        MapObject northDoor = FindObject("NorthDoor");
+
+        Assert.Equal(1, northDoor.Id);
+        Assert.Equal("TransitionPoint", northDoor.Type);
+        Assert.False(northDoor.IsPoint);
+        // The object layer is offset by (8, 4), which is baked into the object's coordinates when the map is read.
+        Assert.Equal(new RectangleF(24, 4, 16, 8), northDoor.Bounds);
+        Assert.Equal(new PointF(24, 4), northDoor.Location);
+        Assert.Equal("Cave", northDoor.CustomProperties.Strings["TargetAreaName"]);
+        Assert.Equal("SouthDoor", northDoor.CustomProperties.Strings["TargetPointName"]);
+    }
+
+    [Fact]
+    public void Load_GrassTransitionPoints_PointObjectValid()
+    {
+        MapObject shrinePortal = FindObject("ShrinePortal");
+
+        Assert.True(shrinePortal.IsPoint);
+        Assert.Equal(new PointF(16, 28), shrinePortal.Location);
+        Assert.Equal(RectangleF.Empty, shrinePortal.Bounds);
+        Assert.Equal("Shrine", shrinePortal.CustomProperties.Strings["TargetAreaName"]);
+    }
+
+    [Fact]
+    public void Load_GrassTransitionPoints_UnclassedObjectValid()
+    {
+        MapObject signpost = FindObject("Signpost");
+
+        Assert.Equal(string.Empty, signpost.Type);
+        Assert.Equal(new RectangleF(12, 8, 4, 4), signpost.Bounds);
+    }
+
+    [Fact]
+    public void Load_GrassTransitionPoints_ObjectRotationRoundTrips()
+    {   // Proves the rotation survives the writer and reader, not merely the importer.
+        Assert.Equal(90, FindObject("Signpost").Rotation);
+        Assert.Equal(0, FindObject("NorthDoor").Rotation);
+    }
+
+    [Fact]
+    public void Load_GrassTransitionPoints_ClassOverridesType()
+    {
+        MapObject legacyDoor = FindObject("LegacyDoor");
+
+        Assert.Equal("TransitionPoint", legacyDoor.Type);
+    }
+
+    [Fact]
     public void Load_GrassAndCollidable_SpatialBoundsValid()
     {
         TileMap map = _content.Load<TileMap>("Tiles\\GrassAndCollidable");
@@ -170,4 +230,16 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
                           e => Assert.Equal(new PointF(88, 56), e.Bounds.Center),
                           e => Assert.Equal(new PointF(72, 88), e.Bounds.Center));
     }
+
+    private ObjectLayer LoadTransitionObjectLayer()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassTransitionPoints");
+
+        return map.Layers.OfType<ObjectLayer>().Single();
+    }
+
+    private MapObject FindObject(string objectName)
+        => LoadTransitionObjectLayer()
+            .Objects
+            .Single(o => objectName.Equals(o.Name, StringComparison.Ordinal));
 }

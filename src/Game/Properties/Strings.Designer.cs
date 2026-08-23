@@ -61,6 +61,24 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Multiple loaded areas share the name &apos;{0}&apos;..
+        /// </summary>
+        internal static string AreaNameDuplicate {
+            get {
+                return ResourceManager.GetString("AreaNameDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No loaded area named &apos;{0}&apos; exists to transition to..
+        /// </summary>
+        internal static string AreaNotFound {
+            get {
+                return ResourceManager.GetString("AreaNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Texture atlas already has a region named &apos;{0}&apos;..
         /// </summary>
         internal static string AtlasAlreadyHasRegion {
@@ -147,6 +165,15 @@ namespace BadEcho.Game.Properties {
         internal static string LabelNoFont {
             get {
                 return ResourceManager.GetString("LabelNoFont", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is classed as a transition point but has no &apos;{2}&apos; custom property..
+        /// </summary>
+        internal static string MapObjectNoTargetAreaName {
+            get {
+                return ResourceManager.GetString("MapObjectNoTargetAreaName", resourceCulture);
             }
         }
         
@@ -349,6 +376,24 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No transition point named &apos;{0}&apos; exists in the area named &apos;{1}&apos; to spawn at..
+        /// </summary>
+        internal static string TransitionPointDestinationNotFound {
+            get {
+                return ResourceManager.GetString("TransitionPointDestinationNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A transition point requires the name of an area to transition to..
+        /// </summary>
+        internal static string TransitionPointNoTargetAreaName {
+            get {
+                return ResourceManager.GetString("TransitionPointNoTargetAreaName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Graphics device has not been initialized yet..
         /// </summary>
         internal static string UninitializedGraphicsDevice {
@@ -363,6 +408,15 @@ namespace BadEcho.Game.Properties {
         internal static string VertexDataAlreadyLoaded {
             get {
                 return ResourceManager.GetString("VertexDataAlreadyLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The deferred worker has already been started..
+        /// </summary>
+        internal static string WorkerAlreadyStarted {
+            get {
+                return ResourceManager.GetString("WorkerAlreadyStarted", resourceCulture);
             }
         }
         

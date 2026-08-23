@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Diagnostics.CodeAnalysis;
 using BadEcho.Game.Lighting;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -79,9 +80,10 @@ public sealed class DeferredRenderer : IDisposable
     private readonly ShadowEffect _shadowEffect;
     private readonly CompositeEffect _compositeEffect;
 
-    private readonly RenderTarget2D _colorBuffer;
-    private readonly RenderTarget2D _normalBuffer;
-    private readonly RenderTarget2D _lightBuffer;
+    private Rectangle _bufferSize;
+    private RenderTarget2D _colorBuffer;
+    private RenderTarget2D _normalBuffer;
+    private RenderTarget2D _lightBuffer;
 
     private bool _disposed;
 
@@ -100,28 +102,7 @@ public sealed class DeferredRenderer : IDisposable
         _shadowEffect = new ShadowEffect(device);
         _compositeEffect = new CompositeEffect(device);
 
-        Rectangle viewportBounds = device.Viewport.Bounds;
-
-        _colorBuffer = new RenderTarget2D(device,
-                                           viewportBounds.Width,
-                                           viewportBounds.Height,
-                                           false,
-                                           SurfaceFormat.Color,
-                                           DepthFormat.None);
-
-        _lightBuffer = new RenderTarget2D(device,
-                                         viewportBounds.Width,
-                                         viewportBounds.Height,
-                                         false,
-                                         SurfaceFormat.Color,
-                                         DepthFormat.Depth24Stencil8);
-
-        _normalBuffer = new RenderTarget2D(device,
-                                          viewportBounds.Width,
-                                          viewportBounds.Height,
-                                          false,
-                                          SurfaceFormat.Color,
-                                          DepthFormat.None);
+        CreateBuffers();
     }
 
     /// <summary>
@@ -132,6 +113,9 @@ public sealed class DeferredRenderer : IDisposable
     public StandardEffect StartColorPhase(RenderStates renderStates)
     {
         Require.NotNull(renderStates, nameof(renderStates));
+
+        // The method marks the beginning of a new frame, so ensure buffer sizes match the current viewport size.
+        EnsureBuffers();
 
         _device.SetRenderTarget(_colorBuffer);
         _device.Clear(Color.Transparent);
@@ -152,6 +136,9 @@ public sealed class DeferredRenderer : IDisposable
     public StandardEffect StartColorPhase(RenderStates renderStates, Texture2D normalAtlas)
     {
         Require.NotNull(renderStates, nameof(renderStates));
+
+        // The method marks the beginning of a new frame, so ensure buffer sizes match the current viewport size.
+        EnsureBuffers();
 
         _device.SetRenderTargets(new RenderTargetBinding(_colorBuffer),
                                  new RenderTargetBinding(_normalBuffer));
@@ -313,5 +300,44 @@ public sealed class DeferredRenderer : IDisposable
         ushort y = (ushort) Math.Clamp((int) Math.Round(origin.Y), 0, 65535);
 
         return new Color((byte) (x >> 8), (byte) (x & 0xFF), (byte) (y >> 8), (byte) (y & 0xFF));
+    }
+
+    [MemberNotNull(nameof(_colorBuffer), nameof(_lightBuffer), nameof(_normalBuffer))]
+    private void CreateBuffers()
+    {
+        _bufferSize = _device.Viewport.Bounds;
+
+        _colorBuffer = new RenderTarget2D(_device,
+                                          _bufferSize.Width,
+                                          _bufferSize.Height,
+                                          false,
+                                          SurfaceFormat.Color,
+                                          DepthFormat.None);
+
+        _lightBuffer = new RenderTarget2D(_device,
+                                          _bufferSize.Width,
+                                          _bufferSize.Height,
+                                          false,
+                                          SurfaceFormat.Color,
+                                          DepthFormat.Depth24Stencil8);
+
+        _normalBuffer = new RenderTarget2D(_device,
+                                           _bufferSize.Width,
+                                           _bufferSize.Height,
+                                           false,
+                                           SurfaceFormat.Color,
+                                           DepthFormat.None);
+    }
+
+    private void EnsureBuffers()
+    {   // No need to recreate buffers if viewport either hasn't changed or has an area of zero (indicative of a minimized window).
+        if (_bufferSize == _device.Viewport.Bounds || _device.Viewport.Bounds.Size == Point.Zero)
+            return;
+
+        _colorBuffer.Dispose();
+        _normalBuffer.Dispose();
+        _lightBuffer.Dispose();
+
+        CreateBuffers();
     }
 }

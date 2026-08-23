@@ -25,7 +25,7 @@ namespace BadEcho.Game.Pipeline.Tiles;
 /// Provides a processor of tile map asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Tile Map Processor - Bad Echo")]
-public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapContent>
+public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
 {
     private const string COMPRESSION_GZIP = "gzip";
     private const string COMPRESSION_ZLIB = "zlib";
@@ -55,7 +55,10 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
         foreach (TileSetAsset tileSet in asset.TileSets)
         {
             if (!string.IsNullOrEmpty(tileSet.Source))
-            {   // Leverage our tile set content loader to load this external tile set.
+            {
+                ValidateDependencyPath(tileSet.Source);
+
+                // Leverage our tile set content loader to load this external tile set.
                 input.AddReference<TileSetContent>(context, tileSet.Source, []);
             }
             else if (tileSet.Image != null)
@@ -65,6 +68,8 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
                                               { nameof(TextureProcessor.ColorKeyColor), tileSet.Image.ColorKey },
                                               { nameof(TextureProcessor.ColorKeyEnabled), true }
                                           };
+
+                ValidateDependencyPath(tileSet.Image.Source);
 
                 input.AddReference<Texture2DContent>(context, tileSet.Image.Source, processorParameters);
             }
@@ -86,6 +91,8 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
                                                   { nameof(TextureProcessor.ColorKeyEnabled), true }
                                               };
 
+                    ValidateDependencyPath(imageLayer.Image.Source);
+
                     input.AddReference<Texture2DContent>(context, imageLayer.Image.Source, processorParameters);
                     break;
 
@@ -99,8 +106,76 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent, TileMapC
 
                     break;
 
+                case ObjectLayerAsset objectLayer:
+                    ProcessObjects(objectLayer, context);
+                    break;
+
                 default:
                     throw new NotSupportedException(Strings.TileMapUnsupportedLayerType.InvariantFormat(layer.Type));
+            }
+        }
+    }
+
+    private static void ProcessObjects(ObjectLayerAsset objectLayer, ContentProcessorContext context)
+    {
+        foreach (MapObjectAsset unsupportedObject in objectLayer.Objects.Where(o => !o.IsSupportedShape).ToList())
+        {
+            context.Log(
+                Strings.ObjectUnsupportedShape.InvariantFormat(unsupportedObject.Name, unsupportedObject.Id));
+
+            objectLayer.Objects.Remove(unsupportedObject);
+        }
+
+        // The pipeline stays neutral as far as the meaning of a map object goes, except for transition points,
+        // whose data must be complete if the areas sourcing them are to function.
+        IEnumerable<MapObjectAsset> transitionObjects
+            = objectLayer.Objects.Where(
+                o => o.Type.Equals(KnownObjectTypes.TransitionPoint, StringComparison.OrdinalIgnoreCase));
+
+        foreach (MapObjectAsset transitionObject in transitionObjects)
+        {
+            EnsureCustomPropertyType(transitionObject, KnownProperties.Enabled, CustomPropertyType.Bool);
+            EnsureCustomPropertyType(transitionObject, KnownProperties.TargetAreaName, CustomPropertyType.String);
+            EnsureCustomPropertyType(transitionObject, KnownProperties.TargetPointName, CustomPropertyType.String);
+         
+            if (!transitionObject.CustomStringProperties.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName)
+                || string.IsNullOrEmpty(targetAreaName))
+            {
+                throw new PipelineException(
+                    Strings.TransitionObjectMissingTargetAreaName.InvariantFormat(transitionObject.Name, transitionObject.Id));
+            }
+
+            // Rectangles are endpoint-exclusive, which makes a zero-sized region a transition point that can never be entered.
+            if (!transitionObject.IsPoint && (transitionObject.Width <= 0 || transitionObject.Height <= 0))
+            {
+                throw new PipelineException(
+                    Strings.TransitionObjectZeroSize.InvariantFormat(transitionObject.Name, transitionObject.Id));
+            }
+
+            // Only axis-aligned bounds are supported for transition objects.
+            if (transitionObject.Rotation != 0)
+            {
+                throw new PipelineException(
+                    Strings.TransitionObjectRotated.InvariantFormat(transitionObject.Name,
+                                                                   transitionObject.Id,
+                                                                   transitionObject.Rotation));
+            }
+        }
+    }
+
+    private static void EnsureCustomPropertyType(
+        MapObjectAsset transitionObject, string propertyName, CustomPropertyType expectedType)
+    {
+        if (transitionObject.TryGetPropertyType(propertyName, out CustomPropertyType actualType))
+        {
+            if (actualType != expectedType)
+            {
+                throw new PipelineException(Strings.TransitionObjectPropertyWrongType.InvariantFormat(
+                                                transitionObject.Name,
+                                                transitionObject.Id,
+                                                propertyName,
+                                                expectedType,
+                                                actualType));
             }
         }
     }

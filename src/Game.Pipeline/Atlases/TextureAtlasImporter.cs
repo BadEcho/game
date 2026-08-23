@@ -34,7 +34,7 @@ public sealed class TextureAtlasImporter : ContentImporter<TextureAtlasContent>
     {
         Require.NotNull(filename, nameof(filename));
         Require.NotNull(context, nameof(context));
-
+        
         context.Log(Strings.ImportingTextureAtlas.InvariantFormat(filename));
 
         var fileContents = File.ReadAllBytes(filename);
@@ -45,9 +45,8 @@ public sealed class TextureAtlasImporter : ContentImporter<TextureAtlasContent>
 
         context.Log(Strings.ImportingDependency.InvariantFormat(asset.TexturePath));
 
-        asset.TexturePath
-            = Path.Combine(Path.GetDirectoryName(filename) ?? string.Empty, asset.TexturePath);
-
+        asset.TexturePath = ResolveAssetRelativePath(filename, asset.TexturePath);
+        
         context.AddDependency(asset.TexturePath);
 
         context.Log(Strings.ImportingFinished.InvariantFormat(filename));

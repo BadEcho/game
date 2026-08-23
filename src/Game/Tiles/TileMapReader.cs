@@ -131,10 +131,59 @@ public sealed class TileMapReader : ContentTypeReader<TileMap>
 
                     map.AddLayer(tileLayer);
                     break;
+
+                case LayerType.Object:
+                    var objectsToRead = input.ReadInt32();
+                    var objects = new List<MapObject>();
+                    var offset = new Vector2(offsetX, offsetY);
+
+                    while (objectsToRead > 0)
+                    {
+                        objects.Add(ReadMapObject(input, offset));
+                        objectsToRead--;
+                    }
+
+                    var objectLayer = new ObjectLayer(name, objects, customProperties)
+                                      {
+                                          IsVisible = isVisible,
+                                          Opacity = opacity,
+                                          Offset = offset
+                                      };
+
+                    map.AddLayer(objectLayer);
+                    break;
             }
 
 
             layersToRead--;
         }
+    }
+
+    private static MapObject ReadMapObject(ContentReader input, Vector2 offset)
+    {
+        var id = input.ReadInt32();
+        var name = input.ReadString();
+        var type = input.ReadString();
+        var x = input.ReadSingle();
+        var y = input.ReadSingle();
+        var width = input.ReadSingle();
+        var height = input.ReadSingle();
+        var rotation = input.ReadSingle();
+        var isPoint = input.ReadBoolean();
+        var customProperties = input.ReadProperties();
+
+        // The offset of the layer an object belongs to is baked into its coordinates here, once, so that consumers of the
+        // object never need to know about it.
+        var location = new PointF(x + offset.X, y + offset.Y);
+
+        return isPoint
+            ? new MapObject(id, name, type, location, customProperties)
+              {
+                  Rotation = rotation
+              }
+            : new MapObject(id, name, type, new RectangleF(location, new SizeF(width, height)), customProperties)
+              {
+                  Rotation = rotation
+              };
     }
 }

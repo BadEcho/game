@@ -99,6 +99,10 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
                 case TileLayerAsset tileLayer:
                     WriteTileLayer(output, tileLayer);
                     break;
+
+                case ObjectLayerAsset objectLayer:
+                    WriteObjectLayer(output, objectLayer);
+                    break;
             }
         }
     }
@@ -124,6 +128,26 @@ public sealed class TileMapWriter : ContentTypeWriter<TileMapContent>
             output.Write(tile.IdWithFlags);
             output.Write(tile.Column);
             output.Write(tile.Row);
+        }
+    }
+
+    private static void WriteObjectLayer(ContentWriter output, ObjectLayerAsset objectLayer)
+    {
+        // Need to record how many objects in order to properly direct the reader.
+        output.Write(objectLayer.Objects.Count);
+
+        foreach (MapObjectAsset mapObject in objectLayer.Objects)
+        {
+            output.Write(mapObject.Id);
+            output.Write(mapObject.Name);
+            output.Write(mapObject.Type);
+            output.Write(mapObject.X);
+            output.Write(mapObject.Y);
+            output.Write(mapObject.Width);
+            output.Write(mapObject.Height);
+            output.Write(mapObject.Rotation);
+            output.Write(mapObject.IsPoint);
+            output.WriteProperties(mapObject);
         }
     }
 }

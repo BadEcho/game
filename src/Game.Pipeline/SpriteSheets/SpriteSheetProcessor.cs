@@ -22,7 +22,7 @@ namespace BadEcho.Game.Pipeline.SpriteSheets;
 /// Provides a processor of sprite sheet asset data for the content pipeline.
 /// </summary>
 [ContentProcessor(DisplayName = "Sprite Sheet Processor - Bad Echo")]
-public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, SpriteSheetContent>
+public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent>
 {
     /// <inheritdoc/>
     public override SpriteSheetContent Process(SpriteSheetContent input, ContentProcessorContext context)
@@ -46,6 +46,11 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent, 
 
     private static void ValidateAsset(SpriteSheetAsset asset)
     {
+        ValidateDependencyPath(asset.TexturePath);
+
+        if (!string.IsNullOrEmpty(asset.NormalMapPath))
+            ValidateDependencyPath(asset.NormalMapPath);
+
         if (asset.RowCount <= 0)
             throw new PipelineException(Strings.SheetHasNoRows);
 

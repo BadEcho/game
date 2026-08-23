@@ -1,0 +1,21 @@
+{
+    "$schema": "https://BadEcho.com/area.json",
+    "name": "Shared Sprite Sheet Area",
+    "tileMapPath": "Tiles/GrassFourTiles.tmx",
+    "actors": [
+        {
+            "spriteSheetPath": "Images/StickMan.spritesheet",
+            "position": {
+                "x": 16,
+                "y": 16
+            }
+        },
+        {
+            "spriteSheetPath": "Images/StickMan.spritesheet",
+            "position": {
+                "x": 32,
+                "y": 48
+            }
+        }
+    ]
+}

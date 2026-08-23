@@ -1,0 +1,11 @@
+{
+  "fontPath": "Fonts/",
+  "characterSet": [
+    {
+      "start": 32,
+      "end": 127
+    }
+  ],
+  "resolution": 64,
+  "range": 4
+}
