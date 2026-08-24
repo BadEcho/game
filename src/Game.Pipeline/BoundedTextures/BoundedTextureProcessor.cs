@@ -157,18 +157,8 @@ public sealed class BoundedTextureProcessor : ContentProcessor<TextureContent, B
 
         context.Log(Strings.ProcessingBoundedTexture.InvariantFormat(input.Identity.SourceFilename));
 
-        var processorParameters = new OpaqueDataDictionary
-                                  {
-                                      { nameof(ColorKeyColor), ColorKeyColor },
-                                      { nameof(ColorKeyEnabled), ColorKeyEnabled },
-                                      { nameof(GenerateMipmaps), GenerateMipmaps },
-                                      { nameof(PremultiplyAlpha), PremultiplyAlpha },
-                                      { nameof(ResizeToPowerOfTwo), ResizeToPowerOfTwo },
-                                      { nameof(TextureFormat), TextureFormat }
-                                  };
-        
         var processedInput =
-            context.Convert<TextureContent, TextureContent>(input, nameof(TextureProcessor), processorParameters);
+            context.Convert<TextureContent, TextureContent>(input, this);
 
         context.Log(Strings.BoundedTextureCharacteristics.InvariantFormat(BoundsShapeType, BoundsWidth, BoundsHeight));
 

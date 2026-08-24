@@ -72,6 +72,9 @@ public abstract class ContentItem<T> : ContentItem, IContentItem
 
         var sourceAsset = new ExternalReference<TContent>(sourcePath);
 
+#pragma warning disable CS0618
+        // I want to let the new content builder pipeline to mature a bit. Changing this to call the new, non-obsolete method
+        // results in the originally obsolete method being called under the hood anyway. Not interested at the moment.
         var reference =
             context.BuildAsset<TContent, TContent>(sourceAsset,
                                                    string.Empty,

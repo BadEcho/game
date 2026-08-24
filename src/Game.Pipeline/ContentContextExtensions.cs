@@ -32,7 +32,7 @@ internal static class ContentContextExtensions
     {
         Require.NotNull(context, nameof(context));
 
-        context.Logger.LogMessage(message);
+        context.Logger.Log(LogLevel.Info, message);
     }
 
     /// <summary>
@@ -44,7 +44,7 @@ internal static class ContentContextExtensions
     {
         Require.NotNull(context, nameof(context));
 
-        context.Logger.LogMessage(message);
+        context.Logger.Log(LogLevel.Info, message);
     }
 
     /// <summary>

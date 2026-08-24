@@ -29,6 +29,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
             Directory.CreateDirectory(IntermediateDirectory);
 
         Environment.CurrentDirectory = GetContentPath();
+        ProjectDirectory = GetProjectPath();
     }
 
     /// <summary>
@@ -45,30 +46,50 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
     { }
 
     /// <inheritdoc />
-    public override TOutput BuildAndLoadAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset,
-                                                               string processorName,
-                                                               OpaqueDataDictionary processorParameters,
-                                                               string importerName)
+    [Obsolete]
+    public override TOutput BuildAndLoadAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, string processorName,
+                                                               OpaqueDataDictionary processorParameters, string importerName)
+    {
+        return (TOutput)RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
+    }
+
+    /// <inheritdoc />
+    public override TOutput BuildAndLoadAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, IContentImporter importer,
+                                                               IContentProcessor processor)
     {
         return (TOutput) RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
     }
 
     /// <inheritdoc />
-    public override ExternalReference<TOutput> BuildAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset,
-                                                                           string processorName,
-                                                                           OpaqueDataDictionary processorParameters,
-                                                                           string importerName,
-                                                                           string assetName)
+    [Obsolete]
+    public override ExternalReference<TOutput> BuildAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, string processorName,
+                                                                           OpaqueDataDictionary processorParameters, string importerName, string assetName)
     {
-        AssetBuilt?.Invoke(this, new EventArgs<string>(assetName));
+        AssetBuilt?.Invoke(this, new EventArgs<string>(assetName ?? string.Empty));
 
         return new ExternalReference<TOutput>();
     }
 
     /// <inheritdoc />
+    public override ExternalReference<TOutput> BuildAsset<TInput, TOutput>(ExternalReference<TInput> sourceAsset, IContentImporter importer,
+                                                                           IContentProcessor processor, string? assetName = null)
+    {
+        AssetBuilt?.Invoke(this, new EventArgs<string>(assetName ?? string.Empty));
+
+        return new ExternalReference<TOutput>();
+    }
+
+    /// <inheritdoc />
+    [Obsolete]
     public override TOutput Convert<TInput, TOutput>(TInput input, string processorName, OpaqueDataDictionary processorParameters)
     {
-        return (TOutput) RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
+        return (TOutput)RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
+    }
+
+    /// <inheritdoc/>
+    public override TOutput Convert<TInput, TOutput>(TInput input, IContentProcessor processor)
+    {
+        return (TOutput)RuntimeHelpers.GetUninitializedObject(typeof(TOutput));
     }
 
     /// <inheritdoc />
@@ -102,6 +123,9 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
     public override OpaqueDataDictionary Parameters
         => [];
 
+    public override string ProjectDirectory 
+    { get; }
+
     /// <inheritdoc />
     public override TargetPlatform TargetPlatform 
         => TargetPlatform.DesktopGL;
@@ -118,4 +142,7 @@ internal sealed class TestContentProcessorContext : ContentProcessorContext
 
     private static string GetContentPath([CallerFilePath] string rootPath = "")
         => $"{Path.GetDirectoryName(rootPath)}\\Content\\";
+
+    private static string GetProjectPath([CallerFilePath] string rootPath = "")
+        => $"{Path.GetDirectoryName(rootPath)}";
 }

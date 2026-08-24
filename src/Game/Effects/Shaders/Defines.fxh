@@ -29,7 +29,7 @@
 	#define sample2D(texture, texCoord) tex2D(texture##Sampler, texCoord)
 	#define declare_texture(name, index) \
 		sampler2D name : register(s##index);
-#elif VULKAN
+#elif VULKAN || SM6
 	#define _vs(r)
 	#define _ps(r)
 	#define _cb(r)

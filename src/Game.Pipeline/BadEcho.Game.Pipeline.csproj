@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>		
+	<PropertyGroup>
 		<Title>Bad Echo Content Pipeline Extension</Title>
 		<AssemblyTitle>$(Title)</AssemblyTitle>
 		<Product>Bad Echo Game Framework</Product>
@@ -26,8 +26,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.4.1" />
-		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.4.1">
+		<PackageReference Include="Microsoft.NETCore.App" Version="2.2.8" >
+			<PrivateAssets>all</PrivateAssets>
+			<ExcludeAssets>runtime</ExcludeAssets>
+		</PackageReference>
+		<PackageReference Include="MonoGame.Framework.Content.Pipeline" Version="3.8.5.1"/>
+		<PackageReference Include="MonoGame.Framework.DesktopGL" Version="3.8.5.1">
 			<PrivateAssets>all</PrivateAssets>
 			<ExcludeAssets>runtime</ExcludeAssets>
 		</PackageReference>

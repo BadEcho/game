@@ -10,6 +10,7 @@ if "%2"==true set skipVulcan=true
 cd /d %~dp0\..\..\
 dotnet tool run mgfxc %name% %nameWithoutExt%.ogl.mgfxo /profile:OpenGL /Debug
 dotnet tool run mgfxc %name% %nameWithoutExt%.dx11.mgfxo /profile:DirectX_11 /Debug
+dotnet tool run mgfxc %name% %nameWithoutExt%.dx12.mgfxo /profile:DirectX_12 /Debug
 
 if defined skipVulcan goto :eof
 
