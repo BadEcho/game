@@ -10,6 +10,7 @@
   <object id="1" name="FlatDoor" class="TransitionPoint" x="16" y="0" width="16" height="0">
    <properties>
     <property name="TargetAreaName" value="Cave"/>
+    <property name="TargetPointName" value="SouthDoor"/>
    </properties>
   </object>
  </objectgroup>

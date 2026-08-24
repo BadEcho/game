@@ -282,8 +282,8 @@
   <data name="ObjectUnsupportedShape" xml:space="preserve">
 	  <value>Map object '{0}' (id {1}) uses an unsupported shape and will be ignored.</value>
   </data>
-  <data name="TransitionObjectMissingTargetAreaName" xml:space="preserve">
-	  <value>Map object '{0}' (id {1}) is classed as a transition point but has no 'TargetAreaName' custom property.</value>
+  <data name="TransitionObjectMissingProperty" xml:space="preserve">
+	  <value>Map object '{0}' (id {1}) is classed as a transition point but has no '{2}' custom property.</value>
   </data>
   <data name="TransitionObjectZeroSize" xml:space="preserve">
 	  <value>Map object '{0}' (id {1}) is a zero-sized transition point region.</value>

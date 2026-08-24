@@ -41,7 +41,7 @@ public abstract class GameplayScene : GameScene
     {
         _renderer = new DeferredRenderer(game.GraphicsDevice);
     }
-    
+
     /// <summary>
     /// Gets a value indicating if gameplay is paused.
     /// </summary>
@@ -120,7 +120,7 @@ public abstract class GameplayScene : GameScene
     /// <inheritdoc/>
     protected sealed override void DrawCore(SpriteBatch spriteBatch)
     {
-        Require.NotNull(spriteBatch, nameof(spriteBatch));        
+        Require.NotNull(spriteBatch, nameof(spriteBatch));
 
         DrawGameplay(spriteBatch);
     }
@@ -200,20 +200,18 @@ public abstract class GameplayScene : GameScene
         Require.NotNull(transitionPoint, nameof(transitionPoint));
         Require.NotNull(newArea, nameof(newArea));
 
-        TransitionPoint? destinationPoint = null;
         string targetPointName = transitionPoint.TargetPointName;
 
-        if (!string.IsNullOrEmpty(targetPointName))
-        {
-            destinationPoint
-                = newArea.TransitionPoints
-                         .FirstOrDefault(t => t.Name.Equals(targetPointName, StringComparison.OrdinalIgnoreCase));
+        // Every transition point names a destination, but the areas naming each other are built independently, so the name
+        // is only ever resolved here and a miss leaves placement of the transitioning entity to the consumer.
+        TransitionPoint? destinationPoint
+            = newArea.TransitionPoints
+                     .FirstOrDefault(t => t.Name.Equals(targetPointName, StringComparison.OrdinalIgnoreCase));
 
-            if (destinationPoint == null)
-            {
-                Logger.Warning(
-                    Strings.TransitionPointDestinationNotFound.InvariantFormat(targetPointName, newArea.Name));
-            }
+        if (destinationPoint == null)
+        {
+            Logger.Warning(
+                Strings.TransitionPointDestinationNotFound.InvariantFormat(targetPointName, newArea.Name));
         }
 
         Area? previousArea = CurrentArea;
@@ -254,8 +252,8 @@ public abstract class GameplayScene : GameScene
     /// moves the activator to the spawn position indicated by <c>destinationPoint</c>, if one was provided.
     /// </para>
     /// <para>
-    /// A null <c>destinationPoint</c> means the initiating point wired no destination or the wired destination was not found in
-    /// the new area.
+    /// A null <c>destinationPoint</c> means the destination named by the initiating point was not found in the new area.
+    /// The consumer will need to resolve this case.
     /// </para>
     /// </remarks>
     protected virtual void OnAreaTransitioned(Area? previousArea, Area newArea, TransitionPoint? destinationPoint)
@@ -273,7 +271,7 @@ public abstract class GameplayScene : GameScene
 
             _disposed = true;
         }
-        
+
         base.Dispose(disposing);
     }
 

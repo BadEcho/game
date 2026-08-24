@@ -18,17 +18,25 @@ namespace BadEcho.Game.Tests;
 
 public class TransitionPointTests
 {
-    [Fact]
-    public void Constructor_EmptyTargetAreaName_ThrowsException()
-        => Assert.Throws<ArgumentException>(() => new TransitionPoint(string.Empty, new PointF(8, 8)));
+    [Theory]
+    [InlineData("", "SouthDoor")]
+    [InlineData("Cave", "")]
+    public void Constructor_EmptyTarget_ThrowsException(string targetAreaName, string targetPointName)
+    {
+        Assert.Throws<ArgumentException>(
+            () => new TransitionPoint(targetAreaName, targetPointName, new PointF(8, 8)));
+        Assert.Throws<ArgumentException>(
+            () => new TransitionPoint(targetAreaName, targetPointName, new RectangleF(0, 0, 8, 8)));
+    }
 
     [Fact]
     public void Constructor_Coordinate_ReturnsDefaults()
     {
-        var transitionPoint = new TransitionPoint("Cave", new PointF(8, 8));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(8, 8));
 
         Assert.Equal(string.Empty, transitionPoint.Name);
-        Assert.Equal(string.Empty, transitionPoint.TargetPointName);
+        Assert.Equal("Cave", transitionPoint.TargetAreaName);
+        Assert.Equal("SouthDoor", transitionPoint.TargetPointName);
         Assert.True(transitionPoint.IsEnabled);
         Assert.False(transitionPoint.IsRegion);
         Assert.Equal(RectangleF.Empty, transitionPoint.Bounds);
@@ -37,7 +45,7 @@ public class TransitionPointTests
     [Fact]
     public void Constructor_Region_ReturnsBoundsLocation()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(16, 32, 8, 8));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(16, 32, 8, 8));
 
         Assert.True(transitionPoint.IsRegion);
         Assert.Equal(new PointF(16, 32), transitionPoint.Location);
@@ -46,7 +54,7 @@ public class TransitionPointTests
     [Fact]
     public void SpawnPosition_Coordinate_ReturnsLocation()
     {
-        var transitionPoint = new TransitionPoint("Cave", new PointF(8, 12));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(8, 12));
 
         Assert.Equal(new PointF(8, 12), transitionPoint.SpawnPosition);
     }
@@ -54,7 +62,7 @@ public class TransitionPointTests
     [Fact]
     public void SpawnPosition_Region_ReturnsCenter()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(16, 32, 8, 16));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(16, 32, 8, 16));
 
         Assert.Equal(new PointF(20, 40), transitionPoint.SpawnPosition);
     }
@@ -62,7 +70,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_CoordinateInsideEntity_ReturnsTrue()
     {
-        var transitionPoint = new TransitionPoint("Cave", new PointF(10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(10, 10));
 
         Assert.True(transitionPoint.IsEntered(new RectangleF(0, 0, 20, 20)));
     }
@@ -70,7 +78,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_CoordinateOutsideEntity_ReturnsFalse()
     {
-        var transitionPoint = new TransitionPoint("Cave", new PointF(30, 30));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(30, 30));
 
         Assert.False(transitionPoint.IsEntered(new RectangleF(0, 0, 20, 20)));
     }
@@ -78,7 +86,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_CoordinateOnEntityEdge_ReturnsFalse()
     {   // Rectangles are endpoint-exclusive, so an entity's right and bottom edges lie outside of it.
-        var transitionPoint = new TransitionPoint("Cave", new PointF(10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(10, 10));
 
         Assert.False(transitionPoint.IsEntered(new RectangleF(0, 0, 10, 10)));
     }
@@ -86,7 +94,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_CoordinateWithZeroSizedEntity_ReturnsFalse()
     {   // An entity occupying no space contains nothing at all, its own coordinates included.
-        var transitionPoint = new TransitionPoint("Cave", new PointF(10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(10, 10));
 
         Assert.False(transitionPoint.IsEntered(new RectangleF(10, 10, 0, 0)));
     }
@@ -94,7 +102,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_RegionOverlappingEntity_ReturnsTrue()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(0, 0, 10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 10, 10));
 
         Assert.True(transitionPoint.IsEntered(new RectangleF(5, 5, 10, 10)));
     }
@@ -102,7 +110,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_RegionSeparateFromEntity_ReturnsFalse()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(0, 0, 10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 10, 10));
 
         Assert.False(transitionPoint.IsEntered(new RectangleF(20, 20, 5, 5)));
     }
@@ -110,7 +118,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_RegionTouchingEntity_ReturnsFalse()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(0, 0, 10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 10, 10));
 
         Assert.False(transitionPoint.IsEntered(new RectangleF(10, 0, 10, 10)));
     }
@@ -118,7 +126,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_Disabled_ReturnsFalse()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(0, 0, 10, 10))
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 10, 10))
                               {
                                   IsEnabled = false
                               };
@@ -129,7 +137,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_DisabledThenEnabled_ReturnsTrue()
     {
-        var transitionPoint = new TransitionPoint("Cave", new RectangleF(0, 0, 10, 10))
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 10, 10))
                               {
                                   IsEnabled = false
                               };
@@ -144,7 +152,7 @@ public class TransitionPointTests
     [Fact]
     public void IsEntered_Null_ThrowsException()
     {
-        var transitionPoint = new TransitionPoint("Cave", new PointF(10, 10));
+        var transitionPoint = new TransitionPoint("Cave", "SouthDoor", new PointF(10, 10));
 
         Assert.Throws<ArgumentNullException>(() => transitionPoint.IsEntered(null!));
     }

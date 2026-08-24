@@ -209,6 +209,9 @@
 	<data name="TransitionPointNoTargetAreaName" xml:space="preserve">
 		<value>A transition point requires the name of an area to transition to.</value>
 	</data>
+	<data name="TransitionPointNoTargetPointName" xml:space="preserve">
+		<value>A transition point requires the name of the point in the target area to spawn at.</value>
+	</data>
 	<data name="TransitionPointDestinationNotFound" xml:space="preserve">
 		<value>No transition point named '{0}' exists in the area named '{1}' to spawn at.</value>
 	</data>
@@ -218,7 +221,7 @@
 	<data name="AreaNameDuplicate" xml:space="preserve">
 		<value>Multiple loaded areas share the name '{0}'.</value>
 	</data>
-	<data name="MapObjectNoTargetAreaName" xml:space="preserve">
+	<data name="MapObjectMissingProperty" xml:space="preserve">
 		<value>Map object '{0}' (id {1}) is classed as a transition point but has no '{2}' custom property.</value>
 	</data>
 </root>

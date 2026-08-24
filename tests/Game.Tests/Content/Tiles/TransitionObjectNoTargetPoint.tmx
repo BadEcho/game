@@ -7,10 +7,9 @@
   </data>
  </layer>
  <objectgroup id="2" name="Transitions">
-  <object id="1" name="TiltedDoor" class="TransitionPoint" x="16" y="0" width="16" height="16" rotation="45">
+  <object id="1" name="UnwiredDoor" class="TransitionPoint" x="16" y="0" width="16" height="8">
    <properties>
     <property name="TargetAreaName" value="Cave"/>
-    <property name="TargetPointName" value="SouthDoor"/>
    </properties>
   </object>
  </objectgroup>

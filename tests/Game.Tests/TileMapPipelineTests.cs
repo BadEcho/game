@@ -94,7 +94,7 @@ public class TileMapPipelineTests
         Assert.True(shrinePortal.IsSupportedShape);
         Assert.Equal(8, shrinePortal.X);
         Assert.Equal(24, shrinePortal.Y);
-        Assert.False(shrinePortal.CustomStringProperties.ContainsKey("TargetPointName"));
+        Assert.Equal("ShrineExit", shrinePortal.CustomStringProperties["TargetPointName"]);
     }
 
     [Fact]
@@ -145,6 +145,18 @@ public class TileMapPipelineTests
     [Fact]
     public void Process_TransitionObjectNoTargetArea_ThrowsPipelineException()
         => AssertProcessThrows("TransitionObjectNoTargetArea.tmx");
+
+    [Fact]
+    public void Process_TransitionObjectNoTargetPoint_ThrowsPipelineException()
+    {
+        TileMapContent content = _importer.Import(GetAssetPath("TransitionObjectNoTargetPoint.tmx"), _importerContext);
+
+        PipelineException exception
+            = Assert.Throws<PipelineException>(() => _processor.Process(content, _processorContext));
+
+        // The object is otherwise valid, so the absent wiring is the only thing left to fail on.
+        Assert.Contains("TargetPointName", exception.Message, StringComparison.Ordinal);
+    }
 
     [Fact]
     public void Process_TransitionObjectZeroSize_ThrowsPipelineException()

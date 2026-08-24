@@ -180,13 +180,13 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
-    public void Load_Transitions_FoldsCoordinateWithoutWiredDestination()
+    public void Load_Transitions_FoldsCoordinate()
     {
         TransitionPoint shrinePortal = FindTransitionPoint("ShrinePortal");
 
         Assert.False(shrinePortal.IsRegion);
         Assert.Equal("Shrine", shrinePortal.TargetAreaName);
-        Assert.Equal(string.Empty, shrinePortal.TargetPointName);
+        Assert.Equal("ShrineExit", shrinePortal.TargetPointName);
         Assert.Equal(new PointF(16, 28), shrinePortal.SpawnPosition);
     }
 
@@ -203,7 +203,7 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
     public void FindEnteredTransitionPoint_SkipsDisabledPoint()
     {
         Area area = CreateEmptyArea();
-        var sealedDoor = new TransitionPoint("Crypt", new RectangleF(0, 0, 16, 16)) { IsEnabled = false };
+        var sealedDoor = new TransitionPoint("Crypt", "CryptStairs", new RectangleF(0, 0, 16, 16)) { IsEnabled = false };
 
         area.AddTransitionPoint(sealedDoor);
 
@@ -218,8 +218,8 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
     public void FindEnteredTransitionPoint_OverlappingPoints_ReturnsFirstMatch()
     {
         Area area = CreateEmptyArea();
-        var first = new TransitionPoint("Cave", new RectangleF(0, 0, 16, 16));
-        var second = new TransitionPoint("Crypt", new RectangleF(0, 0, 16, 16));
+        var first = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 16, 16));
+        var second = new TransitionPoint("Crypt", "CryptStairs", new RectangleF(0, 0, 16, 16));
 
         area.AddTransitionPoint(first);
         area.AddTransitionPoint(second);
@@ -243,7 +243,7 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
     public void AddRemoveTransitionPoint_AddedPoint_IsDetectedThenGone()
     {
         Area area = CreateEmptyArea();
-        var portal = new TransitionPoint("Cave", new RectangleF(0, 0, 16, 16)) { Name = "Portal" };
+        var portal = new TransitionPoint("Cave", "SouthDoor", new RectangleF(0, 0, 16, 16)) { Name = "Portal" };
 
         area.AddTransitionPoint(portal);
 
@@ -253,6 +253,53 @@ public class AreaTests : IClassFixture<ContentManagerFixture>
 
         Assert.Empty(area.TransitionPoints);
         Assert.Null(area.FindEnteredTransitionPoint(new RectangleF(4, 4, 8, 8)));
+    }
+
+    [Theory]
+    [InlineData("TargetAreaName")]
+    [InlineData("TargetPointName")]
+    public void Constructor_TransitionObjectMissingRequiredProperty_ThrowsException(string omittedProperty)
+    {
+        // Only a map assembled in code can reach this; the tile map processor rejects an incomplete transition object.
+        var properties = new Dictionary<string, string>
+                         {
+                             ["TargetAreaName"] = "Cave", ["TargetPointName"] = "SouthDoor"
+                         };
+
+        properties.Remove(omittedProperty);
+
+        InvalidOperationException exception
+            = Assert.Throws<InvalidOperationException>(() => CreateAreaWithTransitionObject(properties));
+
+        Assert.Contains(omittedProperty, exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Constructor_TransitionObjectFullyWired_FoldsPoint()
+    {
+        Area area = CreateAreaWithTransitionObject(new Dictionary<string, string>
+                                                   {
+                                                       ["TargetAreaName"] = "Cave", ["TargetPointName"] = "SouthDoor"
+                                                   });
+
+        TransitionPoint northDoor = Assert.Single(area.TransitionPoints);
+
+        Assert.Equal("Cave", northDoor.TargetAreaName);
+        Assert.Equal("SouthDoor", northDoor.TargetPointName);
+    }
+
+    private Area CreateAreaWithTransitionObject(IReadOnlyDictionary<string, string> stringProperties)
+    {
+        var tileMap = new TileMap(_device, "Coded", new Size(2, 2), new Size(16, 16), new CustomProperties());
+        var mapObject = new MapObject(1,
+                                      "NorthDoor",
+                                      "TransitionPoint",
+                                      new RectangleF(0, 0, 16, 8),
+                                      new CustomProperties { Strings = stringProperties });
+
+        tileMap.AddLayer(new ObjectLayer("Transitions", [mapObject], new CustomProperties()));
+
+        return new Area(tileMap);
     }
 
     private Area CreateEmptyArea()

@@ -137,13 +137,10 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
             EnsureCustomPropertyType(transitionObject, KnownProperties.Enabled, CustomPropertyType.Bool);
             EnsureCustomPropertyType(transitionObject, KnownProperties.TargetAreaName, CustomPropertyType.String);
             EnsureCustomPropertyType(transitionObject, KnownProperties.TargetPointName, CustomPropertyType.String);
-         
-            if (!transitionObject.CustomStringProperties.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName)
-                || string.IsNullOrEmpty(targetAreaName))
-            {
-                throw new PipelineException(
-                    Strings.TransitionObjectMissingTargetAreaName.InvariantFormat(transitionObject.Name, transitionObject.Id));
-            }
+
+            // Following the type checks, we ensure all required properties are present.
+            EnsureRequiredProperty(transitionObject, KnownProperties.TargetAreaName);
+            EnsureRequiredProperty(transitionObject, KnownProperties.TargetPointName);
 
             // Rectangles are endpoint-exclusive, which makes a zero-sized region a transition point that can never be entered.
             if (!transitionObject.IsPoint && (transitionObject.Width <= 0 || transitionObject.Height <= 0))
@@ -160,6 +157,18 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
                                                                    transitionObject.Id,
                                                                    transitionObject.Rotation));
             }
+        }
+    }
+
+    private static void EnsureRequiredProperty(MapObjectAsset transitionObject, string propertyName)
+    {
+        if (!transitionObject.CustomStringProperties.TryGetValue(propertyName, out string? value)
+            || string.IsNullOrEmpty(value))
+        {
+            throw new PipelineException(
+                Strings.TransitionObjectMissingProperty.InvariantFormat(transitionObject.Name,
+                                                                       transitionObject.Id,
+                                                                       propertyName));
         }
     }
 

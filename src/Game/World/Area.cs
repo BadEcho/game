@@ -37,10 +37,13 @@ public class Area
     /// Initializes a new instance of the <see cref="Area"/> class.
     /// </summary>
     /// <param name="tileMap">The tile map defining the layout of this area.</param>
+    /// <exception cref="InvalidOperationException">
+    /// An object on <c>tileMap</c> classed as a transition point is missing a custom property required to make one.
+    /// </exception>
     public Area(TileMap tileMap)
     {
         Require.NotNull(tileMap, nameof(tileMap));
-        
+
         TileMap = tileMap;
 
         var bounds = new RectangleF(-Size, Size * 2);
@@ -62,10 +65,10 @@ public class Area
     protected Area(Area source)
     {
         Require.NotNull(source, nameof(source));
-        
+
         TileMap = source.TileMap;
         _collisionEngine = source._collisionEngine;
-        
+
         _actors.AddRange(source.Actors);
         _actorsWithNormals.AddRange(source._actorsWithNormals);
         _actorsWithShadows.AddRange(source._actorsWithShadows);
@@ -79,7 +82,7 @@ public class Area
     /// <summary>
     /// Gets the tile map defining the layout of this area.
     /// </summary>
-    public TileMap TileMap 
+    public TileMap TileMap
     { get; }
 
     /// <summary>
@@ -242,7 +245,7 @@ public class Area
         Require.NotNull(spriteBatch, nameof(spriteBatch));
         Require.NotNull(renderer, nameof(renderer));
         Require.NotNull(renderStates, nameof(renderStates));
-        
+
         // Color + normal phase: tile map and actors.
         StandardEffect effect = renderer.StartColorPhase(renderStates);
 
@@ -279,33 +282,39 @@ public class Area
     {
         CustomProperties properties = mapObject.CustomProperties;
 
-        if (!properties.Strings.TryGetValue(KnownProperties.TargetAreaName, out string? targetAreaName))
-        {   // Maps built by the tile map processor always carry this property; ones assembled in code may not.
-            throw new InvalidOperationException(
-                Strings.MapObjectNoTargetAreaName.InvariantFormat(mapObject.Name,
-                                                                 mapObject.Id,
-                                                                 KnownProperties.TargetAreaName));
-        }
-
-        if (!properties.Strings.TryGetValue(KnownProperties.TargetPointName, out string? targetPointName))
-            targetPointName = string.Empty;
+        // A transition point cannot do its job without either of these, so an object missing one is a malformed map.
+        // Maps built by the tile map processor always carry them, which makes this reachable only by a map assembled in code.
+        string targetAreaName = GetRequiredProperty(mapObject, KnownProperties.TargetAreaName);
+        string targetPointName = GetRequiredProperty(mapObject, KnownProperties.TargetPointName);
 
         bool isEnabled = properties.Booleans.GetValueOrDefault(KnownProperties.Enabled, true);
 
         TransitionPoint transitionPoint
             = mapObject.IsPoint
-                ? new TransitionPoint(targetAreaName, mapObject.Location)
-                  {
-                      Name = mapObject.Name, TargetPointName = targetPointName
-                  }
-                : new TransitionPoint(targetAreaName, mapObject.Bounds)
-                  {
-                      Name = mapObject.Name, TargetPointName = targetPointName
-                  };
+                ? new TransitionPoint(targetAreaName, targetPointName, mapObject.Location)
+                {
+                    Name = mapObject.Name
+                }
+                : new TransitionPoint(targetAreaName, targetPointName, mapObject.Bounds)
+                {
+                    Name = mapObject.Name
+                };
 
         transitionPoint.IsEnabled = isEnabled;
 
         return transitionPoint;
+
+        static string GetRequiredProperty(MapObject mapObject, string propertyName)
+        {
+            if (!mapObject.CustomProperties.Strings.TryGetValue(propertyName, out string? value)
+                || string.IsNullOrEmpty(value))
+            {
+                throw new InvalidOperationException(
+                    Strings.MapObjectMissingProperty.InvariantFormat(mapObject.Name, mapObject.Id, propertyName));
+            }
+
+            return value;
+        }
     }
 
     /// <summary>
@@ -329,7 +338,7 @@ public class Area
                 continue;
 
             TransitionPoint transitionPoint = CreateTransitionPoint(mapObject);
-            
+
             _transitionPoints.Add(transitionPoint);
         }
     }

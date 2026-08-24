@@ -171,9 +171,9 @@ namespace BadEcho.Game.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is classed as a transition point but has no &apos;{2}&apos; custom property..
         /// </summary>
-        internal static string MapObjectNoTargetAreaName {
+        internal static string MapObjectMissingProperty {
             get {
-                return ResourceManager.GetString("MapObjectNoTargetAreaName", resourceCulture);
+                return ResourceManager.GetString("MapObjectMissingProperty", resourceCulture);
             }
         }
         
@@ -392,7 +392,16 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("TransitionPointNoTargetAreaName", resourceCulture);
             }
         }
-        
+
+        /// <summary>
+        ///   Looks up a localized string similar to A transition point requires the name of the point in the target area to spawn at..
+        /// </summary>
+        internal static string TransitionPointNoTargetPointName {
+            get {
+                return ResourceManager.GetString("TransitionPointNoTargetPointName", resourceCulture);
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized string similar to Graphics device has not been initialized yet..
         /// </summary>

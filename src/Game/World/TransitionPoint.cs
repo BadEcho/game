@@ -34,12 +34,14 @@ public sealed class TransitionPoint
     /// Initializes a new instance of the <see cref="TransitionPoint"/> class occupying a single coordinate.
     /// </summary>
     /// <param name="targetAreaName">The name of the area entering this point transitions to.</param>
+    /// <param name="targetPointName">The name of the transition point in the target area to spawn at.</param>
     /// <param name="location">The coordinates this point occupies.</param>
-    public TransitionPoint(string targetAreaName, PointF location)
+    public TransitionPoint(string targetAreaName, string targetPointName, PointF location)
     {
-        ValidateTargetAreaName(targetAreaName);
+        ValidateTargets(targetAreaName, targetPointName);
 
         TargetAreaName = targetAreaName;
+        TargetPointName = targetPointName;
         Location = location;
         Bounds = RectangleF.Empty;
     }
@@ -48,12 +50,14 @@ public sealed class TransitionPoint
     /// Initializes a new instance of the <see cref="TransitionPoint"/> class occupying a rectangular region.
     /// </summary>
     /// <param name="targetAreaName">The name of the area entering this point transitions to.</param>
+    /// <param name="targetPointName">The name of the transition point in the target area to spawn at.</param>
     /// <param name="bounds">The region this point occupies.</param>
-    public TransitionPoint(string targetAreaName, RectangleF bounds)
+    public TransitionPoint(string targetAreaName, string targetPointName, RectangleF bounds)
     {
-        ValidateTargetAreaName(targetAreaName);
+        ValidateTargets(targetAreaName, targetPointName);
 
         TargetAreaName = targetAreaName;
+        TargetPointName = targetPointName;
         Bounds = bounds;
         Location = bounds.Location;
         IsRegion = true;
@@ -81,11 +85,11 @@ public sealed class TransitionPoint
     /// <remarks>
     /// This wires two transition points together across two different areas, the usual arrangement being a pair of doorways
     /// naming each other. Because it references a point belonging to another area, and areas are built independently of each
-    /// other, it cannot be validated until the transition actually occurs. An empty value means no destination is wired, and
-    /// placement of the transitioning entity is left entirely to the consumer.
+    /// other, the name cannot be validated until the transition actually occurs; a name matching nothing in the target area
+    /// leaves placement of the transitioning entity to the consumer.
     /// </remarks>
     public string TargetPointName
-    { get; init; } = string.Empty;
+    { get; }
 
     /// <summary>
     /// Gets the region this transition point occupies, which is <see cref="RectangleF.Empty"/> if this point occupies a
@@ -136,9 +140,12 @@ public sealed class TransitionPoint
         return IsRegion ? bounds.Intersects(entityBounds) : entityBounds.Contains(Location);
     }
 
-    private static void ValidateTargetAreaName(string targetAreaName)
+    private static void ValidateTargets(string targetAreaName, string targetPointName)
     {
         if (string.IsNullOrEmpty(targetAreaName))
             throw new ArgumentException(Strings.TransitionPointNoTargetAreaName, nameof(targetAreaName));
+
+        if (string.IsNullOrEmpty(targetPointName))
+            throw new ArgumentException(Strings.TransitionPointNoTargetPointName, nameof(targetPointName));
     }
 }

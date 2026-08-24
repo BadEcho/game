@@ -45,7 +45,7 @@ public class GameplaySceneTests
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor" });
+            field.AddTransitionPoint(new TransitionPoint("Cave", "SouthDoor", _Doorway) { Name = "NorthDoor" });
 
             var activator = new EntityStub(_AwayFromDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
@@ -68,7 +68,7 @@ public class GameplaySceneTests
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway));
+            field.AddTransitionPoint(new TransitionPoint("Cave", "SouthDoor", _Doorway));
 
             using TestGameplayScene scene = LoadScene(game, null, field, cave);
 
@@ -86,7 +86,7 @@ public class GameplaySceneTests
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { IsEnabled = false });
+            field.AddTransitionPoint(new TransitionPoint("Cave", "SouthDoor", _Doorway) { IsEnabled = false });
 
             var activator = new EntityStub(_InsideDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
@@ -106,7 +106,7 @@ public class GameplaySceneTests
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway));
+            field.AddTransitionPoint(new TransitionPoint("Cave", "SouthDoor", _Doorway));
 
             var activator = new EntityStub(_InsideDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
@@ -133,8 +133,8 @@ public class GameplaySceneTests
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor", TargetPointName = "SouthDoor" });
-            cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor", TargetPointName = "NorthDoor" });
+            field.AddTransitionPoint(new TransitionPoint("Cave", "SouthDoor", _Doorway) { Name = "NorthDoor" });
+            cave.AddTransitionPoint(new TransitionPoint("Field", "NorthDoor", _Doorway) { Name = "SouthDoor" });
 
             var activator = new EntityStub(_AwayFromDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
@@ -168,7 +168,7 @@ public class GameplaySceneTests
         => RunTest((game, device) =>
         {
             var transitionPoint = 
-                new TransitionPoint("Cave", _Doorway) { Name = "NorthDoor", TargetPointName = "SouthDoor" };
+                new TransitionPoint("Cave", "SouthDoor", _Doorway) { Name = "NorthDoor" };
 
             Area cave = CreateArea(device, "Cave");
             using TestGameplayScene scene = LoadScene(game, null, CreateArea(device, "Field"));
@@ -188,7 +188,7 @@ public class GameplaySceneTests
         => RunTest((game, device) =>
         {
             Area cave = CreateArea(device, "Cave");
-            var southDoor = new TransitionPoint("Field", new RectangleF(32, 32, 16, 16)) { Name = "SouthDoor" };
+            var southDoor = new TransitionPoint("Field", "NorthDoor", new RectangleF(32, 32, 16, 16)) { Name = "SouthDoor" };
 
             cave.AddTransitionPoint(southDoor);
 
@@ -203,7 +203,7 @@ public class GameplaySceneTests
         => RunTest((game, device) =>
         {
             Area cave = CreateArea(device, "Cave");
-            var southDoor = new TransitionPoint("Field", new RectangleF(32, 32, 16, 16))
+            var southDoor = new TransitionPoint("Field", "NorthDoor", new RectangleF(32, 32, 16, 16))
                             {
                                 Name = "SouthDoor", IsEnabled = false
                             };
@@ -221,24 +221,11 @@ public class GameplaySceneTests
         {
             Area cave = CreateArea(device, "Cave");
 
-            cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor" });
+            cave.AddTransitionPoint(new TransitionPoint("Field", "NorthDoor", _Doorway) { Name = "SouthDoor" });
 
             using TestGameplayScene scene = TransitionThroughDoor(game, device, cave, "WestDoor");
 
             Assert.Equal(1, scene.TransitionedCount);
-            Assert.Null(scene.DestinationPoint);
-        });
-
-    [Fact]
-    public void OnAreaTransitioned_NoWiredDestination_PassesNull()
-        => RunTest((game, device) =>
-        {
-            Area cave = CreateArea(device, "Cave");
-
-            cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor" });
-
-            using TestGameplayScene scene = TransitionThroughDoor(game, device, cave, string.Empty);
-
             Assert.Null(scene.DestinationPoint);
         });
 
@@ -249,12 +236,12 @@ public class GameplaySceneTests
             Area field = CreateArea(device, "Field");
             Area cave = CreateArea(device, "Cave");
 
-            var fieldTransitionPoint = new TransitionPoint("Cave", _Doorway)
-                                       { Name = "NorthDoor", TargetPointName = "SouthDoor" };
+            var fieldTransitionPoint = new TransitionPoint("Cave", "SouthDoor", _Doorway)
+                                       { Name = "NorthDoor" };
 
             field.AddTransitionPoint(fieldTransitionPoint);
             
-            cave.AddTransitionPoint(new TransitionPoint("Field", _Doorway) { Name = "SouthDoor" });
+            cave.AddTransitionPoint(new TransitionPoint("Field", "NorthDoor", _Doorway) { Name = "SouthDoor" });
 
             var activator = new EntityStub(_AwayFromDoorway);
             using TestGameplayScene scene = LoadScene(game, activator, field, cave);
@@ -290,9 +277,9 @@ public class GameplaySceneTests
     {
         Area field = CreateArea(device, "Field");
 
-        field.AddTransitionPoint(new TransitionPoint("Cave", _Doorway)
+        field.AddTransitionPoint(new TransitionPoint("Cave", targetPointName, _Doorway)
                                  {
-                                     Name = "NorthDoor", TargetPointName = targetPointName
+                                     Name = "NorthDoor"
                                  });
 
         var activator = new EntityStub(_AwayFromDoorway);

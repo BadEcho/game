@@ -16,18 +16,21 @@
   <object id="2" name="ShrinePortal" class="TransitionPoint" x="8" y="24">
    <properties>
     <property name="TargetAreaName" value="Shrine"/>
+    <property name="TargetPointName" value="ShrineExit"/>
    </properties>
    <point/>
   </object>
   <object id="3" name="SealedDoor" class="TransitionPoint" x="0" y="16" width="8" height="8">
    <properties>
     <property name="TargetAreaName" value="Crypt"/>
+    <property name="TargetPointName" value="CryptStairs"/>
     <property name="Enabled" type="bool" value="false"/>
    </properties>
   </object>
   <object id="4" name="LegacyDoor" type="ObsoleteClass" class="TransitionPoint" x="24" y="24" width="8" height="8">
    <properties>
     <property name="TargetAreaName" value="Attic"/>
+    <property name="TargetPointName" value="AtticHatch"/>
    </properties>
   </object>
   <object id="5" name="Signpost" x="4" y="4" width="4" height="4" rotation="90"/>

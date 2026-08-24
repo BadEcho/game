@@ -556,11 +556,11 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is classed as a transition point but has no &apos;TargetAreaName&apos; custom property..
+        ///   Looks up a localized string similar to Map object &apos;{0}&apos; (id {1}) is classed as a transition point but has no &apos;{2}&apos; custom property..
         /// </summary>
-        internal static string TransitionObjectMissingTargetAreaName {
+        internal static string TransitionObjectMissingProperty {
             get {
-                return ResourceManager.GetString("TransitionObjectMissingTargetAreaName", resourceCulture);
+                return ResourceManager.GetString("TransitionObjectMissingProperty", resourceCulture);
             }
         }
         
