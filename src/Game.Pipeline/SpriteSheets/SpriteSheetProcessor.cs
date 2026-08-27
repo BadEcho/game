@@ -15,6 +15,7 @@ using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
 using Microsoft.Xna.Framework.Content.Pipeline;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace BadEcho.Game.Pipeline.SpriteSheets;
 
@@ -34,10 +35,10 @@ public sealed class SpriteSheetProcessor : ContentProcessor<SpriteSheetContent>
 
         ValidateAsset(input.Asset);
         
-        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, []);
+        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, new TextureProcessor());
 
         if (!string.IsNullOrEmpty(input.Asset.NormalMapPath))
-            input.AddReference<Texture2DContent>(context, input.Asset.NormalMapPath, []);
+            input.AddReference<Texture2DContent>(context, input.Asset.NormalMapPath, new TextureProcessor());
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 

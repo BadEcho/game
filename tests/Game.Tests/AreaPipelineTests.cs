@@ -274,9 +274,10 @@ public class AreaPipelineTests
 
         var assetsBuilt = 0;
         _processorContext.AssetBuilt += (_, _) => assetsBuilt++;
+        var processor = new SpriteSheetProcessor();
 
-        content.AddReference<SpriteSheetContent>(_processorContext, "Images/StickMan.spritesheet", new OpaqueDataDictionary());
-        content.AddReference<SpriteSheetContent>(_processorContext, "images\\StickMan.SpriteSheet", new OpaqueDataDictionary());
+        content.AddReference<SpriteSheetContent>(_processorContext, "Images/StickMan.spritesheet", processor);
+        content.AddReference<SpriteSheetContent>(_processorContext, "images\\StickMan.SpriteSheet", processor);
 
         // One physical file spelled two ways is still one dependency; building it twice would fail the content build.
         Assert.Equal(1, assetsBuilt);
@@ -288,9 +289,10 @@ public class AreaPipelineTests
     public void AddReference_NullSourcePath_ThrowsArgumentNullException()
     {
         AreaContent content = _importer.Import(GetAssetPath("Simple.area"), _importerContext);
+        var processor = new SpriteSheetProcessor();
 
         Assert.Throws<ArgumentNullException>(
-            () => content.AddReference<SpriteSheetContent>(_processorContext, null!, new OpaqueDataDictionary()));
+            () => content.AddReference<SpriteSheetContent>(_processorContext, null!, processor));
     }
 
     [Fact]

@@ -81,7 +81,7 @@ public class DistanceFieldFontPipelineTests
         DistanceFieldFontContent content = _importer.Import(GetAssetPath("Lato.sdfont"), _importerContext);
         
         _processorContext.AssetPathFromOutput = "Fonts\\Lato.xnb";
-        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}", e.Data);
+        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
         _processor.Process(content, _processorContext);
     }
 
@@ -91,7 +91,7 @@ public class DistanceFieldFontPipelineTests
         DistanceFieldFontContent content = _importer.Import(GetAssetPath("SecondLato.sdfont"), _importerContext);
         
         _processorContext.AssetPathFromOutput = "Fonts\\SecondLato.xnb";
-        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}", e.Data);
+        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
         _processor.Process(content, _processorContext);
     }
 
@@ -113,12 +113,12 @@ public class DistanceFieldFontPipelineTests
         
         static void AssertFirstAssetBuilt(object? _, EventArgs<string> e)
         {
-            Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}", e.Data);
+            Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
         }
 
         static void AssertSecondAssetBuilt(object? _, EventArgs<string> e)
         {
-            Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}", e.Data);
+            Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
         }
     }
 

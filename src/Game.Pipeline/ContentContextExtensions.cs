@@ -86,7 +86,7 @@ internal static class ContentContextExtensions
 
         do
         {
-            outputPath = $"{baseOutputPath}_{assetIndex}";
+            outputPath = $"{baseOutputPath}_{assetIndex}.xnb";
             assetIndex++;
         } while (_OutputPaths.Contains(outputPath));
 

@@ -294,4 +294,7 @@
 	<data name="TransitionObjectRotated" xml:space="preserve">
 		<value>Map object '{0}' (id {1}) is a transition point rotated by {2} degrees; only axis-aligned regions are supported.</value>
 	</data>
+	<data name="NoImporterForFileExtension" xml:space="preserve">
+		<value>No importer for file extension '{0}' found.</value>
+	</data>
 </root>

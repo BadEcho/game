@@ -45,9 +45,9 @@ public sealed class TileSetWriter : ContentTypeWriter<TileSetContent>
 
         ExternalReference<Texture2DContent> imageReference
             = referenceSource.GetReference<Texture2DContent>(asset.Image.Source);
-
+        
         output.WriteExternalReference(imageReference);
-
+        
         output.Write(asset.TileWidth);
         output.Write(asset.TileHeight);
         output.Write(asset.TileCount);

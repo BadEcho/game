@@ -74,18 +74,16 @@ public sealed class TileSetProcessor : ContentProcessor<TileSetContent>
             asset.Image = GeneratePackedTexture(input, context);
         }
 
-        var processorParameters = new OpaqueDataDictionary
-                                  {
-                                      { nameof(TextureProcessor.ColorKeyColor), asset.Image.ColorKey },
-                                      { nameof(TextureProcessor.ColorKeyEnabled), true }
-                                  };
-
         ValidateDependencyPath(asset.Image.Source);
 
         input.AddReference<Texture2DContent>(
             context,
             asset.Image.Source,
-            processorParameters,
+            new TextureProcessor
+            {
+                ColorKeyColor = asset.Image.ColorKey,
+                ColorKeyEnabled = true
+            },
             imageGenerated ? context.ResolveOutputPath(asset.Image.Source) : string.Empty);
 
         ProcessTiles(input);

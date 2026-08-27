@@ -35,13 +35,13 @@ public sealed class AreaProcessor : ContentProcessor<AreaContent>
 
         ValidateDependencyPath(input.Asset.TileMapPath);
 
-        input.AddReference<TileMapContent>(context, input.Asset.TileMapPath, []);
+        input.AddReference<TileMapContent>(context, input.Asset.TileMapPath, new TileMapProcessor());
 
         foreach (AreaActorAsset actor in input.Asset.Actors)
         {
             ValidateDependencyPath(actor.SpriteSheetPath);
 
-            input.AddReference<SpriteSheetContent>(context, actor.SpriteSheetPath, []);
+            input.AddReference<SpriteSheetContent>(context, actor.SpriteSheetPath, new SpriteSheetProcessor());
         }
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));

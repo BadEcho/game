@@ -59,19 +59,20 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
                 ValidateDependencyPath(tileSet.Source);
 
                 // Leverage our tile set content loader to load this external tile set.
-                input.AddReference<TileSetContent>(context, tileSet.Source, []);
+                input.AddReference<TileSetContent>(context, tileSet.Source, new TileSetProcessor());
             }
             else if (tileSet.Image != null)
             {   // If the tile set is embedded in the map, then we have to perform the content loading work here.
-                var processorParameters = new OpaqueDataDictionary
-                                          {
-                                              { nameof(TextureProcessor.ColorKeyColor), tileSet.Image.ColorKey },
-                                              { nameof(TextureProcessor.ColorKeyEnabled), true }
-                                          };
-
                 ValidateDependencyPath(tileSet.Image.Source);
 
-                input.AddReference<Texture2DContent>(context, tileSet.Image.Source, processorParameters);
+                input.AddReference<Texture2DContent>(
+                    context,
+                    tileSet.Image.Source,
+                    new TextureProcessor
+                    {
+                        ColorKeyColor = tileSet.Image.ColorKey,
+                        ColorKeyEnabled = true
+                    });
             }
         }
     }
@@ -85,15 +86,13 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
             switch (layer)
             {
                 case ImageLayerAsset imageLayer:
-                    var processorParameters = new OpaqueDataDictionary
-                                              {
-                                                  { nameof(TextureProcessor.ColorKeyColor), imageLayer.Image.ColorKey },
-                                                  { nameof(TextureProcessor.ColorKeyEnabled), true }
-                                              };
-
                     ValidateDependencyPath(imageLayer.Image.Source);
 
-                    input.AddReference<Texture2DContent>(context, imageLayer.Image.Source, processorParameters);
+                    input.AddReference<Texture2DContent>(context, imageLayer.Image.Source, new TextureProcessor
+                                                             {
+                                                                 ColorKeyColor = imageLayer.Image.ColorKey,
+                                                                 ColorKeyEnabled = true
+                                                             });
                     break;
 
                 case TileLayerAsset tileLayer:

@@ -340,6 +340,15 @@ namespace BadEcho.Game.Pipeline.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No importer for file extension &apos;{0}&apos; found..
+        /// </summary>
+        internal static string NoImporterForFileExtension {
+            get {
+                return ResourceManager.GetString("NoImporterForFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No reference to the asset &apos;{0}&apos; was found on this content item..
         /// </summary>
         internal static string NoReferenceInContentItem {

@@ -16,6 +16,7 @@ using BadEcho.Game.Pipeline.Properties;
 using BadEcho.Extensions;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
+using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 namespace BadEcho.Game.Pipeline.Atlases;
 
@@ -35,7 +36,7 @@ public sealed class TextureAtlasProcessor : ContentProcessor<TextureAtlasContent
 
         ValidateAsset(input.Asset);
 
-        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, []);
+        input.AddReference<Texture2DContent>(context, input.Asset.TexturePath, new TextureProcessor());
 
         context.Log(Strings.ProcessingFinished.InvariantFormat(input.Identity.SourceFilename));
 

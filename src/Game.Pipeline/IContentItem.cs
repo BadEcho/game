@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -26,8 +26,8 @@ public interface IContentItem
     /// <typeparam name="TContent">The type of asset data being referenced by this content.</typeparam>
     /// <param name="context">The current content processing context.</param>
     /// <param name="sourcePath">The path to the asset file being referenced.</param>
-    /// <param name="processorParameters">Optional parameters used during the building of the external asset.</param>
-    void AddReference<TContent>(ContentProcessorContext context, string sourcePath, OpaqueDataDictionary processorParameters);
+    /// <param name="processor">Processor for the context.</param>
+    void AddReference<TContent>(ContentProcessorContext context, string sourcePath, IContentProcessor processor);
 
     /// <summary>
     /// Builds the specified external asset and adds a reference to it from this content.
@@ -35,11 +35,11 @@ public interface IContentItem
     /// <typeparam name="TContent">The type of asset data being referenced by this content.</typeparam>
     /// <param name="context">The current content processing context.</param>
     /// <param name="sourcePath">The path to the asset file being referenced.</param>
-    /// <param name="processorParameters">Optional parameters used during the building of the external asset.</param>
+    /// <param name="processor">Processor for the context.</param>
     /// <param name="outputPath">The path to write the built asset to.</param>
     void AddReference<TContent>(ContentProcessorContext context,
                                 string sourcePath,
-                                OpaqueDataDictionary processorParameters,
+                                IContentProcessor processor,
                                 string outputPath);
     /// <summary>
     /// Retrieves a previously referenced external asset from this content.
