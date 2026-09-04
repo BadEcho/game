@@ -106,6 +106,24 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only a single Core instance may exist at a time.
+        /// </summary>
+        internal static string CoreAlreadyExists {
+            get {
+                return ResourceManager.GetString("CoreAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Core instance has been created yet.
+        /// </summary>
+        internal static string CoreNotCreated {
+            get {
+                return ResourceManager.GetString("CoreNotCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing expected effect resource &apos;{0}&apos;..
         /// </summary>
         internal static string EffectMissingResource {

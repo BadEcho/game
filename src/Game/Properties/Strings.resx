@@ -224,4 +224,10 @@
 	<data name="MapObjectMissingProperty" xml:space="preserve">
 		<value>Map object '{0}' (id {1}) is classed as a transition point but has no '{2}' custom property.</value>
 	</data>
+	<data name="CoreAlreadyExists" xml:space="preserve">
+		<value>Only a single Core instance may exist at a time.</value>
+	</data>
+	<data name="CoreNotCreated" xml:space="preserve">
+		<value>No Core instance has been created yet.</value>
+	</data>
 </root>
