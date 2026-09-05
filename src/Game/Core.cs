@@ -89,6 +89,9 @@ public class Core : Microsoft.Xna.Framework.Game
         GraphicsDevice.Clear(Color.Black);
     }
 
+    /// <summary>
+    /// Gets the game's graphics device manager.
+    /// </summary>
     public GraphicsDeviceManager Graphics
     { get; }
 
