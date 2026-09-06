@@ -28,11 +28,11 @@ public abstract class ScreenScene : GameScene
     /// <summary>
     /// Initializes a new instance of the <see cref="ScreenScene"/> class.
     /// </summary>
-    /// <param name="game">The game this scene is for.</param>
-    protected ScreenScene(Microsoft.Xna.Framework.Game game)
-        : base(game)
+    /// <param name="context">Contextual information for the game.</param>
+    protected ScreenScene(GameContext context)
+        : base(context)
     {
-        _screen = new Screen(game.GraphicsDevice);
+        _screen = new Screen(context.GraphicsDevice);
 
         RenderStates = RenderStates with { SortMode = SpriteSortMode.Immediate };
     }

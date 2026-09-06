@@ -29,17 +29,17 @@ public sealed class BackgroundScene : GameScene
     private readonly Texture2D _texture;
 
     private bool _disposed;
-      
+
     /// <summary>
     /// Initializes a new instance of the <see cref="BackgroundScene"/> class.
     /// </summary>
-    /// <param name="game">The game this scene is for.</param>
+    /// <param name="context">Contextual information for the game.</param>
     /// <param name="backgroundAssetPath">The relative content path to the asset that will be loaded as the background's texture.</param>
-    public BackgroundScene(Microsoft.Xna.Framework.Game game, string backgroundAssetPath)
-        : base(game)
+    public BackgroundScene(GameContext context, string backgroundAssetPath)
+        : base(context)
     {
         TransitionTime = TimeSpan.FromSeconds(1.0);
-
+        
         _texture = Content.Load<Texture2D>(backgroundAssetPath);
     }
     

@@ -35,11 +35,11 @@ public abstract class GameplayScene : GameScene
     /// <summary>
     /// Initializes a new instance of the <see cref="GameplayScene"/> class.
     /// </summary>
-    /// <param name="game">The game this scene is for.</param>
-    protected GameplayScene(Microsoft.Xna.Framework.Game game)
-        : base(game)
+    /// <param name="context">Contextual information for the game.</param>
+    protected GameplayScene(GameContext context)
+        : base(context)
     {
-        _renderer = new DeferredRenderer(game.GraphicsDevice);
+        _renderer = new DeferredRenderer(context.GraphicsDevice);
     }
 
     /// <summary>

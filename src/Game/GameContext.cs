@@ -11,17 +11,13 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using BadEcho.Game.Scenes;
-using BadEcho.Game.UI;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace BadEcho.Game.Tests;
+namespace BadEcho.Game;
 
-internal sealed class TestScreenScene : ScreenScene
-{
-    public TestScreenScene(Microsoft.Xna.Framework.Game game) 
-        : base(new GameContext(game.GraphicsDevice, game.Services))
-    { }
-
-    protected override IPanel LoadControls(SceneManager manager)
-        => new StackPanel();
-}
+/// <summary>
+/// Provides contextual information for a game.
+/// </summary>
+/// <param name="GraphicsDevice">The graphics devices used by the game.</param>
+/// <param name="ServiceProvider">The service provider attached to the game.</param>
+public sealed record GameContext(GraphicsDevice GraphicsDevice, IServiceProvider ServiceProvider);

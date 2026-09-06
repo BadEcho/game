@@ -30,7 +30,7 @@ public class SceneTests
     {
         var game = new TestGame();
         var sceneManager = new SceneManager(game);
-
+        
         TestGameScene? gameScene = null;
 
         game.Components.Add(sceneManager);
@@ -99,7 +99,7 @@ public class SceneTests
         game.Components.Add(sceneManager);
         game.Initialized += (_, _) =>
         {
-            backgroundScene = new BackgroundScene(game, "Images\\Circle")
+            backgroundScene = new BackgroundScene(new GameContext(game.GraphicsDevice, game.Services), "Images\\Circle")
                               {
                                   SceneTransitions = Transitions.MoveDown | Transitions.Zoom
                               };
@@ -126,7 +126,7 @@ public class SceneTests
         game.Components.Add(sceneManager);
         game.Initialized += (_, _) =>
         {
-            gameScene = new BackgroundScene(game, "Images\\Circle")
+            gameScene = new BackgroundScene(new GameContext(game.GraphicsDevice, game.Services), "Images\\Circle")
                               {
                                   SceneTransitions = Transitions.MoveDown | Transitions.MoveRight
                               };

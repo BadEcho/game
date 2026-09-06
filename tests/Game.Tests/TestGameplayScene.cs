@@ -24,10 +24,14 @@ namespace BadEcho.Game.Tests;
 internal sealed class TestGameplayScene : GameplayScene
 {
     private readonly List<Area> _loadedAreas = [];
+    private readonly Microsoft.Xna.Framework.Game _game;
 
     public TestGameplayScene(Microsoft.Xna.Framework.Game game, params Area[] areas)
-        : base(game)
-        => _loadedAreas.AddRange(areas);
+        : base(new GameContext(game.GraphicsDevice, game.Services))
+    {
+        _game = game;
+        _loadedAreas.AddRange(areas);
+    }
 
     public IEntity? Activator
     { get; set; }
@@ -57,7 +61,7 @@ internal sealed class TestGameplayScene : GameplayScene
     /// Advances this scene by a single update, exactly as its scene manager would.
     /// </summary>
     public void Tick()
-        => Update(new GameUpdateTime(Game, new GameTime()), true);
+        => Update(new GameUpdateTime(_game, new GameTime()), true);
 
     public void Complete(TransitionPoint transitionPoint, Area loadedArea)
         => CompleteAreaTransition(transitionPoint, loadedArea);

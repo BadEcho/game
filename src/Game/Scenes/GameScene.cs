@@ -32,13 +32,12 @@ public abstract class GameScene : IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="GameScene"/> class.
     /// </summary>
-    /// <param name="game">The game this scene is for.</param>
-    protected GameScene(Microsoft.Xna.Framework.Game game)
+    /// <param name="context">Contextual information for the game.</param>
+    protected GameScene(GameContext context)
     {
-        Require.NotNull(game, nameof(game));
+        Require.NotNull(context, nameof(context));
         
-        Content = new ContentManager(game.Services, "Content");
-        Game = game;
+        Content = new ContentManager(context.ServiceProvider, "Content");
 
         RenderStates = new RenderStates(SpriteSortMode.Deferred,
                                         Matrix.Identity,
@@ -93,12 +92,6 @@ public abstract class GameScene : IDisposable
     /// Gets this scene's <see cref="ContentManager"/> instnace.
     /// </summary>
     protected ContentManager Content
-    { get; }
-
-    /// <summary>
-    /// Gets the game this scene is for.
-    /// </summary>
-    protected Microsoft.Xna.Framework.Game Game
     { get; }
 
     /// <summary>
