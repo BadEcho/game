@@ -19,7 +19,7 @@ namespace BadEcho.Game.Tests;
 internal sealed class TestScreenScene : ScreenScene
 {
     public TestScreenScene(Microsoft.Xna.Framework.Game game) 
-        : base(new GameContext(game.GraphicsDevice, game.Services))
+        : base(TestGame.GetContext(game))
     { }
 
     protected override IPanel LoadControls(SceneManager manager)

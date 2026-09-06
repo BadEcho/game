@@ -21,7 +21,7 @@ internal sealed class TestGameScene : GameScene
     private bool _reportedEntered;
 
     public TestGameScene(Microsoft.Xna.Framework.Game game) 
-        : base(new GameContext(game.GraphicsDevice, game.Services))
+        : base(TestGame.GetContext(game))
     { }
 
     public event EventHandler? Entered;

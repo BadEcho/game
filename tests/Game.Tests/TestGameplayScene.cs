@@ -27,7 +27,7 @@ internal sealed class TestGameplayScene : GameplayScene
     private readonly Microsoft.Xna.Framework.Game _game;
 
     public TestGameplayScene(Microsoft.Xna.Framework.Game game, params Area[] areas)
-        : base(new GameContext(game.GraphicsDevice, game.Services))
+        : base(TestGame.GetContext(game))
     {
         _game = game;
         _loadedAreas.AddRange(areas);

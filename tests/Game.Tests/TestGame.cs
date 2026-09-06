@@ -33,6 +33,9 @@ internal sealed class TestGame : Microsoft.Xna.Framework.Game
     public Func<bool> ExitCondition
     { get; set; } = () => true;
 
+    public static GameContext GetContext(Microsoft.Xna.Framework.Game game) 
+        => new(game.GraphicsDevice, game.Services);
+
     protected override void Initialize()
     {
         base.Initialize();
