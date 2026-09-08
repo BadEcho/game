@@ -70,6 +70,7 @@ VSOutput ShadowVS(VSInput input)
     output.Position = mul(input.Position, MatrixTransform);
     output.Color = input.Color;
     output.TexCoord = input.TexCoord;
+    output.TexCoord.x = 1.0 - output.TexCoord.x;
     
     return output;
 }
