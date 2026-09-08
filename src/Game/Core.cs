@@ -42,8 +42,8 @@ public class Core : Microsoft.Xna.Framework.Game
          : this()
     {
         Graphics.IsFullScreen = false;
-        Graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-        Graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+        Graphics.PreferredBackBufferWidth = windowWidth;
+        Graphics.PreferredBackBufferHeight = windowHeight;
 
         Graphics.ApplyChanges();
     }

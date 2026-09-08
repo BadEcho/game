@@ -20,4 +20,5 @@ namespace BadEcho.Game;
 /// </summary>
 /// <param name="GraphicsDevice">The graphics devices used by the game.</param>
 /// <param name="ServiceProvider">The service provider attached to the game.</param>
-public sealed record GameContext(GraphicsDevice GraphicsDevice, IServiceProvider ServiceProvider);
+/// <param name="ViewportConnector">The connection to the game's viewport.</param>
+public sealed record GameContext(GraphicsDevice GraphicsDevice, IServiceProvider ServiceProvider, ViewportConnector ViewportConnector);
