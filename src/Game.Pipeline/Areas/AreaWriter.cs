@@ -39,6 +39,7 @@ public sealed class AreaWriter : ContentTypeWriter<AreaContent>
 
         output.Write(asset.Name);
         output.WriteExternalReference(value.GetReference<TileMapContent>(asset.TileMapPath));
+        output.Write(asset.DefaultSpawnPosition);
 
         output.Write(asset.Actors.Count);
 

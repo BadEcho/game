@@ -13,6 +13,7 @@
 
 using BadEcho.Extensions;
 using BadEcho.Game.Pipeline.Properties;
+using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Pipeline.Areas;
 
@@ -35,6 +36,13 @@ public sealed class AreaAsset
     /// Gets or sets the path to the area's tile map asset.
     /// </summary>
     public string TileMapPath { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets the default position an entity spawning in this area should be placed at if it did arrive here through a
+    /// transition.
+    /// </summary>
+    public Vector2 DefaultSpawnPosition
+    { get; init; }
 
     /// <summary>
     /// Gets the collection of actors the area is initially populated with.

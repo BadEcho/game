@@ -28,11 +28,13 @@ public sealed class AreaReader : ContentTypeReader<Area>
 
         var name = input.ReadString();
         var tileMap = input.ReadExternalReference<TileMap>();
+        var defaultSpawnPosition = input.ReadVector2();
 
         var actorsToRead = input.ReadInt32();
         var area = new Area(tileMap)
                    {
-                       Name = name
+                       Name = name,
+                       DefaultSpawnPosition = defaultSpawnPosition
                    };
 
         while (actorsToRead > 0)

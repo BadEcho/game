@@ -17,6 +17,7 @@ using BadEcho.Game.Effects;
 using BadEcho.Game.Properties;
 using BadEcho.Game.World;
 using BadEcho.Logging;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Scenes;
@@ -39,7 +40,10 @@ public abstract class GameplayScene : GameScene
     protected GameplayScene(GameContext context)
         : base(context)
     {
+        Require.NotNull(context, nameof(context));
+
         _renderer = new DeferredRenderer(context.GraphicsDevice);
+        Camera = new Camera(context.ViewportConnector);
     }
 
     /// <summary>
@@ -79,11 +83,21 @@ public abstract class GameplayScene : GameScene
     protected override bool AlwaysDisplay
         => true;
 
+    /// <inheritdoc/>
+    protected override Matrix MatrixTransform
+        => Camera.GetViewMatrix();
+
     /// <summary>
     /// Gets the collection of loaded areas.
     /// </summary>
     protected IReadOnlyCollection<Area> Areas
         => _areas;
+
+    /// <summary>
+    /// Gets the camera for viewing the scene.
+    /// </summary>
+    protected Camera Camera
+    { get; }
 
     /// <summary>
     /// Gets the entity whose movement into a transition point triggers a transition to another area.
@@ -135,6 +149,11 @@ public abstract class GameplayScene : GameScene
 
             _areas.Add(area);
         }
+
+        CurrentArea = _areas.FirstOrDefault();
+
+        if (CurrentArea != null)
+            OnAreaLoaded(CurrentArea, CurrentArea.DefaultSpawnPosition);
 
         base.OnLoad(manager);
     }
@@ -214,10 +233,8 @@ public abstract class GameplayScene : GameScene
                 Strings.TransitionPointDestinationNotFound.InvariantFormat(targetPointName, newArea.Name));
         }
 
-        Area? previousArea = CurrentArea;
         CurrentArea = newArea;
-
-        OnAreaTransitioned(previousArea, newArea, destinationPoint);
+        OnAreaLoaded(newArea, destinationPoint?.SpawnPosition ?? newArea.DefaultSpawnPosition);
     }
 
     /// <summary>
@@ -238,28 +255,20 @@ public abstract class GameplayScene : GameScene
     }
 
     /// <summary>
-    /// Called after a transition has completed and the new area has become the current area.
+    /// Called after a new area has become the current area.
     /// </summary>
-    /// <param name="previousArea">The area transitioned away from, or null if there was none.</param>
-    /// <param name="newArea">The area transitioned to, which is now the current area.</param>
-    /// <param name="destinationPoint">
-    /// The transition point in <c>newArea</c> named by the initiating point's <see cref="TransitionPoint.TargetPointName"/>,
-    /// or null if no destination could be resolved.
-    /// </param>
-    /// <remarks>
-    /// <para>
-    /// This is where the entity acting as the transition activator gets moved into the new area. By default, this method
-    /// moves the activator to the spawn position indicated by <c>destinationPoint</c>, if one was provided.
-    /// </para>
-    /// <para>
-    /// A null <c>destinationPoint</c> means the destination named by the initiating point was not found in the new area.
-    /// The consumer will need to resolve this case.
-    /// </para>
-    /// </remarks>
-    protected virtual void OnAreaTransitioned(Area? previousArea, Area newArea, TransitionPoint? destinationPoint)
+    /// <param name="newArea">The now current area.</param> 
+    /// <param name="spawnPoint">The position to place the activator entity.</param>
+    protected virtual void OnAreaLoaded(Area newArea, Vector2 spawnPoint)
     {
-        if (destinationPoint != null && TransitionActivator != null)
-            TransitionActivator.Position = destinationPoint.SpawnPosition;
+        Require.NotNull(newArea, nameof(newArea));
+        
+        TransitionActivator?.Position = spawnPoint;
+
+        SizeF mapSize = newArea.TileMap.Size;
+        SizeF tileSize = newArea.TileMap.TileSize;
+
+        Camera.LockToContent(new SizeF(mapSize.Width * tileSize.Width, mapSize.Height * tileSize.Height));
     }
 
     /// <inheritdoc/>

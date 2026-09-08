@@ -16,6 +16,7 @@ using BadEcho.Game.Effects;
 using BadEcho.Game.Lighting;
 using BadEcho.Game.Properties;
 using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.World;
@@ -90,6 +91,13 @@ public class Area
     /// </summary>
     public string Name
     { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the default position an entity spawning in this area should be placed at if it did arrive here through a
+    /// transition.
+    /// </summary>
+    public Vector2 DefaultSpawnPosition
+    { get; set; }
 
     /// <summary>
     /// Gets the size of this area, measured in pixels.
