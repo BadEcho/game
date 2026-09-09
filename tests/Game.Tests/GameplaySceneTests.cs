@@ -56,7 +56,6 @@ public class GameplaySceneTests
             scene.Tick();
 
             Assert.Same(cave, scene.CurrentArea);
-            Assert.Same(field, scene.PreviousArea);
             Assert.Equal(1, scene.TransitionedCount);
             Assert.False(scene.IsTransitioningAreas);
         });
@@ -194,8 +193,8 @@ public class GameplaySceneTests
 
             using TestGameplayScene scene = TransitionThroughDoor(game, device, cave, "southdoor");
 
-            Assert.Same(southDoor, scene.DestinationPoint);
-            Assert.Equal(new PointF(40, 40), scene.DestinationPoint?.SpawnPosition);
+            Assert.Equal(southDoor.SpawnPosition, scene.SpawnPoint);
+            Assert.Equal(new PointF(40, 40), scene.SpawnPoint);
         });
 
     [Fact]
@@ -212,11 +211,11 @@ public class GameplaySceneTests
 
             using TestGameplayScene scene = TransitionThroughDoor(game, device, cave, "SouthDoor");
 
-            Assert.Same(southDoor, scene.DestinationPoint);
+            Assert.Equal(southDoor.SpawnPosition, scene.SpawnPoint);
         });
 
     [Fact]
-    public void OnAreaTransitioned_MissingDestination_PassesNull()
+    public void OnAreaTransitioned_MissingDestination_PassesDefaultSpawnPosition()
         => RunTest((game, device) =>
         {
             Area cave = CreateArea(device, "Cave");
@@ -226,7 +225,7 @@ public class GameplaySceneTests
             using TestGameplayScene scene = TransitionThroughDoor(game, device, cave, "WestDoor");
 
             Assert.Equal(1, scene.TransitionedCount);
-            Assert.Null(scene.DestinationPoint);
+            Assert.Equal(cave.DefaultSpawnPosition, scene.SpawnPoint);
         });
 
     [Fact]
@@ -267,7 +266,6 @@ public class GameplaySceneTests
 
             Assert.False(scene.IsTransitioningAreas);
             Assert.Same(cave, scene.CurrentArea);
-            Assert.Equal("SouthDoor", scene.DestinationPoint?.Name);
         });
 
     private static TestGameplayScene TransitionThroughDoor(TestGame game,

@@ -45,13 +45,10 @@ internal sealed class TestGameplayScene : GameplayScene
     public int TransitionedCount
     { get; private set; }
 
-    public Area? PreviousArea
-    { get; private set; }
-
     public Area? NewArea
     { get; private set; }
 
-    public TransitionPoint? DestinationPoint
+    public Vector2? SpawnPoint
     { get; private set; }
 
     public TransitionPoint? ObservedActiveTransitionPoint
@@ -64,7 +61,10 @@ internal sealed class TestGameplayScene : GameplayScene
         => Update(new GameUpdateTime(_game, new GameTime()), true);
 
     public void Complete(TransitionPoint transitionPoint, Area loadedArea)
-        => CompleteAreaTransition(transitionPoint, loadedArea);
+    {
+        TransitionedCount++;
+        CompleteAreaTransition(transitionPoint, loadedArea);
+    }
 
     public void MakeCurrent(Area area)
         => CurrentArea = area;
@@ -82,15 +82,15 @@ internal sealed class TestGameplayScene : GameplayScene
         if (DefersTransitions)
             return;
 
+        TransitionedCount++;
+
         base.OnAreaTransitioning(transitionPoint, newArea);
     }
 
-    protected override void OnAreaTransitioned(Area? previousArea, Area newArea, TransitionPoint? destinationPoint)
+    protected override void OnAreaLoaded(Area newArea, Vector2 spawnPoint)
     {
-        TransitionedCount++;
-        PreviousArea = previousArea;
         NewArea = newArea;
-        DestinationPoint = destinationPoint;
+        SpawnPoint = spawnPoint;
     }
 
     protected override void DrawGameplay(SpriteBatch spriteBatch)

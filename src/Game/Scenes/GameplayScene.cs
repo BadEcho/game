@@ -167,6 +167,7 @@ public abstract class GameplayScene : GameScene
         if (!IsAreaLoaded)
             return;
 
+        Camera.Update();
         CurrentArea.Update(time);
     }
 
