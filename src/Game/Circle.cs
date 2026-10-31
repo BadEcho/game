@@ -187,20 +187,14 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     /// <param name="other">The circle to check.</param>
     /// <returns>True if <c>other</c> is wholly contained within this circle; otherwise, false.</returns>
     /// <remarks>
-    /// <para>
-    /// A circle is considered to be within this circle if the displacement vector from this circle's center to the center of
-    /// <c>other</c> has a length that doesn't exceed the sum of both circles' radii.
-    /// </para>
-    /// <para>
-    /// For consistency purposes, circles are also treated as endpoint exclusive, much like <see cref="RectangleF"/> values.
-    /// Two circles merely sharing common points and touching are not considered to be intersecting.
-    /// </para>
+    /// A circle is considered to be within this circle if the distance between both circles' centers, plus the radius of
+    /// <c>other</c>, doesn't exceed this circle's radius.
     /// </remarks>
     public bool Contains(Circle other)
     {
         Vector2 distance = Center.Displace(other.Center);
 
-        return distance.Length() < Radius + other.Radius;
+        return distance.Length() + other.Radius <= Radius;
     }
 
     /// <inheritdoc/>

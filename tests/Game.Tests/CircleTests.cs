@@ -69,6 +69,22 @@ public class CircleTests
     }
 
     [Fact]
+    public void Contains_PartiallyOverlappingCircle_ReturnsFalse()
+    {
+        var overlapping = new Circle(350, 200, 100);
+
+        Assert.False(_circle.Contains(overlapping));
+    }
+
+    [Fact]
+    public void Contains_InternallyTangentCircle_ReturnsTrue()
+    {
+        var tangent = new Circle(300, 200, 100);
+
+        Assert.True(_circle.Contains(tangent));
+    }
+
+    [Fact]
     public void CalculatePenetration_CenterInsideRectangleAlignedOnAxis_ReturnsFiniteSeparatingVector()
     {
         var circle = new Circle(50, 40, 10);
