@@ -22,7 +22,6 @@ sampler2D SpriteTextureSampler : register(s0) = sampler_state
 BEGIN_PARAMETERS
     float4x4 MatrixTransform;
     float2 LightPosition;
-    float LightRadius;
 END_PARAMETERS
 
 float4 ShadowPS(VSOutput input) : SV_Target
