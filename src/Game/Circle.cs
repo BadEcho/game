@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -228,27 +228,18 @@ public readonly struct Circle : IEquatable<Circle>, IShape
     {
         PointF closestPoint = other.GetPointClosestTo(Center);
         Vector2 distance = Center.Displace(closestPoint);
-        
+
         if (distance == Vector2.Zero)
-        {   // If the circle's center is inside the rectangle, we need to find the axis where penetration is smallest
-            // and use that to calculate a displacement vector. We need to do this because we can't work with zero vectors.
-            distance = Center.Displace(other.Center);
+        {   // If the circle's center is inside the rectangle, we push the circle out along whichever axis requires the least
+            // amount of displacement.
+            Vector2 centerOffset = Center.Displace(other.Center);
 
-            if (distance == Vector2.Zero)
-            {   // This means the center of the rectangle is also the center of this circle. We simply displace along the y-axis
-                // at a magnitude of equal to both radii.
-                return Vector2.UnitY * (Radius + other.Height / 2);
-            }
+            float depthX = Radius + other.Width / 2 - MathF.Abs(centerOffset.X);
+            float depthY = Radius + other.Height / 2 - MathF.Abs(centerOffset.Y);
 
-            var distanceX = new Vector2(distance.X, 0);
-            var distanceY = new Vector2(0, distance.Y);
-
-            float distanceXLength = distanceX.Length();
-            float distanceYLength = distanceY.Length();
-
-            return distanceXLength < distanceYLength
-                ? distanceX.ToUnit() * (Radius + other.Width / 2 - distanceXLength)
-                : distanceY.ToUnit() * (Radius + other.Height / 2 - distanceYLength);
+            return depthX < depthY
+                ? new Vector2(centerOffset.X < 0 ? -depthX : depthX, 0)
+                : new Vector2(0, centerOffset.Y < 0 ? -depthY : depthY);
         }
 
         return distance.ToUnit() * (Radius - distance.Length());

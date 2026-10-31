@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under a
 //		GNU Affero General Public License v3.0.
@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using Microsoft.Xna.Framework;
 using Xunit;
 
 namespace BadEcho.Game.Tests;
@@ -65,6 +66,32 @@ public class CircleTests
         var overlapping = new Circle(50, 50, 100);
 
         Assert.True(_circle.Intersects(overlapping));
+    }
+
+    [Fact]
+    public void CalculatePenetration_CenterInsideRectangleAlignedOnAxis_ReturnsFiniteSeparatingVector()
+    {
+        var circle = new Circle(50, 40, 10);
+        var rectangle = new RectangleF(0, 0, 100, 100);
+
+        Vector2 penetration = circle.CalculatePenetration(rectangle);
+
+        Assert.False(float.IsNaN(penetration.X) || float.IsNaN(penetration.Y));
+
+        var adjustedCircle = new Circle(circle.Center + penetration, circle.Radius);
+
+        Assert.False(ShapeIntersects(adjustedCircle, rectangle));
+    }
+
+    [Fact]
+    public void CalculatePenetration_CenterInsideRectangle_UsesShallowestAxis()
+    {
+        var circle = new Circle(501, 12, 5);
+        var rectangle = new RectangleF(0, 0, 1000, 20);
+
+        Vector2 penetration = circle.CalculatePenetration(rectangle);
+
+        Assert.Equal(new Vector2(0, 13), penetration);
     }
 
     [Fact]
