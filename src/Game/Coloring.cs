@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -62,26 +62,31 @@ public static class Coloring
     {
         result = new Color();
         colorHex = colorHex.Trim('#');
+
+        if (colorHex.Length != 6 && colorHex.Length != 8)
+            return false;
         
-        if (!int.TryParse(colorHex[..2], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int r))
+        if (!TryParseScalar(colorHex[..2], out int r))
             return false;
 
-        if (!int.TryParse(colorHex[2..4], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int g))
+        if (!TryParseScalar(colorHex[2..4], out int g))
             return false;
 
-        if (!int.TryParse(colorHex[4..6], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int b))
+        if (!TryParseScalar(colorHex[4..6], out int b))
             return false;
 
         int a = 255;
 
-        if (colorHex.Length  > 6)
-        {
-            if (!int.TryParse(colorHex[6..8], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out a))
-                return false;
-        }
+        if (colorHex.Length == 8 && !TryParseScalar(colorHex[6..8], out a))
+            return false;
 
         result = new Color(r, g, b, a);
 
         return true;
+
+        static bool TryParseScalar(ReadOnlySpan<char> scalar, out int value)
+        {
+            return int.TryParse(scalar, NumberStyles.AllowHexSpecifier, CultureInfo.InvariantCulture, out value);
+        }
     }
 }
