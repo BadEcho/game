@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -25,7 +25,9 @@ public sealed class Quadtree<T>
     where T : ISpatial
 {
     private readonly List<T> _elements = [];
-    
+    private readonly Dictionary<T, Quadtree<T>> _locations;
+    private readonly Quadtree<T>? _parent;
+
     private readonly int _bucketCapacity;
     private readonly int _maxDepth;
 
@@ -50,10 +52,17 @@ public sealed class Quadtree<T>
     /// <param name="bucketCapacity">The maximum number of items allowed in this node before it gets quartered.</param>
     /// <param name="maxDepth">The maximum number of levels of child nodes allowed across the entire quad tree.</param>
     public Quadtree(RectangleF bounds, int bucketCapacity, int maxDepth)
+        : this(bounds, bucketCapacity, maxDepth, null)
+    { }
+
+    private Quadtree(RectangleF bounds, int bucketCapacity, int maxDepth, Quadtree<T>? parent)
     {
         _bucketCapacity = bucketCapacity;
         _maxDepth = maxDepth;
-        
+        _parent = parent;
+        // All nodes in a tree share the root's record of which node each element is stored in.
+        _locations = parent?._locations ?? new Dictionary<T, Quadtree<T>>();
+
         Bounds = bounds;
     }
 
@@ -86,9 +95,10 @@ public sealed class Quadtree<T>
     /// </summary>
     public bool AllowOutOfBounds
     { get; set; }
-    
+
     /// <summary>
-    /// Inserts the specified spatial element into the quadtree at the appropriate node.
+    /// Inserts the specified spatial element into the quadtree at the appropriate node, removing it from elsewhere in the tree
+    /// if already present.
     /// </summary>
     /// <param name="element">The spatial element to insert into the quadtree.</param>
     public void Insert(T element)
@@ -97,22 +107,11 @@ public sealed class Quadtree<T>
 
         if (!(Bounds.Contains(element.Bounds) || AllowOutOfBounds))
             throw new ArgumentException(Strings.ElementOutsideQuadtreeBounds, nameof(element));
-        
-        // A node exceeding its allotted number of items will get split (if it hasn't been already) into four equal quadrants.
-        if (_elements.Count >= _bucketCapacity)
-            Split();
 
-        Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
+        if (_locations.ContainsKey(element))
+            Remove(element);
 
-        if (containingChild != null)
-        {
-            containingChild.Insert(element);
-        }
-        else
-        {   // If no child was returned, then this is either a leaf node, or the element's boundaries overlap multiple children.
-            // Either way, the element gets assigned to this node.
-            _elements.Add(element);
-        }
+        Add(element);
     }
 
     /// <summary>
@@ -124,17 +123,20 @@ public sealed class Quadtree<T>
     {
         Require.NotNull(element, nameof(element));
 
-        Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
+        if (!_locations.Remove(element, out Quadtree<T>? node))
+            return false;
 
-        // If no child was returned, then this is the leaf node (or potentially non-leaf node, if the element's boundaries overlap
-        // multiple children) containing the element.
-        bool removed = containingChild?.Remove(element) ?? _elements.Remove(element);
-        
-        // If the total descendant element count is less than the bucket capacity, we ensure the node is in a non-split state.
-        if (removed && CountElements() <= _bucketCapacity)
-            Merge();
+        node._elements.Remove(element);
 
-        return removed;
+        // Any node on the path back to the root whose total descendant element count no longer exceeds the bucket capacity
+        // is returned to a non-split state.
+        for (Quadtree<T>? current = node; current != null; current = current._parent)
+        {
+            if (!current.IsLeaf && current.CountElements() <= _bucketCapacity)
+                current.Merge();
+        }
+
+        return true;
     }
 
     /// <summary>
@@ -159,7 +161,7 @@ public sealed class Quadtree<T>
             if (!element.Bounds.Intersects(node.Bounds))
                 continue;
 
-            collisions.AddRange(node._elements.Where(e => e.Bounds.Intersects(element.Bounds)));
+            collisions.AddRange(node._elements.Where(e => !ReferenceEquals(e, element) && e.Bounds.Intersects(element.Bounds)));
 
             if (!node.IsLeaf)
             {
@@ -184,7 +186,7 @@ public sealed class Quadtree<T>
     /// Gets the total number of elements belonging to this and all descending nodes.
     /// </summary>
     /// <returns>The total number of elements belong to this and all descending nodes.</returns>
-    public int CountElements() 
+    public int CountElements()
     {
         int count = _elements.Count;
 
@@ -228,6 +230,25 @@ public sealed class Quadtree<T>
         return children;
     }
 
+    private void Add(T element)
+    {   // A node exceeding its allotted number of items will get split (if it hasn't been already) into four equal quadrants.
+        if (_elements.Count >= _bucketCapacity)
+            Split();
+
+        Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
+
+        if (containingChild != null)
+        {
+            containingChild.Add(element);
+        }
+        else
+        {   // If no child was returned, then this is either a leaf node, or the element's boundaries overlap multiple children.
+            // Either way, the element gets assigned to this node.
+            _elements.Add(element);
+            _locations[element] = this;
+        }
+    }
+
     private void Split()
     {   // If we're not a leaf node, then we're already split.
         if (!IsLeaf)
@@ -249,31 +270,48 @@ public sealed class Quadtree<T>
             Quadtree<T>? containingChild = GetContainingChild(element.Bounds);
             // An element is only moved if it completely fits into a child quadrant.
             if (containingChild != null)
-            {   
+            {
                 _elements.Remove(element);
 
-                containingChild.Insert(element);
+                containingChild.Add(element);
             }
         }
     }
 
     private Quadtree<T> CreateChild(PointF location)
-        => new(new RectangleF(location, Bounds.Size / 2), _bucketCapacity, _maxDepth)
-           {
-               Level = Level + 1
-           };
+        => new(new RectangleF(location, Bounds.Size / 2), _bucketCapacity, _maxDepth, this)
+        {
+            Level = Level + 1
+        };
 
     private void Merge()
     {   // If we're a leaf node, then there is nothing to merge.
         if (IsLeaf)
             return;
 
-        _elements.AddRange(_topLeft._elements);
-        _elements.AddRange(_topRight._elements);
-        _elements.AddRange(_bottomLeft._elements);
-        _elements.AddRange(_bottomRight._elements);
+        // Children are merged first so that elements from every descendant level are reclaimed.
+        _topLeft.Merge();
+        _topRight.Merge();
+        _bottomLeft.Merge();
+        _bottomRight.Merge();
+
+        TakeElements(_topLeft);
+        TakeElements(_topRight);
+        TakeElements(_bottomLeft);
+        TakeElements(_bottomRight);
 
         _topLeft = _topRight = _bottomLeft = _bottomRight = null;
+    }
+
+    private void TakeElements(Quadtree<T> child)
+    {
+        foreach (T element in child._elements)
+        {
+            _elements.Add(element);
+            _locations[element] = this;
+        }
+
+        child._elements.Clear();
     }
 
     private Quadtree<T>? GetContainingChild(IShape bounds)
@@ -283,13 +321,13 @@ public sealed class Quadtree<T>
 
         if (_topLeft.Bounds.Contains(bounds))
             return _topLeft;
-        
+
         if (_topRight.Bounds.Contains(bounds))
             return _topRight;
-        
+
         if (_bottomLeft.Bounds.Contains(bounds))
             return _bottomLeft;
-        
+
         return _bottomRight.Bounds.Contains(bounds) ? _bottomRight : null;
     }
 }

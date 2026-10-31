@@ -293,7 +293,7 @@ public sealed class TileMap : Extensible, IModelRenderer, IDisposable
         imageData.AddTexture(layer.Image.Bounds, layer.Image.Bounds, layer.Position);
         
         _layerModelMap.Add(layer,
-                           new StaticModel(_device, layer.Image, imageData).AsEnumerable());
+                           [new StaticModel(_device, layer.Image, imageData)]);
     }
 
     private void CreateLayerModels(TileLayer layer)

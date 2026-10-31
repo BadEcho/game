@@ -117,18 +117,6 @@ public class QuadtreeTests
     }
     
     [Fact]
-    public void FindCollisions_Large_ReturnsIdentity()
-    {
-        foreach (var stub in _largeQuadtreeItems)
-        {
-            var collisions = _largeQuadtree.FindCollisions(stub).ToList();
-
-            Assert.Single(collisions);
-            Assert.Equal(stub, collisions.First());
-        }
-    }
-
-    [Fact]
     public void Remove_Large_Merges()
     {
         Assert.False(_largeQuadtree.IsLeaf);
@@ -141,6 +129,50 @@ public class QuadtreeTests
         Assert.True(_largeQuadtree.IsLeaf);
     }
 
+    [Fact]
+    public void Remove_ElementMovedAcrossQuadrants_RemovesElement()
+    {
+        var mover = new SpatialStub(20, 20, 10, 10);
+        _quadtree.Insert(mover);
+
+        Assert.False(_quadtree.IsLeaf);
+
+        mover.Bounds = new RectangleF(60, 60, 10, 10);
+
+        Assert.True(_quadtree.Remove(mover));
+        Assert.DoesNotContain(mover, _quadtree.GetElements());
+        Assert.Equal(3, _quadtree.CountElements());
+    }
+
+    [Fact]
+    public void Insert_ElementAlreadyPresent_RelocatesWithoutDuplicating()
+    {
+        var mover = new SpatialStub(20, 20, 10, 10);
+        _quadtree.Insert(mover);
+
+        mover.Bounds = new RectangleF(60, 60, 10, 10);
+        _quadtree.Insert(mover);
+
+        Assert.Single(_quadtree.GetElements(), e => ReferenceEquals(e, mover));
+        Assert.Equal(4, _quadtree.CountElements());
+    }
+
+    [Fact]
+    public void Remove_ElementsMovedInLargeTree_RemovesAllAndMerges()
+    {
+        Assert.False(_largeQuadtree.IsLeaf);
+
+        foreach (var stub in _largeQuadtreeItems)
+        {   // Shift each element by roughly half the tree so it no longer sits where it was inserted.
+            stub.Bounds = new RectangleF((stub.Bounds.Center.X + 5000) % 9990, stub.Bounds.Center.Y, 7, 7);
+
+            Assert.True(_largeQuadtree.Remove(stub));
+        }
+
+        Assert.True(_largeQuadtree.IsLeaf);
+        Assert.Equal(0, _largeQuadtree.CountElements());
+    }
+
     private sealed class SpatialStub : ISpatial
     {
         public SpatialStub(float x, float y, float width, float height)
@@ -148,6 +180,6 @@ public class QuadtreeTests
             Bounds = new RectangleF(x, y, width, height);
         }
 
-        public IShape Bounds { get; }
+        public IShape Bounds { get; set; }
     }
 }
