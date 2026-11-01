@@ -11,6 +11,7 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace BadEcho.Game.Effects;
@@ -20,6 +21,8 @@ namespace BadEcho.Game.Effects;
 /// </summary>
 public static class SpriteBatchExtensions
 {
+    private static readonly ConditionalWeakTable<SpriteBatch, StandardEffect> _Effects = new();
+
     /// <param name="spriteBatch">A <see cref="SpriteBatch" /> instance.</param>
     extension(SpriteBatch spriteBatch)
     {
@@ -32,11 +35,10 @@ public static class SpriteBatchExtensions
             Require.NotNull(spriteBatch, nameof(spriteBatch));
             Require.NotNull(renderStates, nameof(renderStates));
 
-            var effect = new StandardEffect(spriteBatch.GraphicsDevice)
-                         {
-                             Alpha = renderStates.Alpha ?? 1.0f,
-                             MatrixTransform = renderStates.MatrixTransform
-                         };
+            var effect = GetEffect(spriteBatch);
+
+            effect.Alpha = renderStates.Alpha ?? 1.0f;
+            effect.MatrixTransform = renderStates.MatrixTransform;
 
             spriteBatch.Begin(renderStates.SortMode,
                               renderStates.BlendState,
@@ -66,5 +68,18 @@ public static class SpriteBatchExtensions
                               effect,
                               renderStates.MatrixTransform);
         }
+    }
+    
+    private static StandardEffect GetEffect(SpriteBatch spriteBatch)
+    {
+        var effect = new StandardEffect(spriteBatch.GraphicsDevice);
+
+        spriteBatch.Disposing += (_, _) =>
+        {
+            _Effects.Remove(spriteBatch);
+            effect.Dispose();
+        };
+
+        return effect;
     }
 }

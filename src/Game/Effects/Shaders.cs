@@ -68,7 +68,7 @@ internal static class Shaders
 
     private static byte[] GetStreamBytes(string name)
     {
-        UnmanagedMemoryStream stream
+        using UnmanagedMemoryStream stream
             = _Manager.GetStream(name, CultureInfo.InvariantCulture)
               ?? throw new BadImageFormatException(Strings.EffectMissingResource.InvariantFormat(name));
 
