@@ -61,6 +61,10 @@ public static class GameWindowExtensions
     private static unsafe WindowHandle GetSdlWindowHandle(GameWindow window)
     {
         SdlWindowManagerInfo wmInfo = default;
+
+        // The version affects which members in the info union get written by SDL.
+        Sdl2.GetVersion(out wmInfo.version);
+
         bool success = Sdl2.GetWindowManagerInfo(window.Handle, ref wmInfo);
 
         if (!success)
@@ -73,6 +77,16 @@ public static class GameWindowExtensions
             throw new InvalidOperationException(Strings.SdlGetWindowManagerFailed.InvariantFormat(error));
         }
 
-        return new WindowHandle(wmInfo.window, false);
+        // The info union is essentially a sequence of pointers (or pointer-sized members at least).
+        nint* info = (nint*) wmInfo.info;
+
+        nint handle = wmInfo.subsystem switch
+        {
+            SdlWindowManagerType.X11 or SdlWindowManagerType.Wayland or SdlWindowManagerType.Mir => info[1],
+            SdlWindowManagerType.Unknown => nint.Zero,
+            _ => info[0]
+        };
+
+        return handle == nint.Zero ? WindowHandle.InvalidHandle : new WindowHandle(handle, false);
     }
 }

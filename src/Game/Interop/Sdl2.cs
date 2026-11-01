@@ -32,10 +32,19 @@ internal static unsafe partial class Sdl2
     /// </param>
     /// <returns>True if successful; otherwise, false.</returns>
     [LibraryImport(LIBRARY_NAME, EntryPoint = "SDL_GetWindowWMInfo")]
-    [return: MarshalAs(UnmanagedType.U1)]
+    [return: MarshalAs(UnmanagedType.Bool)]
     [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
     [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
     public static partial bool GetWindowManagerInfo(nint handle, ref SdlWindowManagerInfo info);
+
+    /// <summary>
+    /// Gets the version of SDL that is linked against the program.
+    /// </summary>
+    /// <param name="version">The version information of the loaded SDL library.</param>
+    [LibraryImport(LIBRARY_NAME, EntryPoint = "SDL_GetVersion")]
+    [UnmanagedCallConv(CallConvs = [typeof(CallConvCdecl)])]
+    [DefaultDllImportSearchPaths(DllImportSearchPath.SafeDirectories)]
+    public static partial void GetVersion(out SdlVersion version);
 
     /// <summary>
     /// Retrieve a message about the last error that occurred on the current thread.

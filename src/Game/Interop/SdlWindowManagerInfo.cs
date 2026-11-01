@@ -19,7 +19,7 @@ namespace BadEcho.Game.Interop;
 /// Represents custom window manager information.
 /// </summary>
 [StructLayout(LayoutKind.Sequential)]
-internal struct SdlWindowManagerInfo
+internal unsafe struct SdlWindowManagerInfo
 {
     /// <summary>
     /// The version of SDL.
@@ -30,7 +30,7 @@ internal struct SdlWindowManagerInfo
     /// </summary>
     public SdlWindowManagerType subsystem;
     /// <summary>
-    /// The handle to the underlying native window.
+    /// Subsystem-specific information, laid out according to <see cref="subsystem"/>.
     /// </summary>
-    public nint window;
+    public fixed byte info[64];
 }

@@ -11,6 +11,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using System.Runtime.InteropServices;
+
 namespace BadEcho.Game.Interop;
 
 /// <summary>
@@ -19,6 +21,7 @@ namespace BadEcho.Game.Interop;
 /// <suppressions>
 /// ReSharper disable InconsistentNaming
 /// </suppressions>
+[StructLayout(LayoutKind.Sequential)]
 internal struct SdlVersion
 {
     /// <summary>
