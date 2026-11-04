@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -201,6 +201,7 @@ public sealed class DistanceFieldFont
         private readonly bool _useSmallShader;
         private readonly bool _useStrokedShader;
 
+        private DistanceFieldFontEffect? _effect;
         private SizeF? _size;
         private bool _disposed;
 
@@ -242,19 +243,10 @@ public sealed class DistanceFieldFont
         public void Draw(Matrix view, float alpha)
         {
             GraphicsDevice device = _font._device;
+            DistanceFieldFontEffect effect = _effect ??= CreateEffect();
 
-            Matrix viewProjection = view.MultiplyBy2DProjection(device.Viewport.Bounds.Size);
-
-            var effect = new DistanceFieldFontEffect(device)
-                         {
-                             MatrixTransform = viewProjection,
-                             AtlasSize = new Vector2(_font.Characteristics.Width, _font.Characteristics.Height),
-                             DistanceRange = _font.Characteristics.DistanceRange,
-                             Texture = _font.Atlas,
-                             Alpha = alpha
-                         };
-
-            effect.CurrentTechnique = GetTechnique(effect);
+            effect.MatrixTransform = view.MultiplyBy2DProjection(device.Viewport.Bounds.Size);
+            effect.Alpha = alpha;
 
             _model.Draw(effect);
         }
@@ -266,8 +258,23 @@ public sealed class DistanceFieldFont
                 return;
 
             _model.Dispose();
+            _effect?.Dispose();
 
             _disposed = true;
+        }
+
+        private DistanceFieldFontEffect CreateEffect()
+        {
+            var effect = new DistanceFieldFontEffect(_font._device)
+                         {
+                             AtlasSize = new Vector2(_font.Characteristics.Width, _font.Characteristics.Height),
+                             DistanceRange = _font.Characteristics.DistanceRange,
+                             Texture = _font.Atlas
+                         };
+
+            effect.CurrentTechnique = GetTechnique(effect);
+
+            return effect;
         }
 
         private EffectTechnique GetTechnique(Effect effect) => (_useSmallShader, _useStrokedShader)
