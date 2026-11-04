@@ -241,9 +241,24 @@ public class SceneTests
     public void Dispose_Twice_NoException()
     {
         using var game = new TestGame();
-        var gameScene = new TestGameScene(game);
 
-        gameScene.Dispose();
-        gameScene.Dispose();
+        TestGameScene? gameScene = null;
+        Exception? failure = null;
+
+        game.Initialized += (_, _) =>
+        {
+            gameScene = new TestGameScene(game);
+
+            failure = Record.Exception(() =>
+            {
+                gameScene.Dispose();
+                gameScene.Dispose();
+            });
+        };
+
+        game.Run();
+
+        Assert.NotNull(gameScene);
+        Assert.Null(failure);
     }
 }
