@@ -78,6 +78,9 @@ public sealed class NineSliceRegion : TextureRegion
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
+        if (targetArea.Width <= 0 || targetArea.Height <= 0)
+            return;
+
         Thickness targetPadding = CalculateTargetPadding(targetArea);
         int centerWidth = targetArea.Width - targetPadding.Left - targetPadding.Right;
         int centerHeight = targetArea.Height - targetPadding.Top - targetPadding.Bottom;
@@ -115,22 +118,22 @@ public sealed class NineSliceRegion : TextureRegion
         int bottom = Padding.Bottom;
 
         // The exterior slices always should maintain either their width, height, or both, depending on their position;
-        // however, if the target bounding rectangle is too small to accomodate a particular dimension, then the affected slices
-        // will be resized proportionally to the overall region's source size.
+        // however, if the target bounding rectangle is too small to accommodate a particular dimension, then the affected
+        // slices are shrunk proportionally so that, together, they fill exactly the available space.
         if (left + right > targetArea.Width)
         {
-            double sourceTargetRatio = (double)SourceArea.Width / targetArea.Width;
+            double shrinkRatio = (double)Math.Max(0, targetArea.Width) / (left + right);
 
-            left = (int)(left * sourceTargetRatio);
-            right = (int)(right * sourceTargetRatio);
+            left = (int)(left * shrinkRatio);
+            right = (int)(right * shrinkRatio);
         }
 
         if (top + bottom > targetArea.Height)
         {
-            double sourceTargetRatio = (double)SourceArea.Height / targetArea.Height;
+            double shrinkRatio = (double)Math.Max(0, targetArea.Height) / (top + bottom);
 
-            top = (int)(top * sourceTargetRatio);
-            bottom = (int)(bottom * sourceTargetRatio);
+            top = (int)(top * shrinkRatio);
+            bottom = (int)(bottom * shrinkRatio);
         }
 
         return new Thickness(left, top, right, bottom);
