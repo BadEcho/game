@@ -71,7 +71,8 @@ public class ViewportConnector
         Require.NotNull(device, nameof(device));
 
         Device = device;
-        VirtualSize = Size;
+        VirtualSize = new Size(device.PresentationParameters.BackBufferWidth,
+                               device.PresentationParameters.BackBufferHeight);
     }
 
     /// <summary>
@@ -84,7 +85,13 @@ public class ViewportConnector
     /// Gets the physical resolution of the render-target surface.
     /// </summary>
     public Size Size
-        => new(Device.Viewport.Width, Device.Viewport.Height);
+        => new(Viewport.Width, Viewport.Height);
+
+    /// <summary>
+    /// Gets the region of the back buffer that content should be rendered to.
+    /// </summary>
+    public virtual Viewport Viewport
+        => new(0, 0, Device.PresentationParameters.BackBufferWidth, Device.PresentationParameters.BackBufferHeight);
 
     /// <summary>
     /// Gets the base resolution of drawn content, which will be scaled to fit the actual surface
@@ -98,6 +105,12 @@ public class ViewportConnector
     /// </summary>
     public GraphicsDevice Device
     { get; }
+
+    /// <summary>
+    /// Applies this connector's <see cref="Viewport"/> as the graphics device's active viewport.
+    /// </summary>
+    public void Apply()
+        => Device.Viewport = Viewport;
 
     /// <summary>
     /// Gets an adapted scaling matrix used to transform coordinates to be in accordance with this connector.

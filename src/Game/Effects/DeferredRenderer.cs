@@ -80,7 +80,8 @@ public sealed class DeferredRenderer : IDisposable
     private readonly ShadowEffect _shadowEffect;
     private readonly CompositeEffect _compositeEffect;
 
-    private Rectangle _bufferSize;
+    private Point _bufferSize;
+    private Viewport _viewport;
     private RenderTarget2D _colorBuffer;
     private RenderTarget2D _normalBuffer;
     private RenderTarget2D _lightBuffer;
@@ -116,6 +117,7 @@ public sealed class DeferredRenderer : IDisposable
 
         // The method marks the beginning of a new frame, so ensure buffer sizes match the current viewport size.
         EnsureBuffers();
+        _viewport = _device.Viewport;
 
         _device.SetRenderTarget(_colorBuffer);
         _device.Clear(Color.Transparent);
@@ -139,6 +141,7 @@ public sealed class DeferredRenderer : IDisposable
 
         // The method marks the beginning of a new frame, so ensure buffer sizes match the current viewport size.
         EnsureBuffers();
+        _viewport = _device.Viewport;
 
         _device.SetRenderTargets(new RenderTargetBinding(_colorBuffer),
                                  new RenderTargetBinding(_normalBuffer));
@@ -250,7 +253,7 @@ public sealed class DeferredRenderer : IDisposable
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
 
-        Rectangle viewportBounds = _device.Viewport.Bounds;
+        var viewportBounds = new Rectangle(0, 0, _device.Viewport.Width, _device.Viewport.Height);
 
         _compositeEffect.AmbientLight = ambientLight;
         _compositeEffect.LightBuffer = _lightBuffer;
@@ -264,8 +267,11 @@ public sealed class DeferredRenderer : IDisposable
     /// <summary>
     /// Finishes the current rendering phase.
     /// </summary>
-    public void Finish() 
-        => _device.SetRenderTarget(null);
+    public void Finish()
+    {
+        _device.SetRenderTarget(null);
+        _device.Viewport = _viewport;
+    }
 
     /// <inheritdoc/>
     public void Dispose()
@@ -304,25 +310,25 @@ public sealed class DeferredRenderer : IDisposable
     [MemberNotNull(nameof(_colorBuffer), nameof(_lightBuffer), nameof(_normalBuffer))]
     private void CreateBuffers()
     {
-        _bufferSize = _device.Viewport.Bounds;
+        _bufferSize = _device.Viewport.Bounds.Size;
 
         _colorBuffer = new RenderTarget2D(_device,
-                                          _bufferSize.Width,
-                                          _bufferSize.Height,
+                                          _bufferSize.X,
+                                          _bufferSize.Y,
                                           false,
                                           SurfaceFormat.Color,
                                           DepthFormat.None);
 
         _lightBuffer = new RenderTarget2D(_device,
-                                          _bufferSize.Width,
-                                          _bufferSize.Height,
+                                          _bufferSize.X,
+                                          _bufferSize.Y,
                                           false,
                                           SurfaceFormat.Color,
                                           DepthFormat.Depth24Stencil8);
 
         _normalBuffer = new RenderTarget2D(_device,
-                                           _bufferSize.Width,
-                                           _bufferSize.Height,
+                                           _bufferSize.X,
+                                           _bufferSize.Y,
                                            false,
                                            SurfaceFormat.Color,
                                            DepthFormat.None);
@@ -330,7 +336,7 @@ public sealed class DeferredRenderer : IDisposable
 
     private void EnsureBuffers()
     {   // No need to recreate buffers if viewport either hasn't changed or has an area of zero (indicative of a minimized window).
-        if (_bufferSize == _device.Viewport.Bounds || _device.Viewport.Bounds.Size == Point.Zero)
+        if (_bufferSize == _device.Viewport.Bounds.Size || _device.Viewport.Bounds.Size == Point.Zero)
             return;
 
         _colorBuffer.Dispose();

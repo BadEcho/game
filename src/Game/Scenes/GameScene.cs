@@ -25,6 +25,8 @@ public abstract class GameScene : IDisposable
 {
     private const Transitions MOVEMENT_FLAGS =
         Transitions.MoveLeft | Transitions.MoveRight | Transitions.MoveUp | Transitions.MoveDown;
+    
+    private readonly ViewportConnector _viewportConnector;
 
     private bool _isClosing;
     private bool _disposed;
@@ -36,7 +38,8 @@ public abstract class GameScene : IDisposable
     protected GameScene(GameContext context)
     {
         Require.NotNull(context, nameof(context));
-        
+
+        _viewportConnector = context.ViewportConnector;
         Content = new ContentManager(context.ServiceProvider, "Content");
 
         RenderStates = new RenderStates(SpriteSortMode.Deferred,
@@ -181,6 +184,10 @@ public abstract class GameScene : IDisposable
     public void Draw(SpriteBatch spriteBatch)
     {
         Require.NotNull(spriteBatch, nameof(spriteBatch));
+
+        // Our viewport connector is reapplied at the start of every frame to account for drawing to any render target
+        // that isn't the back buffer (which would cause the viewport the be reset to the full back buffer).
+        _viewportConnector.Apply();
 
         var viewport = spriteBatch.GraphicsDevice.Viewport;
         var transform = MatrixTransform;
