@@ -193,7 +193,7 @@ public sealed class DistanceFieldFont
     /// <summary>
     /// Provides a renderer of signed distance field font models using shaders appropriate to the size of the text.
     /// </summary>
-    private sealed class DistanceFieldFontRenderer : IModelRenderer, IDisposable
+    private sealed class DistanceFieldFontRenderer : IModelRenderer
     {
         private readonly DistanceFieldFont _font;
         private readonly StaticModel _model;

@@ -26,7 +26,7 @@ namespace BadEcho.Game.Tiles;
 /// Tile maps supported by the Bad Echo Game Framework are based on the TMX map format, used by various popular tile map editors such
 /// as Tiled.
 /// </remarks>
-public sealed class TileMap : Extensible, IModelRenderer, IDisposable
+public sealed class TileMap : Extensible, IModelRenderer
 {
     private readonly Dictionary<Layer, IEnumerable<IPrimitiveModel>> _layerModelMap = [];
     private readonly Dictionary<TileSet, int> _tileSetFirstIdMap = [];

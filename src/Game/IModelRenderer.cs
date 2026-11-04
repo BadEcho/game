@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -18,7 +18,7 @@ namespace BadEcho.Game;
 /// <summary>
 /// Defines a renderer of one or more related models using shaders appropriate for the model type.
 /// </summary>
-public interface IModelRenderer
+public interface IModelRenderer : IDisposable
 {
     /// <summary>
     /// Gets the size of the model when it is rendered.

@@ -59,6 +59,9 @@ public sealed class Label : Control<Label>
     /// <inheritdoc />
     protected override Size MeasureCore(Size availableSize)
     {
+        _textRenderer?.Dispose();
+        _textRenderer = null;
+
         if (Font == null)
             return Size.Empty;
         
