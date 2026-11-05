@@ -39,13 +39,14 @@ public sealed class Image : Control<Image>
         int width = Visual.Size.Width;
         int height = Visual.Size.Height;
 
-        float aspectRatio = (float) Visual.Size.Width / Visual.Size.Height;
+        if (width == 0 || height == 0)
+            return new Size(width, height);
 
-        if (Width != null && Height == null) 
-            height = (int) aspectRatio * Width.Value;
+        if (Width != null && Height == null)
+            height = (int)MathF.Round((float)Width.Value * height / width);
 
         else if (Height != null && Width == null)
-            width = (int) aspectRatio * Height.Value;
+            width = (int)MathF.Round((float)Height.Value * width / height);
 
         return new Size(width, height);
     }
