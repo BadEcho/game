@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -13,6 +13,7 @@
 
 using System.ComponentModel;
 using BadEcho.Game.AI;
+using BadEcho.Game.Properties;
 using Microsoft.Xna.Framework;
 
 namespace BadEcho.Game.Routines;
@@ -47,6 +48,9 @@ public sealed class Patrol : Component
     {
         Require.NotNull(targets, nameof(targets));
 
+        if (targets.Count == 0)
+            throw new ArgumentException(Strings.PatrolNoTargets, nameof(targets));
+
         int targetIndex = 0;
         var builder = new StateMachineBuilder<int>();
 
@@ -55,6 +59,9 @@ public sealed class Patrol : Component
             int maxIndex = targets.Count - 1;
             bool extremum = targetIndex == 0 || targetIndex == maxIndex;
             int nextIndex = GetNextIndex(targetIndex, maxIndex, loopType);
+
+            if (nextIndex < 0)
+                nextIndex = 0;
 
             var state = builder.Add(targetIndex)
                                .Executes(() => new MoveTo(target, speed))

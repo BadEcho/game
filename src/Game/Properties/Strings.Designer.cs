@@ -106,7 +106,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Only a single Core instance may exist at a time.
+        ///   Looks up a localized string similar to Only a single Core instance may exist at a time..
         /// </summary>
         internal static string CoreAlreadyExists {
             get {
@@ -115,7 +115,7 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Core instance has been created yet.
+        ///   Looks up a localized string similar to No Core instance has been created yet..
         /// </summary>
         internal static string CoreNotCreated {
             get {
@@ -246,6 +246,15 @@ namespace BadEcho.Game.Properties {
         internal static string NoShadersForGraphicsBackend {
             get {
                 return ResourceManager.GetString("NoShadersForGraphicsBackend", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A patrol requires at least one target position..
+        /// </summary>
+        internal static string PatrolNoTargets {
+            get {
+                return ResourceManager.GetString("PatrolNoTargets", resourceCulture);
             }
         }
         
@@ -410,7 +419,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("TransitionPointNoTargetAreaName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to A transition point requires the name of the point in the target area to spawn at..
         /// </summary>
@@ -419,7 +428,7 @@ namespace BadEcho.Game.Properties {
                 return ResourceManager.GetString("TransitionPointNoTargetPointName", resourceCulture);
             }
         }
-
+        
         /// <summary>
         ///   Looks up a localized string similar to Graphics device has not been initialized yet..
         /// </summary>

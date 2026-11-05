@@ -230,4 +230,7 @@
 	<data name="CoreNotCreated" xml:space="preserve">
 		<value>No Core instance has been created yet.</value>
 	</data>
+	<data name="PatrolNoTargets" xml:space="preserve">
+		<value>A patrol requires at least one target position.</value>
+	</data>
 </root>

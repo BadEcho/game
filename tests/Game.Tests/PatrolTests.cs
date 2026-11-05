@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -165,5 +165,28 @@ public class PatrolTests : IClassFixture<ContentManagerFixture>
         // Should stay at the end.
         _entity.Update(_time);
         Assert.Equal(fourthPoint, _entity.Position);
+    }
+
+    [Fact]
+    public void Update_PingPongSinglePoint_StaysAtPoint()
+    {
+        var point = new Vector2(1, 0);
+
+        _entity.Components.Add(new Patrol([point], 1.0f, LoopType.PingPong));
+
+        for (int i = 0; i < 3; i++)
+        {
+            _entity.Update(_time);
+        }
+
+        Assert.Equal(point, _entity.Position);
+    }
+
+    [Fact]
+    public void Init_NoTargets_ThrowsException()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => new Patrol([], 1.0f));
+
+        Assert.Equal("targets", exception.ParamName);
     }
 }
