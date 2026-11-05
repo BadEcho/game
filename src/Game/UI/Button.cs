@@ -91,6 +91,15 @@ public sealed class Button : Control<Button>
     }
 
     /// <summary>
+    /// Gets or sets the size of the font used for this button's text.
+    /// </summary>
+    public float FontSize
+    {
+        get => _innerLabel.FontSize;
+        set => _innerLabel.FontSize = value;
+    }
+
+    /// <summary>
     /// Gets or sets the background visual for this button when it is being pressed.
     /// </summary>
     /// <remarks>
@@ -160,7 +169,7 @@ public sealed class Button : Control<Button>
 
     /// <inheritdoc/>
     protected override void DrawPrimitivesCore(Matrix? transform, float alpha)
-    { }
+        => _innerPanel.DrawPrimitives(transform, alpha);
 
     /// <inheritdoc/>
     protected override void OnMouseDown(MouseButton pressedButton)

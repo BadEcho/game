@@ -60,6 +60,18 @@ public class CircleTests
         Assert.False(_circle.Contains(touching));
     }
 
+    [Theory]
+    [InlineData(350f, 200f, 100f, false)]  // Overlaps the right edge, so it is not contained.
+    [InlineData(250f, 200f, 50f, true)]    // Off-centre but wholly inside.
+    [InlineData(200f, 200f, 100f, true)]   // Concentric and smaller.
+    [InlineData(-20f, -20f, 50f, false)]   // Wholly outside.
+    public void Contains_Circle_ReturnsExpected(float x, float y, float radius, bool expected)
+    {
+        var other = new Circle(x, y, radius);
+
+        Assert.Equal(expected, _circle.Contains(other));
+    }
+
     [Fact]
     public void Intersects_OverlappingCircle_ReturnsTrue()
     {
