@@ -349,6 +349,15 @@ namespace BadEcho.Game.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to State &apos;{0}&apos; transitions to unregistered target &apos;{1}&apos;..
+        /// </summary>
+        internal static string StateUnregisteredTransitionTarget {
+            get {
+                return ResourceManager.GetString("StateUnregisteredTransitionTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Setter expression targets a property not belonging to the control type being styled..
         /// </summary>
         internal static string StyleSetterNonLocalProperty {

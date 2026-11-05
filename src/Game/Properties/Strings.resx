@@ -233,4 +233,7 @@
 	<data name="PatrolNoTargets" xml:space="preserve">
 		<value>A patrol requires at least one target position.</value>
 	</data>
+	<data name="StateUnregisteredTransitionTarget" xml:space="preserve">
+		<value>State '{0}' transitions to unregistered target '{1}'.</value>
+	</data>
 </root>

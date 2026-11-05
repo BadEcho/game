@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -47,6 +47,15 @@ public class StateMachineTests
         fsm.Update(new GameUpdateTime(_game, new GameTime(TimeSpan.Zero, TimeSpan.FromMilliseconds(200))));
 
         Assert.Equal(TestState.This, fsm.CurrentState.Identifier);
+    }
+
+    [Fact]
+    public void Build_TransitionToUnregisteredState_ThrowsException()
+    {
+        var exception = Assert.Throws<ArgumentException>(() => _builder.Add(TestState.That)
+                                                                       .TransitionsTo(TestState.This).WhenTrue(_ => true)
+                                                                       .Build(TestState.That));
+        Assert.Equal("states", exception.ParamName);
     }
 
     [Fact]

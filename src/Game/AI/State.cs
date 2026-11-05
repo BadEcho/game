@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -80,6 +80,12 @@ public sealed class State<T>
     /// </summary>
     public T Next
     { get; private set; }
+
+    /// <summary>
+    /// Gets the collection of possible transition targets from this state.
+    /// </summary>
+    internal IReadOnlyCollection<T> TransitionTargets
+        => _transitionTargets;
 
     /// <summary>
     /// Activates the state, executing all configured enter actions.

@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -37,6 +37,14 @@ public sealed class StateMachine<T> : Component
         foreach (State<T> state in states)
         {
             _states.Add(state.Identifier, state);
+
+            foreach (T target in state.TransitionTargets)
+            {
+                if (!_states.ContainsKey(target))
+                    throw new ArgumentException(
+                        Strings.StateUnregisteredTransitionTarget.InvariantFormat(state.Identifier, target),
+                        nameof(states));
+            }
         }
 
         if (!_states.TryGetValue(initialState, out State<T>? currentState))
