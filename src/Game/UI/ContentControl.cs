@@ -25,6 +25,14 @@ public abstract class ContentControl<T,TSelf> : Control<TSelf>
     where T : Control<T>, new()
     where TSelf : ContentControl<T, TSelf>
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ContentControl{T,TSelf}"/> class.
+    /// </summary>
+    protected ContentControl()
+    {
+        Content.Parent = this;
+    }
+
     /// <inheritdoc/>
     public override IInputHandler? InputHandler
     {
