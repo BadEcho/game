@@ -94,15 +94,26 @@ $endif
 /importer:TileMapImporter
 /processor:TileMapProcessor
 /build:Tiles/GrassTopLeftWithEmpties.tmx
+
 #begin Tiles/GrassLeftUpOrder.tmx
 /importer:TileMapImporter
 /processor:TileMapProcessor
 /build:Tiles/GrassLeftUpOrder.tmx
 
+#begin Tiles/GrassRightUpOrder.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassRightUpOrder.tmx
+
 #begin Tiles/GrassImageBeneathTiles.tmx
 /importer:TileMapImporter
 /processor:TileMapProcessor
 /build:Tiles/GrassImageBeneathTiles.tmx
+
+#begin Tiles/GrassFlippedTiles.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassFlippedTiles.tmx
 
 #begin Atlases/BlackShuttleGrass.atlas
 /importer:TextureAtlasImporter
