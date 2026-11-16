@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -64,19 +64,18 @@ public sealed class TileMapAsset : ExtensibleAsset
             _tileSets.Add(new TileSetAsset(tileSet));
         }
 
-        foreach (XElement tileLayer in root.Elements(TILE_LAYER_ELEMENT))
+        foreach (XElement element in root.Elements())
         {
-            _layers.Add(new TileLayerAsset(tileLayer));
-        }
+            LayerAsset? layer = element.Name.LocalName switch
+            {
+                TILE_LAYER_ELEMENT => new TileLayerAsset(element),
+                IMAGE_LAYER_ELEMENT => new ImageLayerAsset(element),
+                OBJECT_LAYER_ELEMENT => new ObjectLayerAsset(element),
+                _ => null
+            };
 
-        foreach (XElement imageLayer in root.Elements(IMAGE_LAYER_ELEMENT))
-        {
-            _layers.Add(new ImageLayerAsset(imageLayer));
-        }
-
-        foreach (XElement objectLayer in root.Elements(OBJECT_LAYER_ELEMENT))
-        {
-            _layers.Add(new ObjectLayerAsset(objectLayer));
+            if (layer != null)
+                _layers.Add(layer);
         }
     }
 

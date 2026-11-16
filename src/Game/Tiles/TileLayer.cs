@@ -93,7 +93,7 @@ public sealed class TileLayer : Layer
     /// <summary>
     /// Loads the identified tile into the tile layer at the specified location.
     /// </summary>
-    /// <param name="idWithFlags">The global identifier and flip flags of the tile to load into the layer.</param>w
+    /// <param name="idWithFlags">The global identifier and flip flags of the tile to load into the layer.</param>
     /// <param name="column">The index of the column within the tile layer to load the tile into.</param>
     /// <param name="row">The index of the row within the tile layer to load the tile into.</param>
     public void LoadTile(uint idWithFlags, int column, int row)

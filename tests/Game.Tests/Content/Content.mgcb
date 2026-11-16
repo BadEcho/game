@@ -99,6 +99,11 @@ $endif
 /processor:TileMapProcessor
 /build:Tiles/GrassLeftUpOrder.tmx
 
+#begin Tiles/GrassImageBeneathTiles.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassImageBeneathTiles.tmx
+
 #begin Atlases/BlackShuttleGrass.atlas
 /importer:TextureAtlasImporter
 /processor:TextureAtlasProcessor

@@ -92,6 +92,17 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
     }
 
     [Fact]
+    public void Load_GrassImageBeneathTiles_PreservesDocumentLayerOrder()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassImageBeneathTiles");
+
+        Assert.Collection(map.Layers,
+                          l => Assert.Equal("Sky", Assert.IsType<ImageLayer>(l).Name),
+                          l => Assert.Equal("Ground", Assert.IsType<TileLayer>(l).Name),
+                          l => Assert.Equal("Markers", Assert.IsType<ObjectLayer>(l).Name));
+    }
+    
+    [Fact]
     public void Load_GrassTwoTileLayers_HasTwoTileLayers()
     {
         TileMap map = _content.Load<TileMap>("Tiles\\GrassTwoTileLayers");
