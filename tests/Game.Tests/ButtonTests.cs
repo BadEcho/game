@@ -21,6 +21,8 @@ namespace BadEcho.Game.Tests;
 
 public class ButtonTests : IClassFixture<ContentManagerFixture>
 {
+    private readonly Rectangle _screenBounds = new(0, 0, 1920, 1080);
+
     private readonly ContentManagerFixture _contentFixture;
     private readonly DistanceFieldFont _font;
 
@@ -28,6 +30,109 @@ public class ButtonTests : IClassFixture<ContentManagerFixture>
     {
         _contentFixture = contentFixture;
         _font = contentFixture.Content.Load<DistanceFieldFont>("Fonts\\Lato");
+    }
+
+    [Fact]
+    public void UpdateInput_VisibleClicked_ClickedRaised()
+    {
+        var handler = new TestInputHandler { MousePosition = new Point(10, 10) };
+        Button button = CreateArrangedButton(handler);
+        bool clicked = false;
+
+        button.Clicked += (_, _) => clicked = true;
+
+        Click(handler, button);
+
+        Assert.True(clicked);
+    }
+
+    [Fact]
+    public void UpdateInput_HiddenClicked_ClickedNotRaised()
+    {
+        var handler = new TestInputHandler { MousePosition = new Point(10, 10) };
+        Button button = CreateArrangedButton(handler);
+        bool clicked = false;
+
+        button.Clicked += (_, _) => clicked = true;
+        button.IsVisible = false;
+
+        Click(handler, button);
+
+        Assert.False(clicked);
+        Assert.False(button.IsMouseOver);
+    }
+
+    [Fact]
+    public void UpdateInput_HiddenWhilePressed_ClickedNotRaised()
+    {
+        var handler = new TestInputHandler { MousePosition = new Point(10, 10) };
+        Button button = CreateArrangedButton(handler);
+        bool clicked = false;
+
+        button.Clicked += (_, _) => clicked = true;
+
+        handler.PressedButtons.Add(MouseButton.Left);
+        button.UpdateInput();
+
+        button.IsVisible = false;
+
+        handler.PressedButtons.Clear();
+        button.UpdateInput();
+
+        Assert.False(clicked);
+    }
+
+    [Fact]
+    public void UpdateInput_ParentHidden_ClickedNotRaised()
+    {
+        var handler = new TestInputHandler { MousePosition = new Point(10, 10) };
+        var panel = new StackPanel
+        {
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            InputHandler = handler
+        };
+        var button = new Button { Width = 100, Height = 40 };
+        bool clicked = false;
+
+        button.Clicked += (_, _) => clicked = true;
+        panel.AddChild(button);
+        panel.Measure(_screenBounds.Size);
+        panel.Arrange(_screenBounds);
+
+        panel.IsVisible = false;
+
+        handler.PressedButtons.Add(MouseButton.Left);
+        panel.UpdateInput();
+        handler.PressedButtons.Clear();
+        panel.UpdateInput();
+
+        Assert.False(clicked);
+    }
+
+    private static void Click(TestInputHandler handler, Button button)
+    {
+        handler.PressedButtons.Add(MouseButton.Left);
+        button.UpdateInput();
+        handler.PressedButtons.Clear();
+        button.UpdateInput();
+    }
+
+    private Button CreateArrangedButton(TestInputHandler handler)
+    {
+        var button = new Button
+        {
+            Width = 100,
+            Height = 40,
+            HorizontalAlignment = HorizontalAlignment.Left,
+            VerticalAlignment = VerticalAlignment.Top,
+            InputHandler = handler
+        };
+
+        button.Measure(_screenBounds.Size);
+        button.Arrange(_screenBounds);
+
+        return button;
     }
 
     [Fact]

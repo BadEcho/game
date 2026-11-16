@@ -467,6 +467,19 @@ public abstract class Control<TSelf> : IControl
         if (InputHandler == null)
             throw new InvalidOperationException(Strings.NoInputHandler);
 
+        IArrangeable? current = this;
+
+        while (current is IControl control)
+        {
+            if (!control.IsVisible)
+            {
+                ReleaseInput();
+                return;
+            }
+
+            current = control.Parent;
+        }
+
         UpdateMouseInput(InputHandler.MousePosition, InputHandler.PressedButtons.ToList());
         UpdateKeyboardInput(InputHandler.PressedKeys.ToList());
     }
@@ -551,6 +564,30 @@ public abstract class Control<TSelf> : IControl
         field = value;
 
         InvalidateArrange();
+    }
+
+    private void ReleaseInput()
+    {
+        IsMouseOver = false;
+
+        if (_lastMousePosition != null)
+            OnMouseLeave();
+
+        _lastMousePosition = null;
+
+        foreach (MouseButton releasedButton in _pressedButtons.ToList())
+        {
+            _pressedButtons.Remove(releasedButton);
+
+            OnMouseUp(releasedButton);
+        }
+
+        foreach (Keys releasedKey in _pressedKeys.ToList())
+        {
+            _pressedKeys.Remove(releasedKey);
+
+            OnKeyUp(releasedKey);
+        }
     }
 
     private Rectangle Align(Size effectiveSize, Size desiredSize)
