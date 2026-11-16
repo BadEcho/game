@@ -50,6 +50,7 @@ public abstract class Panel<TSelf> : Control<TSelf>, IPanel
         _children.Add(child);
 
         child.Parent = this;
+        child.InputHandler = InputHandler;
         InvalidateMeasure();
     }
 
@@ -59,11 +60,28 @@ public abstract class Panel<TSelf> : Control<TSelf>, IPanel
     {
         Require.NotNull(child, nameof(child));
 
-        if (_children.Remove(child))
+        if (!_children.Remove(child))
+            return;
+        
+        if (InputHandler is { FocusedElement: IArrangeable focusedElement })
         {
-            child.Parent = null;
-            InvalidateMeasure();
+            IArrangeable? current = focusedElement;
+
+            while (current != null)
+            {
+                if (ReferenceEquals(current, child))
+                {
+                    InputHandler.ClearFocus();
+                    break;
+                }
+
+                current = (current as IControl)?.Parent;
+            }
         }
+
+        child.Parent = null;
+        child.InputHandler = null;
+        InvalidateMeasure();
     }
 
     /// <inheritdoc/>
