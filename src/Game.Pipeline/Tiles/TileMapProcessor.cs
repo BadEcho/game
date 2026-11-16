@@ -236,7 +236,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
 
     private static IEnumerable<Tile> CreateTilesLeftUp(int mapWidth, int mapHeight, IList<uint> tileData)
     {
-        for (int row = mapHeight - 1; row >= mapHeight; row--)
+        for (int row = mapHeight - 1; row >= 0; row--)
         {
             for (int column = mapWidth - 1; column >= 0; column--)
             {

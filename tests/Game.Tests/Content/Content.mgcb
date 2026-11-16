@@ -94,6 +94,11 @@ $endif
 /importer:TileMapImporter
 /processor:TileMapProcessor
 /build:Tiles/GrassTopLeftWithEmpties.tmx
+#begin Tiles/GrassLeftUpOrder.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassLeftUpOrder.tmx
+
 #begin Atlases/BlackShuttleGrass.atlas
 /importer:TextureAtlasImporter
 /processor:TextureAtlasProcessor

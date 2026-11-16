@@ -57,6 +57,20 @@ public class TileMapPipelineTests
         Assert.Collection(content.Asset.TileSets, t => Assert.Equal(tileSetPath, t.Source));
         Assert.Equal([tileSetPath], _importerContext.Dependencies);
     }
+    
+    [Theory]
+    [InlineData("GrassLeftUpOrder.tmx", new[] { 4, 3, 2, 1 })]
+    [InlineData("GrassRightUpOrder.tmx", new[] { 3, 4, 1, 2 })]
+    public void Process_UpwardRenderOrder_EmitsAllTilesInRenderOrder(string assetName, int[] expectedIds)
+    {
+        TileMapContent content = _importer.Import(GetAssetPath(assetName), _importerContext);
+
+        content = _processor.Process(content, _processorContext);
+
+        TileLayerAsset tileLayer = content.Asset.Layers.OfType<TileLayerAsset>().Single();
+
+        Assert.Equal(expectedIds, tileLayer.Tiles.Select(t => t.Id));
+    }
 
     [Fact]
     public void Process_GrassTopLeftWithEmpties_OmitsEmptyTiles()
