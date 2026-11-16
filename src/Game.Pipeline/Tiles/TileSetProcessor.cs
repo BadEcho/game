@@ -29,6 +29,8 @@ namespace BadEcho.Game.Pipeline.Tiles;
 [ContentProcessor(DisplayName = "Tile Set Processor - Bad Echo")]
 public sealed class TileSetProcessor : ContentProcessor<TileSetContent>
 {
+    private const string PACKED_TEXTURE_ASSET_NAME = "packed";
+
     /// <summary>
     /// Initializes the <see cref="TileSetProcessor"/> class.
     /// </summary>
@@ -84,7 +86,7 @@ public sealed class TileSetProcessor : ContentProcessor<TileSetContent>
                 ColorKeyColor = asset.Image.ColorKey,
                 ColorKeyEnabled = true
             },
-            imageGenerated ? context.ResolveOutputPath(asset.Image.Source) : string.Empty);
+            imageGenerated ? context.ResolveOutputPath(PACKED_TEXTURE_ASSET_NAME) : string.Empty);
 
         ProcessTiles(input);
 

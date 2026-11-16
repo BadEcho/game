@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -30,6 +30,7 @@ namespace BadEcho.Game.Pipeline.Fonts;
 [ContentProcessor(DisplayName = "Distance Field Font Processor - Bad Echo")]
 public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldFontContent>
 {
+    private const string ATLAS_ASSET_NAME = "atlas";
     private const string UNICODE_PROPERTY_NAME = "unicode";
 
     private static readonly JsonSerializerOptions _OutputFileOptions
@@ -110,7 +111,7 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         // Because we've generated the atlas texture asset in an intermediate directory, we need to explicitly provide
         // an output path and asset name, otherwise MonoGame will mangle the output path (i.e., the output path
         // will end up being something like bin\Platform\obj\Platform\*\).
-        string outputPath = context.ResolveOutputPath(atlasPath);
+        string outputPath = context.ResolveOutputPath(ATLAS_ASSET_NAME);
         output.AtlasPath = atlasPath;
         output.AddReference<Texture2DContent>(context,
                                               atlasPath,

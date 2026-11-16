@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -21,8 +21,6 @@ namespace BadEcho.Game.Pipeline;
 /// </summary>
 internal static class ContentContextExtensions
 {
-    private static readonly List<string> _OutputPaths = [];
-
     /// <summary>
     /// Logs a message during the importation of an asset to the content pipeline.
     /// </summary>
@@ -73,25 +71,18 @@ internal static class ContentContextExtensions
     /// Builds a unique path to an output directory for an asset that was generated during the processing of another asset.
     /// </summary>
     /// <param name="context">The current game asset's processor's context.</param>
-    /// <param name="outputFileName">The file name for the asset that was generated during processing of another asset.</param>
+    /// <param name="generatedAssetName">
+    /// A name that identifies the generated asset among any others generated while processing the same asset.
+    /// </param>
     /// <returns>An output path to use when building the generated asset whose name is <c>outputFileName</c>.</returns>
-    public static string ResolveOutputPath(this ContentProcessorContext context, string outputFileName)
+    public static string ResolveOutputPath(this ContentProcessorContext context, string generatedAssetName)
     {
         Require.NotNull(context, nameof(context));
+        Require.NotNull(generatedAssetName, nameof(generatedAssetName));
 
-        string baseOutputPath = Path.Combine(Path.GetDirectoryName(context.OutputFilename) ?? string.Empty,
-                                             Path.GetFileNameWithoutExtension(outputFileName));
-        int assetIndex = 0;
-        string outputPath;
+        string outputDirectory = Path.GetDirectoryName(context.OutputFilename) ?? string.Empty;
+        string ownerName = Path.GetFileNameWithoutExtension(context.OutputFilename);
 
-        do
-        {
-            outputPath = $"{baseOutputPath}_{assetIndex}.xnb";
-            assetIndex++;
-        } while (_OutputPaths.Contains(outputPath));
-
-        _OutputPaths.Add(outputPath);
-
-        return outputPath;
+        return Path.Combine(outputDirectory, $"{ownerName}-{generatedAssetName}.xnb");
     }
 }
