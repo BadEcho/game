@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -45,7 +45,26 @@ public class DistanceFieldFontPipelineTests
         Assert.Equal(64, asset.Resolution);
         Assert.Equal(4, asset.Range);
     }
-    
+
+    [Fact]
+    public void ImportProcess_BothLatoFonts_DistinctIntermediateFiles()
+    {
+        DistanceFieldFontContent first = _importer.Import(GetAssetPath("Lato.sdfont"), _importerContext);
+
+        _processorContext.AssetPathFromOutput = "Fonts\\Lato.xnb";
+        first = _processor.Process(first, _processorContext);
+
+        DistanceFieldFontContent second = _importer.Import(GetAssetPath("SecondLato.sdfont"), _importerContext);
+
+        _processorContext.AssetPathFromOutput = "Fonts\\SecondLato.xnb";
+        second = _processor.Process(second, _processorContext);
+
+        Assert.Equal("Lato-atlas.png", Path.GetFileName(first.AtlasPath));
+        Assert.Equal("SecondLato-atlas.png", Path.GetFileName(second.AtlasPath));
+        Assert.True(File.Exists(first.AtlasPath));
+        Assert.True(File.Exists(second.AtlasPath));
+    }
+
     [Fact]
     public void ImportProcess_LatoFont_ReturnsValid()
     {

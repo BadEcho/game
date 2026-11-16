@@ -84,9 +84,10 @@ public sealed class DistanceFieldFontProcessor : ContentProcessor<DistanceFieldF
         if (!Directory.Exists(intermediatePath))
             Directory.CreateDirectory(intermediatePath);
 
-        string charsetPath = CreateCharacterSetFile(input.Asset, input.Name, intermediatePath);
-        string atlasPath = Path.Combine(intermediatePath, $"{input.Name}-atlas.png");
-        string jsonPath = Path.Combine(intermediatePath, $"{input.Name}-layout.json");
+        string fontAssetName = Path.GetFileNameWithoutExtension(input.Identity.SourceFilename);
+        string charsetPath = CreateCharacterSetFile(input.Asset, fontAssetName, intermediatePath);
+        string atlasPath = Path.Combine(intermediatePath, $"{fontAssetName}-atlas.png");
+        string jsonPath = Path.Combine(intermediatePath, $"{fontAssetName}-layout.json");
 
         var fontConfiguration = new FontConfiguration
                                 {
