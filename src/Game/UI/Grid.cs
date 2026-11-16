@@ -123,7 +123,7 @@ public sealed class Grid : Panel<Grid>, ISelectable
         if (!base.Focus())
             return false;
 
-        if (Children.Count != 0)
+        if (Children.Any(c => c.IsVisible))
             UpdateMouseOver(0, 0);
 
         return true;
