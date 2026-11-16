@@ -166,7 +166,7 @@ public sealed class Grid : Panel<Grid>, ISelectable
     {
         UpdateMouseOver(null, null);
         UpdateSelection(null, null);
-    } 
+    }
 
     /// <inheritdoc/>
     protected override Size MeasureCore(Size availableSize)
@@ -175,10 +175,16 @@ public sealed class Grid : Panel<Grid>, ISelectable
         _columnWidths.Clear();
         _rowHeights.Clear();
 
-        if (Children.Count == 0)
-            return Size.Empty;
+        // Cell membership is rebuilt on every pass so removed or hidden children no longer occupy a cell.
+        foreach (List<IControl>? cell in _cells)
+        {
+            cell?.Clear();
+        }
 
         _visibleChildren.AddRange(Children.Where(c => c.IsVisible));
+
+        if (_visibleChildren.Count == 0)
+            return Size.Empty;
 
         int columns = _visibleChildren.Max(c => c.Column) + 1;
         int rows = _visibleChildren.Max(c => c.Row) + 1;
@@ -192,8 +198,13 @@ public sealed class Grid : Panel<Grid>, ISelectable
         _columnWidths.AddRange(Enumerable.Repeat(0, columns));
         _rowHeights.AddRange(Enumerable.Repeat(0, rows));
 
-        if (_cells.GetLength(0) < columns || _cells.GetLength(1) < rows)
-            _cells = new List<IControl>?[rows, columns];
+        if (_cells.GetLength(0) < rows || _cells.GetLength(1) < columns)
+        {
+            int newRows = Math.Max(rows, _cells.GetLength(0));
+            int newColumns = Math.Max(columns, _cells.GetLength(1));
+
+            _cells = new List<IControl>?[newRows, newColumns];
+        }
 
         foreach (IControl child in _visibleChildren)
         {
@@ -357,7 +368,7 @@ public sealed class Grid : Panel<Grid>, ISelectable
     {
         base.OnKeyDown(pressedKey);
 
-        if (!IsSelectable || Children.Count == 0)
+        if (!IsSelectable || _cellsX.Count == 0 || _cellsY.Count == 0)
             return;
 
         switch (pressedKey)
