@@ -90,6 +90,10 @@ $endif
 /processor:TileSetProcessor
 /build:Tiles/AnimatedGrass.tsx
 
+#begin Tiles/GrassTopLeftWithEmpties.tmx
+/importer:TileMapImporter
+/processor:TileMapProcessor
+/build:Tiles/GrassTopLeftWithEmpties.tmx
 #begin Atlases/BlackShuttleGrass.atlas
 /importer:TextureAtlasImporter
 /processor:TextureAtlasProcessor

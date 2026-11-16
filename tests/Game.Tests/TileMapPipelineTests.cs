@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under a
 //		GNU Affero General Public License v3.0.
@@ -18,6 +18,9 @@ using Xunit;
 
 namespace BadEcho.Game.Tests;
 
+/// <suppressions>
+/// ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
+/// </suppressions>
 public class TileMapPipelineTests
 {
     private readonly TileMapImporter _importer = new();
@@ -53,6 +56,24 @@ public class TileMapPipelineTests
 
         Assert.Collection(content.Asset.TileSets, t => Assert.Equal(tileSetPath, t.Source));
         Assert.Equal([tileSetPath], _importerContext.Dependencies);
+    }
+
+    [Fact]
+    public void Process_GrassTopLeftWithEmpties_OmitsEmptyTiles()
+    {
+        TileMapContent content = _importer.Import(GetAssetPath("GrassTopLeftWithEmpties.tmx"), _importerContext);
+
+        content = _processor.Process(content, _processorContext);
+
+        TileLayerAsset tileLayer = content.Asset.Layers.OfType<TileLayerAsset>().Single();
+        
+        Assert.Collection(tileLayer.Tiles,
+                          t =>
+                          {
+                              Assert.Equal(1, t.Id);
+                              Assert.Equal(0, t.Column);
+                              Assert.Equal(0, t.Row);
+                          });
     }
 
     [Fact]

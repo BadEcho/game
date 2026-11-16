@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -189,13 +189,17 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
     }
 
     private static IEnumerable<Tile> CreateTiles(TileRenderOrder renderOrder, int mapWidth, int mapHeight, IList<uint> tileData)
-        => renderOrder switch
+    {
+        IEnumerable<Tile> tiles = renderOrder switch
         {
             TileRenderOrder.RightDown => CreateTilesRightDown(mapWidth, mapHeight, tileData),
             TileRenderOrder.RightUp => CreateTilesRightUp(mapWidth, mapHeight, tileData),
             TileRenderOrder.LeftDown => CreateTilesLeftDown(mapWidth, mapHeight, tileData),
             _ => CreateTilesLeftUp(mapWidth, mapHeight, tileData)
         };
+
+        return tiles.Where(t => t.Id != 0);
+    }
 
     private static IEnumerable<Tile> CreateTilesRightDown(int mapWidth, int mapHeight, IList<uint> tileData)
     {
@@ -246,7 +250,7 @@ public sealed class TileMapProcessor : ContentProcessor<TileMapContent>
         int tileIndex = column + row * mapWidth;
         uint tileId = tileData[tileIndex];
 
-        return tileId == 0 ? default : new Tile(tileId, column, row);
+        return new Tile(tileId, column, row);
     }
 
     private static List<uint> DecodeTileData(DataAsset tileData, int tilesToDecode)

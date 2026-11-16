@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //		Created by Matt Weber <matt@badecho.com>
-//		Copyright @ 2024 Bad Echo LLC. All rights reserved.
+//		Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //		Bad Echo Technologies are licensed under a
 //		GNU Affero General Public License v3.0.
@@ -12,6 +12,7 @@
 // -----------------------------------------------------------------------
 
 using BadEcho.Game.Tiles;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Xunit;
 
@@ -45,6 +46,17 @@ public class TileMapTests : IClassFixture<ContentManagerFixture>
         TileMap map = _content.Load<TileMap>("Tiles\\GrassFourTiles");
 
         Assert.Equal(MapOrientation.Orthogonal, map.Orientation);
+    }
+
+    [Fact]
+    public void Load_GrassTopLeftWithEmpties_TopLeftTilePreserved()
+    {
+        TileMap map = _content.Load<TileMap>("Tiles\\GrassTopLeftWithEmpties");
+
+        TileLayer tileLayer = map.Layers.OfType<TileLayer>().Single();
+
+        Assert.Equal(1, tileLayer.GetTile(Vector2.Zero).Id);
+        Assert.Collection(map.ToCollidableMap(), c => Assert.Equal(new PointF(8, 8), c.Bounds.Center));
     }
 
     [Theory]
