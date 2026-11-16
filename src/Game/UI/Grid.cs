@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // <copyright>
 //      Created by Matt Weber <matt@badecho.com>
-//      Copyright @ 2025 Bad Echo LLC. All rights reserved.
+//      Copyright @ 2026 Bad Echo LLC. All rights reserved.
 //
 //      Bad Echo Technologies are licensed under the
 //      GNU Affero General Public License v3.0.
@@ -240,6 +240,12 @@ public sealed class Grid : Panel<Grid>, ISelectable
             _cellsY.Add(nextChildPosition + ContentBounds.Y);
             nextChildPosition += rowHeight;
         }
+
+        // Clear stale hover/selection states (the previous cells may no longer exist after the layout changes).
+        if (_mouseOverColumn >= _cellsX.Count || _mouseOverRow >= _cellsY.Count)
+            UpdateMouseOver(null, null);
+        if (_selectedColumn >= _cellsX.Count || _selectedRow >= _cellsY.Count)
+            UpdateSelection(null, null);
 
         foreach (IControl child in _visibleChildren)
         {
