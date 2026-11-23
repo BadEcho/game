@@ -34,10 +34,18 @@ public sealed class StateMachine<T> : Component
     {
         Require.NotNull(states, nameof(states));
 
+        states = states.ToList();
+
         foreach (State<T> state in states)
         {
             _states.Add(state.Identifier, state);
+        }
 
+        if (!_states.TryGetValue(initialState, out State<T>? currentState))
+            throw new ArgumentException(Strings.StateMachineMissingState.InvariantFormat(initialState), nameof(initialState));
+        
+        foreach (State<T> state in states)
+        {
             foreach (T target in state.TransitionTargets)
             {
                 if (!_states.ContainsKey(target))
@@ -46,9 +54,6 @@ public sealed class StateMachine<T> : Component
                         nameof(states));
             }
         }
-
-        if (!_states.TryGetValue(initialState, out State<T>? currentState))
-            throw new ArgumentException(Strings.StateMachineMissingState.InvariantFormat(initialState), nameof(initialState));
 
         CurrentState = currentState;
         CurrentState.Enter();

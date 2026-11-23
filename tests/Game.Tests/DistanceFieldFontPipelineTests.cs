@@ -22,8 +22,6 @@ namespace BadEcho.Game.Tests;
 
 public class DistanceFieldFontPipelineTests
 {
-    private static int _AssetCount;
-
     private readonly DistanceFieldFontImporter _importer = new();
     private readonly DistanceFieldFontProcessor _processor = new();
     private readonly TestContentImporterContext _importerContext = new();
@@ -75,8 +73,7 @@ public class DistanceFieldFontPipelineTests
 
         _processorContext.AssetPathFromOutput = "Fonts\\Lato.xnb";
         content = _processor.Process(content, _processorContext);
-        _AssetCount++;
-
+        
         Assert.Equal(4, content.Characteristics.DistanceRange);
         Assert.Equal(592, content.Characteristics.Width);
         Assert.Equal(592, content.Characteristics.Height);
@@ -100,7 +97,7 @@ public class DistanceFieldFontPipelineTests
         DistanceFieldFontContent content = _importer.Import(GetAssetPath("Lato.sdfont"), _importerContext);
         
         _processorContext.AssetPathFromOutput = "Fonts\\Lato.xnb";
-        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
+        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith("Lato-atlas.xnb", e.Data);
         _processor.Process(content, _processorContext);
     }
 
@@ -110,7 +107,7 @@ public class DistanceFieldFontPipelineTests
         DistanceFieldFontContent content = _importer.Import(GetAssetPath("SecondLato.sdfont"), _importerContext);
         
         _processorContext.AssetPathFromOutput = "Fonts\\SecondLato.xnb";
-        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
+        _processorContext.AssetBuilt += (_, e) => Assert.EndsWith("Lato-atlas.xnb", e.Data);
         _processor.Process(content, _processorContext);
     }
 
@@ -132,12 +129,12 @@ public class DistanceFieldFontPipelineTests
         
         static void AssertFirstAssetBuilt(object? _, EventArgs<string> e)
         {
-            Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
+            Assert.EndsWith("Lato-atlas.xnb", e.Data);
         }
 
         static void AssertSecondAssetBuilt(object? _, EventArgs<string> e)
         {
-            Assert.EndsWith($"Lato-Regular-atlas_{_AssetCount++}.xnb", e.Data);
+            Assert.EndsWith("SecondLato-atlas.xnb", e.Data);
         }
     }
 
